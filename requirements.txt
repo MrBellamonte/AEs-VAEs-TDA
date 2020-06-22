@@ -1,0 +1,5 @@
+numpy
+tadasets
+cechmate
+cmake
+dionysus
