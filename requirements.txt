@@ -3,3 +3,6 @@ tadasets
 cechmate
 cmake
 dionysus
+persim
+Cython
+Ripser
