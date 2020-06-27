@@ -7,16 +7,34 @@ from matplotlib.collections import PatchCollection
 
 
 def plot_simplicial_complex_2D(simp_complex: list, points: np.ndarray, scale: float):
+    """
+    Util to plot simplicial complexes in 2D, for k-simplicies k=(0,1,2).
+
+    :param simp_complex:
+    :param points:
+    :param scale:
+    :return:
+    """
     #todo: allow custom style?
+    #todo: find a way that 2-simplex do not overlap (visually)
+
+    #needed because over gudhi simp. complex object can only be iterated once for unknown reasons.
+    complex = []
+    for s in simp_complex:
+        complex.append(s)
 
 
     # 2-simplicies
     triangles = np.array(
-        [s[0] for s in simp_complex if len(s[0]) == 3 and s[1] <= scale])
+        [s[0] for s in complex if len(s[0]) == 3 and s[1] <= scale])
     triangle_patches = []
-    for triangle in triangles:
+    temp2 = []
+    for s in simp_complex:
+        temp2.append(s)
+
+    for idx in triangles:
         coord = np.column_stack(
-            (points[triangle, 0].reshape(3, ), points[triangle, 1].reshape(3, )))
+            (points[idx, 0].reshape(3, ), points[idx, 1].reshape(3, )))
         polygon = Polygon(coord, True)
         triangle_patches.append(polygon)
 
@@ -25,15 +43,15 @@ def plot_simplicial_complex_2D(simp_complex: list, points: np.ndarray, scale: fl
     p.set_array(np.array(colors))
 
     plt.gca().add_collection(p)
-
+    
     # 1-simplicies
-    coord_1s = np.array(
-        [s[0] for s in simp_complex if len(s[0]) == 2 and s[1] <= scale])
-    for idxs in coord_1s:
-        plt.plot(points[idxs, 0], points[idxs, 1], color='darkblue')
+    edges = np.array(
+        [s[0] for s in complex if len(s[0]) == 2 and s[1] <= scale])
+    for idx in edges:
+        plt.plot(points[idx, 0], points[idx, 1], color='darkblue')
 
     # 0-simplicies
     plt.scatter(points[:, 0], points[:, 1], color='indigo', zorder=10)
 
-    plt.show()
+
 
