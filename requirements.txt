@@ -1,5 +1,5 @@
 numpy
-tadasets
+scikit-tda
 cechmate
 cmake
 dionysus

@@ -3,7 +3,7 @@ import json
 import datetime
 import dep.COREL_icml2019.config as config
 
-from dep.COREL_icml2019.core import train, configs_from_grid
+from dep.COREL_icml2019.core.train_engine import train, configs_from_grid
 
 ROOT_DIR = config.paths.ablation_bkb_dir
 
