@@ -1,6 +1,7 @@
 [submodule "COREL_icml2019"]
 	path = COREL_icml2019
 	url = https://github.com/c-hofer/COREL_icml2019
-[submodule "torchph"]
-	path = torchph
+
+[submodule "dep/torchph"]
+	path = dep/torchph
 	url = https://github.com/c-hofer/torchph.git
