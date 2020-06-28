@@ -1,0 +1,4 @@
+[submodule "COREL_icml2019"]
+	path = COREL_icml2019
+	url = https://github.com/c-hofer/COREL_icml2019
+

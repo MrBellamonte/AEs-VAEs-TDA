@@ -1,5 +1,3 @@
-import random
-
 import cechmate
 import gudhi
 import tadasets
@@ -7,7 +5,10 @@ from persim import plot_diagrams
 import matplotlib.pyplot as plt
 import numpy as np
 
-from utils.plots import plot_simplicial_complex_2D
+import torchph
+
+
+from src.utils.plots import plot_simplicial_complex_2D
 
 data = tadasets.infty_sign(n=60, noise=0.07)
 
