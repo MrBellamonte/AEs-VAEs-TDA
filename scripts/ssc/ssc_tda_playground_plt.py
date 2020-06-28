@@ -5,6 +5,9 @@ from persim import plot_diagrams
 import matplotlib.pyplot as plt
 import numpy as np
 
+import torchph
+
+
 from src.utils.plots import plot_simplicial_complex_2D
 
 data = tadasets.infty_sign(n=60, noise=0.07)
