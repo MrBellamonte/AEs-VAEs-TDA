@@ -5,18 +5,19 @@
 
 ### pre-commit
 Pre-commit is used to protect the master branch from (accidental) commits. 
-1. Make sure pre-commit package is installed. To verify run:
+
 ```bash
+pip install pre-commit
 pre-commit --version
-```
-2. Install pre-commit hooks into git config
-```bash
 pre-commit install
 ```
 
 ### torchph 
 https://github.com/c-hofer/torchph
 
+Recommended to install it this way: (not with conda)
 ```bash
-conda develop torchph
+git clone https://github.com/c-hofer/torchph.git
+cd torchph
+python setup.py develop
 ```
