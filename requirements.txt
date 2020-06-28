@@ -6,3 +6,5 @@ dionysus
 persim
 Cython
 Ripser
+torch
+torchvision
