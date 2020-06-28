@@ -8,3 +8,4 @@ Cython
 Ripser
 torch
 torchvision
+pre-commit
