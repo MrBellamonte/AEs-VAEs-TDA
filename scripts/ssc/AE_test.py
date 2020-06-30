@@ -35,9 +35,18 @@ if __name__ == "__main__":
         }
     }
 
-    path = '/home/simonberg/PycharmProjects/MT-VAEs-TDA'
+    root_dir = '/home/simonberg/PycharmProjects/MT-VAEs-TDA/output'
+    now = datetime.datetime.now()
+    path = os.path.join(root_dir, now.strftime("%Y-%m-%d-%H-%M-%S"))
     os.makedirs(path)
+    configs = []
+    for k, v in grid_one_branch.items():
+        configs += configs_from_grid(v)
 
-    print('start')
+        with open(os.path.join(path, k + '.json'), 'w') as fid:
+            json.dump(v, fid)
 
-    train(path, grid_one_branch)
+
+    print(configs[0])
+
+    train(path, configs[0])

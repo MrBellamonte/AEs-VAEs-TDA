@@ -5,7 +5,7 @@ Author(s): chofer, rkwitt (2018)
 
 import torch
 import torch.nn as nn
-import dep.COREL_icml2019.core as mynn
+import dep.COREL_icml2019.core.mynn as mynn
 
 
 class DCGEncDec(nn.Module):
