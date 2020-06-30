@@ -1,8 +1,8 @@
 import datetime
 import os
-import uuid
 
-from torch.utils.data import DataLoader
+from torch import Tensor
+from torch.utils.data import DataLoader, TensorDataset
 
 from src.datasets.shapes import dsphere
 from src.model.train_engine import train
@@ -32,8 +32,10 @@ if __name__ == "__main__":
         }
 
 
-    data = dsphere(n=1024*4, r=10, d=3)
+    X, y = dsphere(n=1024*4, r=10, d=3)
 
+
+    dataset = TensorDataset(Tensor(X), Tensor(y))
     # create root_dir
     root_dir = '/home/simonberg/PycharmProjects/MT-VAEs-TDA/output'
     now = datetime.datetime.now()
@@ -45,4 +47,4 @@ if __name__ == "__main__":
 
 
 
-    train(data, config, path)
+    train(dataset, config, path)

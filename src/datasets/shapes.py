@@ -2,8 +2,11 @@ import numpy as np
 from tadasets import embed
 
 
-def dsphere(n=100, d=2, r=1, noise=None, ambient=None):
+def dsphere(n=100, d=2, r=1, noise=None, ambient=None, label = 0):
     """
+    Code adopted from TopAE paper (xxx)
+    #todo: make proper reference
+
     Sample `n` data points on a d-sphere.
 
     Parameters
@@ -27,4 +30,4 @@ def dsphere(n=100, d=2, r=1, noise=None, ambient=None):
         assert ambient > d, "Must embed in higher dimensions"
         data = embed(data, ambient)
 
-    return data
+    return data, np.ones(data.shape[0])*label

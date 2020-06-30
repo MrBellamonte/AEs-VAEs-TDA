@@ -4,6 +4,7 @@ source: https://github.com/c-hofer/COREL_icml2019
 modified version, tailored to our needs
 """
 import inspect
+import itertools
 import os
 import pickle
 import uuid
@@ -11,7 +12,7 @@ import uuid
 import torch
 import numpy as np
 from torch.optim import Adam
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, TensorDataset
 
 from collections import defaultdict
 
@@ -40,6 +41,44 @@ def l1_loss(x_hat, x, reduce=True):
         l = l.mean()
     return l
 
+
+def get_keychain_value(d, key_chain=None, allowed_values=(list,)):
+    key_chain = [] if key_chain is None else list(key_chain).copy()
+
+    if not isinstance(d, dict):
+        if allowed_values is not None:
+            assert isinstance(d, allowed_values), 'Value needs to be of type {}!'.format(
+                allowed_values)
+        yield key_chain, d
+    else:
+        for k, v in d.items():
+            yield from get_keychain_value(v, key_chain+[k], allowed_values=allowed_values)
+
+
+def configs_from_grid(grid):
+    tmp = list(get_keychain_value(grid))
+    values = [x[1] for x in tmp]
+    key_chains = [x[0] for x in tmp]
+
+    ret = []
+
+    for v in itertools.product(*values):
+
+        ret_i = {}
+
+        for kc, kc_v in zip(key_chains, v):
+            tmp = ret_i
+            for k in kc[:-1]:
+                if k not in tmp:
+                    tmp[k] = {}
+
+                tmp = tmp[k]
+
+            tmp[kc[-1]] = kc_v
+
+        ret.append(ret_i)
+
+    return ret
 
 
 def check_config(config):
@@ -96,7 +135,7 @@ def create_uuid(config):
     return uuid_str+'-'+uuid_suffix
 
 
-def train(data, config, root_folder):
+def train(data: TensorDataset, config, root_folder):
 
     # HARD-CODED conifg
     ball_radius = 1.0 #only affects the scaling
@@ -126,7 +165,7 @@ def train(data, config, root_folder):
 
     for epoch in range(1,train_args['n_epochs']+1):
 
-        for x in dl:
+        for x, _ in dl:
             x = x.to(DEVICE)
 
             # Get reconstruction x_hat and latent
