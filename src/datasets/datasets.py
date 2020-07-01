@@ -1,8 +1,9 @@
+from typing import Tuple
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from .shapes import dsphere
-
+from .shapes import dsphere, torus
 
 
 def create_sphere_dataset(n_samples=500, d=100, n_spheres=11, r=5, plot=False, seed=42):
@@ -49,3 +50,10 @@ def create_sphere_dataset(n_samples=500, d=100, n_spheres=11, r=5, plot=False, s
         label_index += n_sphere_samples
 
     return dataset, labels
+
+
+def double_tours(n_samples: int = 500) -> Tuple[np.ndarray, np.ndarray]:
+    #todo allow furhter parametrization
+    data1, labels1 = torus(n=n_samples, c=6, a=4, label=0) # outer torus
+    data2, labels2 = torus(n=n_samples, c=6, a=1, label=1) # inner torus
+    return np.vstack((data1, data2)), np.vstack((labels1, labels2))

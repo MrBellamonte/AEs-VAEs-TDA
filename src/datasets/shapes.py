@@ -1,8 +1,12 @@
+from typing import Tuple
+
 import numpy as np
+import tadasets
 from tadasets import embed
 
 
-def dsphere(n=100, d=2, r=1, noise=None, ambient=None, label = 0):
+def dsphere(n: int = 100, d: int = 2, r: float = 1, noise: float = None, ambient: int = None,
+            label: int = 0) -> Tuple[np.ndarray, np.ndarray]:
     """
     Code adopted from TopAE paper (xxx)
     #todo: make proper reference
@@ -21,13 +25,22 @@ def dsphere(n=100, d=2, r=1, noise=None, ambient=None, label = 0):
     data = np.random.randn(n, d+1)
 
     # Normalize points to the sphere
-    data = r * data / np.sqrt(np.sum(data**2, 1)[:, None])
+    data = r*data/np.sqrt(np.sum(data**2, 1)[:, None])
 
     if noise:
-        data += noise * np.random.randn(*data.shape)
+        data += noise*np.random.randn(*data.shape)
 
     if ambient:
         assert ambient > d, "Must embed in higher dimensions"
         data = embed(data, ambient)
 
     return data, np.ones(data.shape[0])*label
+
+
+def torus(n: int = 100, c: float = 2, a: float = 1, noise: float = None, ambient: int = None,
+          label: int = 0) -> Tuple[np.ndarray, np.ndarray]:
+    data = tadasets.torus(n, c, a, noise=noise, ambient=ambient)
+
+    return data, np.ones(data.shape[0])*label
+
+
