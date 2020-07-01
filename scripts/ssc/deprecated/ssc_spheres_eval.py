@@ -8,7 +8,7 @@ import numpy as np
 
 from src.datasets.datasets import create_sphere_dataset
 from src.datasets.shapes import dsphere
-from src.model.eval_engine import get_model, get_latentspace_representation
+from src.model.eval_engine import get_model, get_latentspace_representation, get_config
 
 if __name__ == "__main__":
 
@@ -36,4 +36,9 @@ if __name__ == "__main__":
         plt.scatter(Z[:, 0], Z[:, 1], c=Y,
                     cmap=plt.cm.Spectral, s=2., alpha=0.5)
 
+
+        config = get_config(path)
+
         plt.show()
+
+

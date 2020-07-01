@@ -1,6 +1,7 @@
 import datetime
 import os
 
+import torch
 from torch import Tensor
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -13,10 +14,10 @@ if __name__ == "__main__":
     config_grid = {
         'train_args': {
             'learning_rate': [0.001],
-            'batch_size'   : [256],
+            'batch_size'   : [1024],
             'n_epochs'     : [50],
             'rec_loss_w'   : [1.0],
-            'top_loss_w'   : [1/32,1/16,2/16,3/16],
+            'top_loss_w'   : [1/128,1/64,1/32,1/16,2/16,3/16],
         },
         'model_args': {
             'class_id': ['autoencoder'],
@@ -45,4 +46,5 @@ if __name__ == "__main__":
     configs = configs_from_grid(config_grid)
     for i, config in enumerate(configs):
         print('Run model for configuration {} out of {}'.format(i+1, len(configs)))
+        torch.cuda.empty_cache()
         train(dataset, config, path)
