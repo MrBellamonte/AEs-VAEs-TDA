@@ -3,11 +3,9 @@ source: https://github.com/c-hofer/COREL_icml2019
 
 modified version, tailored to our needs
 """
-import inspect
-import itertools
 import os
 import pickle
-import uuid
+
 
 import torch
 import numpy as np
@@ -16,137 +14,29 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from collections import defaultdict
 
-from src.model.autoencoders import autoencoder
-
 from torchph.pershom import pershom_backend
+
+from src.utils.config_utils import (check_config, configs_from_grid, create_model_uuid, create_data_uuid)
+
 vr_l1_persistence = pershom_backend.__C.VRCompCuda__vr_persistence_l1
 
 # config
 DEVICE  = "cuda"
 
-#todo: get rid of this mapping, not a nice solution.
-model_mapping = {
-    'autoencoder' : autoencoder
-}
 
 
-
-
-def l1_loss(x_hat, x, reduce=True):
-    """
-    L1 loss used for reconstruction.
-    """
-    l = (x - x_hat).abs().view(x.size(0), - 1).sum(dim=1)
-    if reduce:
-        l = l.mean()
-    return l
-
-
-def get_keychain_value(d, key_chain=None, allowed_values=(list,)):
-    key_chain = [] if key_chain is None else list(key_chain).copy()
-
-    if not isinstance(d, dict):
-        if allowed_values is not None:
-            assert isinstance(d, allowed_values), 'Value needs to be of type {}!'.format(
-                allowed_values)
-        yield key_chain, d
-    else:
-        for k, v in d.items():
-            yield from get_keychain_value(v, key_chain+[k], allowed_values=allowed_values)
-
-
-def configs_from_grid(grid):
-    tmp = list(get_keychain_value(grid))
-    values = [x[1] for x in tmp]
-    key_chains = [x[0] for x in tmp]
-
-    ret = []
-
-    for v in itertools.product(*values):
-
-        ret_i = {}
-
-        for kc, kc_v in zip(key_chains, v):
-            tmp = ret_i
-            for k in kc[:-1]:
-                if k not in tmp:
-                    tmp[k] = {}
-
-                tmp = tmp[k]
-
-            tmp[kc[-1]] = kc_v
-
-        ret.append(ret_i)
-
-    return ret
-
-
-def check_config(config):
-    #todo: Think about if it makes sense to create a "config" class....
-    #todo: Should contain information on dataset for uuid
-
-
-    assert 'train_args' in config
-    train_args = config['train_args']
-
-    assert 'learning_rate' in train_args
-    assert 0 < train_args['learning_rate']
-
-    assert 'batch_size' in train_args
-    assert 0 < train_args['batch_size']
-
-    assert 'n_epochs' in train_args
-    assert 0 < train_args['n_epochs']
-
-    assert 'rec_loss_w' in train_args
-    assert 'top_loss_w' in train_args
-
-    # check model-speficic args
-    assert 'model_args' in config
-    model_args = config['model_args']
-    assert 'class_id' in model_args
-    assert model_args['class_id'] in model_mapping
-    assert 'kwargs' in model_args
-    kwargs = model_args['kwargs']
-    s = inspect.getfullargspec(model_mapping[model_args['class_id']].__init__)
-    for a in s.kwonlyargs:
-        assert a in kwargs
-    try:
-        create_uuid(config)
-    except:
-        print("Failed to create unique ID")
-
-
-def create_uuid(config):
-    uuid_suffix = str(uuid.uuid4())[:8]
-
-    uuid_str = '{}-{}-lr{}-bs{}-nep{}-rlw{}-tlw{}'.format(config['model_args']['class_id'],
-                                                          '-'.join(str(x) for x in
-                                                                   config['model_args']['kwargs'][
-                                                                       'size_hidden_layers'])+'-'+str(
-                                                              config['model_args']['kwargs'][
-                                                                  'latent_dim']),
-                                                          int(1000*config['train_args']['learning_rate']),
-                                                          config['train_args']['batch_size'],
-                                                          config['train_args']['n_epochs'],
-                                                          int(100*config['train_args']['rec_loss_w']),
-                                                          int(100*config['train_args']['top_loss_w']))
-
-    return uuid_str+'-'+uuid_suffix
-
-
-def train(data: TensorDataset, config, root_folder):
+def train(data: TensorDataset, config, root_folder, data_uuid = '', verbose = False):
 
     # HARD-CODED conifg
+    # todo parametrize as well
     ball_radius = 1.0 #only affects the scaling
 
 
-    check_config(config)
 
     train_args = config['train_args']
     model_args = config['model_args']
 
-    model_class = model_mapping[model_args['class_id']]
+    model_class = model_args['model_class']
 
     model = model_class(**model_args['kwargs']).to(DEVICE)
 
@@ -177,7 +67,8 @@ def train(data: TensorDataset, config, root_folder):
             top_loss = torch.tensor([0]).type_as(x_hat)
 
             # Computes l1-reconstruction loss
-            rec_loss = l1_loss(x_hat, x, reduce=True)
+            rec_loss_func = train_args['rec_loss']['loss_class']
+            rec_loss = rec_loss_func(x_hat, x)
 
             # For each branch in the latent space representation,
             # we enforce the topology loss and track the lifetimes
@@ -188,25 +79,27 @@ def train(data: TensorDataset, config, root_folder):
             if pers.dim() == 2:
                 pers = pers[:, 1]
                 lifetimes.append(pers.tolist())
-                top_loss += (pers-2.0*ball_radius).abs().sum()
+                top_loss_func = train_args['top_loss']['loss_class']
+                top_loss +=top_loss_func(pers,2.0*ball_radius*torch.ones_like(pers))
 
             # Log lifetimes as well as all losses we compute
             log['lifetimes'].append(lifetimes)
             log['top_loss'].append(top_loss.item())
             log['rec_loss'].append(rec_loss.item())
 
-            loss = train_args['rec_loss_w']*rec_loss + train_args['top_loss_w']*top_loss # HARD-CODED: equal weight
+            loss = train_args['rec_loss']['weight']*rec_loss + train_args['top_loss']['weight']*top_loss
 
             model.zero_grad()
             loss.backward()
             optimizer.step()
-        print('{}: rec_loss: {:.4f} | top_loss: {:.4f}'.format(
-            epoch,
-            np.array(log['rec_loss'][-int(len(data)/train_args['batch_size']):]).mean()*train_args['rec_loss_w'],
-            np.array(log['top_loss'][-int(len(data)/train_args['batch_size']):]).mean()*train_args['top_loss_w']))
+        if verbose:
+            print('{}: rec_loss: {:.4f} | top_loss: {:.4f}'.format(
+                epoch,
+                np.array(log['rec_loss'][-int(len(data)/train_args['batch_size']):]).mean()*train_args['rec_loss']['weight'],
+                np.array(log['top_loss'][-int(len(data)/train_args['batch_size']):]).mean()*train_args['top_loss']['weight']))
 
     # Create a unique base filename
-    the_uuid = create_uuid(config)
+    the_uuid = data_uuid + create_model_uuid(config)
 
     path = os.path.join(root_folder, the_uuid)
     os.makedirs(path)
@@ -222,3 +115,38 @@ def train(data: TensorDataset, config, root_folder):
     for x, y in zip(out_data, file_ext):
         with open('.'.join([path + '/'+ y, 'pickle']), 'wb') as fid:
             pickle.dump(x, fid)
+
+
+def simulator(config_grid, path, verbose = False, create_datauuid = True):
+
+    # sample data
+    if verbose:
+        print('Sample data...')
+    data_args = config_grid.pop('data_args')
+
+    dataset = data_args['dataset']
+    X, y = dataset.sample(**data_args['kwargs'])
+    dataset = TensorDataset(torch.Tensor(X), torch.Tensor(y))
+    if create_datauuid:
+        data_uuid = create_data_uuid(data_args) + '-'
+
+    if verbose:
+        print('Load and verify configurations...')
+    configs = configs_from_grid(config_grid)
+    for config in configs:
+        check_config(config)
+
+    if verbose:
+        print('START!')
+    # train model for all configurations
+
+
+    for i, config in enumerate(configs):
+        print('Run model for configuration {} out of {}'.format(i+1, len(configs)))
+        torch.cuda.empty_cache()
+        train(dataset, config, path, data_uuid, verbose = verbose)
+
+
+
+
+

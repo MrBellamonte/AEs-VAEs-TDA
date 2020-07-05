@@ -5,10 +5,7 @@ from torch import Tensor
 from torch.utils.data import DataLoader, TensorDataset
 
 from src.datasets.shapes import dsphere
-from src.model.train_engine import train
-
-
-
+from src.model.train_engine import train, train_teststructure
 
 if __name__ == "__main__":
 
@@ -37,7 +34,7 @@ if __name__ == "__main__":
 
     dataset = TensorDataset(Tensor(X), Tensor(y))
     # create root_dir
-    root_dir = '/home/simonberg/PycharmProjects/MT-VAEs-TDA/output'
+    root_dir = '/home/simonberg/PycharmProjects/MT-VAEs-TDA/output/todelete'
     now = datetime.datetime.now()
     path = os.path.join(root_dir, now.strftime("%Y-%m-%d"))
     try:
@@ -47,4 +44,4 @@ if __name__ == "__main__":
 
 
 
-    train(dataset, config, path)
+    train_teststructure(dataset, config, path)
