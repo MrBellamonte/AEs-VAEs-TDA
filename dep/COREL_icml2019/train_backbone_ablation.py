@@ -13,10 +13,10 @@ if __name__ == "__main__":
     {
         'train_args': {
             'learning_rate': [0.001], 
-            'batch_size'   : [100], 
+            'batch_size'   : [300],
             'n_epochs'     : [50], 
             'rec_loss_w'   : [1.0],
-            'top_loss_w'   : [0.0, 1.0, 10.0, 20.0, 40.0]
+            'top_loss_w'   : [1.0, 10.0, 20.0, 40.0]
         }, 
         'model_args': {
             'class_id'     : ['DCGEncDec'],
@@ -40,10 +40,10 @@ if __name__ == "__main__":
     {
         'train_args': {
             'learning_rate': [0.001], 
-            'batch_size'   : [100], 
+            'batch_size'   : [612],
             'n_epochs'     : [50], 
             'rec_loss_w'   : [1.0],
-            'top_loss_w'   : [0.0, 1.0, 10.0, 20.0, 40.0]
+            'top_loss_w'   : [1.0, 10.0, 20.0, 40.0]
         }, 
         'model_args': {
             'class_id'     : ['DCGEncDec'],
@@ -65,9 +65,9 @@ if __name__ == "__main__":
 
     grids = {'grid_one_branch': grid_one_branch, 'grid_many_branches': grid_many_branches}
 
+    root_dir = '/home/simonberg/PycharmProjects/MT-VAEs-TDA/output'
     now = datetime.datetime.now()
-    # path = os.path.join(ROOT_DIR, now.strftime("%Y-%m-%d-%H-%M-%S"))
-    path = ROOT_DIR
+    path = os.path.join(root_dir, now.strftime("%Y-%m-%d-%H-%M-%S"))
     os.makedirs(path)
 
     configs = []

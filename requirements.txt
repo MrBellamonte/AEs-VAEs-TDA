@@ -9,3 +9,4 @@ Ripser
 torch
 torchvision
 pre-commit
+seaborn

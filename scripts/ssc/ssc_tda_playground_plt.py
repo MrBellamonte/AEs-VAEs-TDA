@@ -1,12 +1,5 @@
-import cechmate
 import gudhi as gd
 import tadasets
-from persim import plot_diagrams
-import matplotlib.pyplot as plt
-import numpy as np
-
-
-from src.utils.plots import plot_simplicial_complex_2D
 
 data = tadasets.infty_sign(n=35, noise = 0.07)
 
