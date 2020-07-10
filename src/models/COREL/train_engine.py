@@ -16,7 +16,7 @@ from collections import defaultdict
 
 from torchph.pershom import pershom_backend
 
-from src.models.COREL.config_corel import Config_COREL, ConfigGrid_COREL
+from src.models.COREL.configcorel import ConfigCOREL, ConfigGrid_COREL
 
 
 vr_l1_persistence = pershom_backend.__C.VRCompCuda__vr_persistence_l1
@@ -26,7 +26,7 @@ DEVICE  = "cuda"
 
 
 
-def train_COREL(data: TensorDataset, config: Config_COREL, root_folder, data_uuid ='', verbose = False):
+def train_COREL(data: TensorDataset, config: ConfigCOREL, root_folder, verbose = False):
 
     # HARD-CODED conifg
     # todo parametrize as well

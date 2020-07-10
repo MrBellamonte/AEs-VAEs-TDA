@@ -1,5 +1,5 @@
 from src.datasets.datasets import Spheres
-from src.models.COREL.config_corel import ConfigGrid_COREL
+from src.models.COREL.configcorel import ConfigGrid_COREL
 from src.models.autoencoders import autoencoder
 from src.models.loss_collection import L1Loss, TwoSidedHingeLoss, HingeLoss
 
