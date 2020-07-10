@@ -3,7 +3,8 @@ import pickle
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from src.model.train_engine import model_mapping
+
+from src.models.autoencoders import autoencoder
 
 
 def get_config(path_to_folder):
@@ -23,20 +24,31 @@ def get_log(path_to_folder):
 
     return log
 
-def get_model(path_to_folder):
+def get_model(path_to_folder, config_fix = False):
+    '''
+    config_fix: allows to hardcode model in case configuration file is corrupted
+    '''
+    if config_fix:
+        model = autoencoder(input_dim=101, latent_dim=2, size_hidden_layers=[128 ,64 ,32])
 
-    # get config to initialize model
-    path_config = path_to_folder+'config.pickle'
-    infile = open(path_config, 'rb')
-    config = pickle.load(infile)
-    infile.close()
+        path_model = path_to_folder+'models.pht'
+        model.load_state_dict(torch.load(path_model))
 
-    model_args = config['model_args']
-    model_class = model_mapping[model_args['class_id']]
+    else:
+        # get config to initialize models
+        path_config = path_to_folder+'config.pickle'
+        infile = open(path_config, 'rb')
+        config = pickle.load(infile)
+        infile.close()
 
-    path_model = path_to_folder+'model.pht'
-    model = model_class(**model_args['kwargs'])
-    model.load_state_dict(torch.load(path_model))
+        model_kwargs = config['model_kwargs']
+
+
+        path_model = path_to_folder+'models.pht'
+
+        #todo: works only for autoencoder... Fix if necessary
+        model = autoencoder(**model_kwargs['kwargs'])
+        model.load_state_dict(torch.load(path_model))
 
     return model
 

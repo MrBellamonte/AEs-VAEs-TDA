@@ -62,7 +62,7 @@ def evaluate(model, ds_train, ds_test, kde_factory, device='cpu'):
         ds_train_inlier = ds_label_filter(ds_train, labels=[inlier_class])
 
         # Get ONLY inliear latent space representations using the 
-        # trained model and fit our counting routine.
+        # trained models and fit our counting routine.
         X_inl,_      = apply_model(ds_train_inlier, model, device=device)
         kde.fit(X_inl)
         

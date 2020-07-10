@@ -1,14 +1,9 @@
-import pickle
-
 from torch import Tensor
 from torch.utils.data import TensorDataset
-import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
 
 from src.datasets.datasets import create_sphere_dataset
-from src.datasets.shapes import dsphere
-from src.model.eval_engine import get_model, get_latentspace_representation, get_config
+from src.model.COREL.eval_engine import get_model, get_latentspace_representation, get_config
 
 if __name__ == "__main__":
 

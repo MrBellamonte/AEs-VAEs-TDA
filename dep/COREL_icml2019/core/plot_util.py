@@ -34,14 +34,14 @@ def plt_img_grid(images, nrow = 8):
 def plt_reconstructions(dl, m, n_reconstructions=12):
     """
     Plot reconstructions using data from a DataLoader and 
-    an autoencoder model.
+    an autoencoder models.
 
     Args:
         dl: DataLoader
             Instance of a DataLoader.
 
         m: nn.Module 
-            Instance of an autoencoder model.
+            Instance of an autoencoder models.
 
         n_reconstructions: int
             n_reconstructions are plotted - This uses

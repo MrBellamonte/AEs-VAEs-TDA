@@ -22,7 +22,8 @@ class Loss(metaclass=ABCMeta):
 DEFAULT = {
     "l1loss"   : dict(reduction='mean'),
     "huberloss": dict(reduction='mean', delta=10),
-    "hingeloss": dict(reduction='mean', penalty_type='linear', penalty_direction='positive')
+    "hingeloss": dict(reduction='mean', penalty_type='linear', penalty_direction='positive'),
+    "twosidedhingeloss": dict(reduction = 'mean', ratio = 1/2, penalty_type = 'linear')
 }
 
 
@@ -97,3 +98,22 @@ class HingeLoss(Loss):
             return torch.sum(temp)
         else:
             raise ValueError
+
+
+class TwoSidedHingeLoss(Loss):
+    """Two-sided HingeLoss"""
+    __slots__ = ['reduction', 'ratio', 'penalty_type']
+
+    fancy_name = "Two-sided Hinge Loss"
+
+    def __init__(self, reduction=DEFAULT["twosidedhingeloss"]['reduction'], ratio=DEFAULT["twosidedhingeloss"]['ratio'], penalty_type=DEFAULT["twosidedhingeloss"]['penalty_type']):
+        self.reduction = reduction
+        self.ratio = ratio
+        self.penalty_type = penalty_type
+        
+    
+    def forward(self, input, target):
+        hinge_positive = HingeLoss(reduction=self.reduction, penalty_direction='positive', penalty_type = self.penalty_type)
+        hinge_negative = HingeLoss(reduction=self.reduction, penalty_direction='negative', penalty_type = self.penalty_type)
+        
+        return hinge_positive.forward(input, target) + hinge_negative.forward(input, target*self.ratio )

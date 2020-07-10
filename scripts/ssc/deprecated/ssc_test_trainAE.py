@@ -2,10 +2,10 @@ import datetime
 import os
 
 from torch import Tensor
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import TensorDataset
 
 from src.datasets.shapes import dsphere
-from src.model.train_engine import train, train_teststructure
+from src.model.COREL.train_engine import train_teststructure
 
 if __name__ == "__main__":
 

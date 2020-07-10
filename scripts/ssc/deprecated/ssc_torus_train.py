@@ -3,11 +3,10 @@ import os
 
 import torch
 from torch import Tensor
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import TensorDataset
 
-from src.datasets.datasets import create_sphere_dataset
-from src.datasets.shapes import dsphere, torus, torus_sectorized
-from src.model.train_engine import train, configs_from_grid, train_custom
+from src.datasets.shapes import torus_sectorized
+from src.model.COREL.train_engine import configs_from_grid, train_custom
 
 if __name__ == "__main__":
 
@@ -47,7 +46,7 @@ if __name__ == "__main__":
 
     configs = configs_from_grid(config_grid)
     for i, config in enumerate(configs):
-        print('Run model for configuration {} out of {}'.format(i+1, len(configs)))
+        print('Run models for configuration {} out of {}'.format(i+1, len(configs)))
         torch.cuda.empty_cache()
         #train(dataset, config, path)
         train_custom(dataset, config, path)
