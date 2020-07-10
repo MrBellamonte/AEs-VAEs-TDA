@@ -16,7 +16,8 @@ from collections import defaultdict
 
 from torchph.pershom import pershom_backend
 
-from src.utils.config_utils import (check_config, configs_from_grid, create_model_uuid, create_data_uuid)
+from src.models.COREL.config_corel import Config_COREL, ConfigGrid_COREL
+
 
 vr_l1_persistence = pershom_backend.__C.VRCompCuda__vr_persistence_l1
 
@@ -25,27 +26,23 @@ DEVICE  = "cuda"
 
 
 
-def train(data: TensorDataset, config, root_folder, data_uuid = '', verbose = False):
+def train_COREL(data: TensorDataset, config: Config_COREL, root_folder, data_uuid ='', verbose = False):
 
     # HARD-CODED conifg
     # todo parametrize as well
     ball_radius = 1.0 #only affects the scaling
 
 
+    model_class = config.model_class
 
-    train_args = config['train_args']
-    model_args = config['model_args']
-
-    model_class = model_args['model_class']
-
-    model = model_class(**model_args['kwargs']).to(DEVICE)
+    model = model_class(**config.model_kwargs).to(DEVICE)
 
     optimizer = Adam(
         model.parameters(),
-        lr=train_args['learning_rate'])
+        lr=config.learning_rate)
 
     dl = DataLoader(data,
-                    batch_size=train_args['batch_size'],
+                    batch_size=config.batch_size,
                     shuffle=True,
                     drop_last=True)
 
@@ -53,7 +50,7 @@ def train(data: TensorDataset, config, root_folder, data_uuid = '', verbose = Fa
 
     model.train()
 
-    for epoch in range(1,train_args['n_epochs']+1):
+    for epoch in range(1,config.n_epochs+1):
 
         for x, _ in dl:
             x = x.to(DEVICE)
@@ -67,7 +64,7 @@ def train(data: TensorDataset, config, root_folder, data_uuid = '', verbose = Fa
             top_loss = torch.tensor([0]).type_as(x_hat)
 
             # Computes l1-reconstruction loss
-            rec_loss_func = train_args['rec_loss']['loss_class']
+            rec_loss_func = config.rec_loss
             rec_loss = rec_loss_func(x_hat, x)
 
             # For each branch in the latent space representation,
@@ -79,15 +76,15 @@ def train(data: TensorDataset, config, root_folder, data_uuid = '', verbose = Fa
             if pers.dim() == 2:
                 pers = pers[:, 1]
                 lifetimes.append(pers.tolist())
-                top_loss_func = train_args['top_loss']['loss_class']
-                top_loss +=top_loss_func(pers,2.0*ball_radius*torch.ones_like(pers))
+                top_loss_func = config.top_loss
+                top_loss +=top_loss_func.forward(pers,2.0*ball_radius*torch.ones_like(pers))
 
             # Log lifetimes as well as all losses we compute
             log['lifetimes'].append(lifetimes)
             log['top_loss'].append(top_loss.item())
             log['rec_loss'].append(rec_loss.item())
 
-            loss = train_args['rec_loss']['weight']*rec_loss + train_args['top_loss']['weight']*top_loss
+            loss = config.rec_loss_weight*rec_loss + config.top_loss_weight*top_loss
 
             model.zero_grad()
             loss.backward()
@@ -95,56 +92,69 @@ def train(data: TensorDataset, config, root_folder, data_uuid = '', verbose = Fa
         if verbose:
             print('{}: rec_loss: {:.4f} | top_loss: {:.4f}'.format(
                 epoch,
-                np.array(log['rec_loss'][-int(len(data)/train_args['batch_size']):]).mean()*train_args['rec_loss']['weight'],
-                np.array(log['top_loss'][-int(len(data)/train_args['batch_size']):]).mean()*train_args['top_loss']['weight']))
+                np.array(log['rec_loss'][-int(len(data)):]).mean()*config.rec_loss_weight,
+                np.array(log['top_loss'][-int(len(data)):]).mean()*config.top_loss_weight))
 
-    # Create a unique base filename
-    the_uuid = data_uuid + create_model_uuid(config)
 
-    path = os.path.join(root_folder, the_uuid)
+    path = os.path.join(root_folder, config.creat_uuid())
     os.makedirs(path)
-    config['uuid'] = the_uuid
 
-    # Save model
-    torch.save(model.state_dict(), '.'.join([path + '/model', 'pht']))
+    config_dict = config.create_dict()
+    config_dict['uuid'] = config.creat_uuid()
 
+    # Save models
+    torch.save(model.state_dict(), '.'.join([path + '/models', 'pht']))
 
     # Save the config used for training as well as all logging results
-    out_data = [config, log]
+    out_data = [config_dict, log]
     file_ext = ['config', 'log']
     for x, y in zip(out_data, file_ext):
         with open('.'.join([path + '/'+ y, 'pickle']), 'wb') as fid:
             pickle.dump(x, fid)
 
 
-def simulator(config_grid, path, verbose = False, create_datauuid = True):
-
-    # sample data
-    if verbose:
-        print('Sample data...')
-    data_args = config_grid.pop('data_args')
-
-    dataset = data_args['dataset']
-    X, y = dataset.sample(**data_args['kwargs'])
-    dataset = TensorDataset(torch.Tensor(X), torch.Tensor(y))
-    if create_datauuid:
-        data_uuid = create_data_uuid(data_args) + '-'
+def simulator_COREL(config_grid: ConfigGrid_COREL, path: str, verbose: bool = False, data_constant: bool = False):
 
     if verbose:
         print('Load and verify configurations...')
-    configs = configs_from_grid(config_grid)
+    configs = config_grid.configs_from_grid()
     for config in configs:
-        check_config(config)
+        config.check()
+
+
+    if data_constant:
+        print('WARNING: Model runs with same data for all configurations!')
+        # sample data
+        if verbose:
+            print('Sample data...')
+
+        dataset = configs[0].dataset
+        X, y = dataset.sample(**configs[0].sampling_kwargs)
+        dataset = TensorDataset(torch.Tensor(X), torch.Tensor(y))
+
+
 
     if verbose:
         print('START!')
-    # train model for all configurations
+    # train models for all configurations
 
 
     for i, config in enumerate(configs):
-        print('Run model for configuration {} out of {}'.format(i+1, len(configs)))
+        print('Configuration {} out of {}'.format(i+1, len(configs)))
+        if not data_constant:
+            # sample data
+            if verbose:
+                print('Sample data...')
+
+            dataset = config.dataset
+            X, y = dataset.sample(**config.sampling_kwargs)
+            dataset = TensorDataset(torch.Tensor(X), torch.Tensor(y))
+
+        if verbose:
+            print('Run model...')
+
         torch.cuda.empty_cache()
-        train(dataset, config, path, data_uuid, verbose = verbose)
+        train_COREL(dataset, config, path, verbose = verbose)
 
 
 

@@ -46,7 +46,7 @@ class DCGEncDec(nn.Module):
             64 filters (each followed by leaky ReLU activations). The decoder 
             mirrors this architecture with convolutional transpose filters. 
 
-            In the latent space, this model has 16 branches
+            In the latent space, this models has 16 branches
             that output 10 dimensional features. For decoding, these features
             are concatenated. In this particular example, flattening the output 
             of the last conv. layer results in a 1024-dim. representation.

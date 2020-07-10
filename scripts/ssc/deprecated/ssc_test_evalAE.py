@@ -1,10 +1,8 @@
-import pickle
-
 from torch import Tensor
 from torch.utils.data import TensorDataset
 
 from src.datasets.shapes import dsphere
-from src.model.eval_engine import get_model, get_latentspace_representation
+from src.model.COREL.eval_engine import get_model, get_latentspace_representation
 
 if __name__ == "__main__":
 

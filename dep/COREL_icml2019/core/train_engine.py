@@ -1,6 +1,6 @@
 """train_engine.py
 
-Core routines for training the proposed autoencoder model.
+Core routines for training the proposed autoencoder models.
 
 Author(s): chofer, rkwitt (2018)
 """
@@ -189,7 +189,7 @@ def check_config(config):
     assert 'rec_loss_w' in train_args
     assert 'top_loss_w' in train_args
 
-    # check model-speficic args
+    # check models-speficic args
     assert 'model_args' in config
     model_args = config['model_args']
     assert 'class_id' in model_args
@@ -294,8 +294,8 @@ def train(root_folder, config):
     basefile = os.path.join(root_folder, the_uuid)
     config['uuid'] = the_uuid
 
-    # Save model
-    torch.save(model, '.'.join([basefile, 'model', 'pht']))
+    # Save models
+    torch.save(model, '.'.join([basefile, 'models', 'pht']))
 
     # Save the config used for training as well as all logging results
     out_data = [config, log]
@@ -308,7 +308,7 @@ def train(root_folder, config):
 class BackboneTrainResult:
 
     config_ext = '.config.pickle'
-    model_ext  = '.model.pht'
+    model_ext  = '.models.pht'
     log_ext    = '.log.pickle'
 
     def __init__(self, path_base):

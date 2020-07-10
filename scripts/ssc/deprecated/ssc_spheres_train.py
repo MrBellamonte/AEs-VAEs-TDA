@@ -3,15 +3,13 @@ import os
 
 import torch
 from torch import Tensor
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import TensorDataset
 
 from src.datasets.datasets import create_sphere_dataset, Spheres
-from src.datasets.shapes import dsphere
 from src.model.autoencoders import autoencoder
 from src.model.loss_collection import L1Loss
-from src.model.train_engine import (
-    train, train_Huber10, train_inctlw,
-    train_custom, train_custom2, train_new)
+from src.model.COREL.train_engine import (
+    train_new)
 from src.utils.config_utils import configs_from_grid
 
 
@@ -117,7 +115,7 @@ if __name__ == "__main__":
 
     configs = configs_from_grid(config_grid)
     for i, config in enumerate(configs):
-        print('Run model for configuration {} out of {}'.format(i+1, len(configs)))
+        print('Run models for configuration {} out of {}'.format(i+1, len(configs)))
         torch.cuda.empty_cache()
         #train(dataset, config, path)
         #train_Huber10(dataset, config, path)

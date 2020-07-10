@@ -77,7 +77,7 @@ def evaluate(model, ds_train, ds_test, kde_factory,
         assert len(ds_train_inlier) > 0
 
         # Get ONLY inliear latent space representations using the 
-        # trained model and fit our counting routine.
+        # trained models and fit our counting routine.
         X_inl,_      = apply_model(ds_train_inlier, model, device=device)
 
         kde.fit(X_inl)
@@ -165,7 +165,7 @@ def evaluate_backbone_with_scorer(eval_config,
                           train=False,
                           subset_ratio=None)
     
-    # The encoder part of the backbone autoencoder is the model 
+    # The encoder part of the backbone autoencoder is the models
     model = backbone_trn_result.model
     enc = model.enc
 
