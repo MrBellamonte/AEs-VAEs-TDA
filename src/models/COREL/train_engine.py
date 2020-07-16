@@ -16,7 +16,7 @@ from collections import defaultdict
 
 from torchph.pershom import pershom_backend
 
-from src.models.COREL.configcorel import ConfigCOREL, ConfigGrid_COREL
+from src.models.COREL.config import ConfigCOREL, ConfigGrid_COREL
 
 
 vr_l1_persistence = pershom_backend.__C.VRCompCuda__vr_persistence_l1
@@ -106,11 +106,14 @@ def train_COREL(data: TensorDataset, config: ConfigCOREL, root_folder, verbose =
     torch.save(model.state_dict(), '.'.join([path + '/models', 'pht']))
 
     # Save the config used for training as well as all logging results
+    #todo fix log!
     out_data = [config_dict, log]
     file_ext = ['config', 'log']
     for x, y in zip(out_data, file_ext):
         with open('.'.join([path + '/'+ y, 'pickle']), 'wb') as fid:
             pickle.dump(x, fid)
+
+    #todo calculate and save metrics after training
 
 
 def simulator_COREL(config_grid: ConfigGrid_COREL, path: str, verbose: bool = False, data_constant: bool = False):
