@@ -20,7 +20,7 @@ from src.utils.config_utils import (
 admissible_model_classes_COREL  = [autoencoder.__name__]
 
 @dataclass
-class Config_COREL:
+class ConfigCOREL:
     __slots__ = ['learning_rate',
                  'batch_size',
                  'n_epochs',
@@ -152,7 +152,7 @@ class ConfigGrid_COREL:
 
                 tmp[kc[-1]] = kc_v
 
-            ret.append(Config_COREL(**ret_i))
+            ret.append(ConfigCOREL(**ret_i))
 
         return ret
 

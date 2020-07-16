@@ -3,7 +3,6 @@ import pickle
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-
 from src.models.autoencoders import autoencoder
 
 
@@ -31,7 +30,7 @@ def get_model(path_to_folder, config_fix = False):
     if config_fix:
         model = autoencoder(input_dim=101, latent_dim=2, size_hidden_layers=[128 ,64 ,32])
 
-        path_model = path_to_folder+'models.pht'
+        path_model = path_to_folder+'model.pht'
         model.load_state_dict(torch.load(path_model))
 
     else:
