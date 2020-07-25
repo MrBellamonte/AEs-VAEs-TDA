@@ -4,15 +4,15 @@ import os
 from torch import Tensor
 from torch.utils.data import TensorDataset
 
-from src.datasets.datasets import create_sphere_dataset
-from src.model.COREL.train_engine import simulator
+from src.datasets.datasets import Spheres
+from src.models.COREL.train_engine import simulator
 
 from scripts.ssc.config_library import *
 
 
 if __name__ == "__main__":
 
-    X, y = create_sphere_dataset()
+    X, y = Spheres()
 
 
     dataset = TensorDataset(Tensor(X), Tensor(y))
@@ -26,5 +26,5 @@ if __name__ == "__main__":
         pass
 
 
-    for config_grid in [config_bugsearch]:
+    for config_grid in [config_grid_Spheres_n3_250_l1]:
         simulator(config_grid, path, verbose = True)
