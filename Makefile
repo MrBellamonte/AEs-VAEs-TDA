@@ -1,5 +1,6 @@
 run_simulator_cluster:
-	echo 'Hello World'
+	python scripts/ssc/leonhard_scripts/run_simulator_leonhard
+
 
 
 
