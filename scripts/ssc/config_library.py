@@ -5,6 +5,26 @@ from src.models.loss_collection import L1Loss, TwoSidedHingeLoss, HingeLoss
 
 
 
+test_run_leonhard = ConfigGrid_COREL(
+    learning_rate=[1/1000],
+    batch_size=[64, 128],
+    n_epochs=[40],
+    rec_loss=[L1Loss()],
+    rec_loss_weight=[1],
+    top_loss=[L1Loss()],
+    top_loss_weight=[1],
+    model_class=[autoencoder],
+    model_kwargs={
+        'input_dim'         : [101],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[128, 64, 32]]
+    },
+    dataset=[Spheres()],
+    sampling_kwargs={
+        'n_samples': [250]
+    }
+)
+
 config_grid_Spheres_n3_250_l1 = ConfigGrid_COREL(
     learning_rate=[1/1000],
     batch_size=[8,16,32, 64, 128, 256, 512],
