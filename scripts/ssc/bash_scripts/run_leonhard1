@@ -4,7 +4,9 @@ cd ~/MT_VAE-TDA
 pip --no-cache-dir install -r MT-VAEs-TDA/requirements.txt
 
 cd torchph
-python setup.py develop
+python setup.py develop --install-option="~/MT_VAE-TDA/python_modules"
+
+
 
 
 echo 'done'
