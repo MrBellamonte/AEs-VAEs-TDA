@@ -1,4 +1,5 @@
 module load python_gpu/3.7.1
+module load ninja/1.8.2
 
 cd ~/MT_VAE-TDA
 pip --no-cache-dir install -r MT-VAEs-TDA/requirements.txt
