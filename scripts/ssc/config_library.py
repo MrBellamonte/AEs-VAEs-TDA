@@ -1,7 +1,34 @@
+from fractions import Fraction
+
+import numpy as np
+
 from src.datasets.datasets import Spheres
 from src.models.COREL.config import ConfigGrid_COREL
 from src.models.autoencoders import autoencoder
 from src.models.loss_collection import L1Loss, TwoSidedHingeLoss, HingeLoss
+
+
+
+conifg_spheres_fullbatch_l1 = ConfigGrid_COREL(
+    learning_rate=[1/1000],
+    #batch_size=[int(i) for i in np.logspace(3,9,num=7,base = 2.0)],
+    batch_size=[500],
+    n_epochs=[40],
+    rec_loss=[L1Loss()],
+    rec_loss_weight=[1],
+    top_loss=[L1Loss()],
+    top_loss_weight=[float(Fraction(1/i))for i in np.logspace(-2,9,num=12,base = 2.0)],
+    model_class=[autoencoder],
+    model_kwargs={
+        'input_dim'         : [101],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[128, 64, 32]]
+    },
+    dataset=[Spheres()],
+    sampling_kwargs={
+        'n_samples': [25]
+    }
+)
 
 
 

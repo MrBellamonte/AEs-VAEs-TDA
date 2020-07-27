@@ -30,7 +30,7 @@ def get_model(path_to_folder, config_fix = False):
     if config_fix:
         model = autoencoder(input_dim=101, latent_dim=2, size_hidden_layers=[128 ,64 ,32])
 
-        path_model = path_to_folder+'model.pht'
+        path_model = path_to_folder+'models.pht'
         model.load_state_dict(torch.load(path_model))
 
     else:
