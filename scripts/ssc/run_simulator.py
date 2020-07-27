@@ -44,6 +44,11 @@ if __name__ == "__main__":
     #
     # simulator_COREL(config_grid_Spheres_n3_250_l1, path, verbose=True, data_constant = True)
 
-    path = 'PycharmProjects/MT-VAEs-TDA/output_simulator/spheres_default/l1/2020-07-17/'
+    path = 'PycharmProjects/MT-VAEs-TDA/output_simulator/spheres_fullbatch/l1/2020-07-27/'
 
-    simulator_COREL(config_grid_Spheres_benchmark,path,verbose= True, data_constant=True)
+    try:
+        os.makedirs(path)
+    except:
+        pass
+
+    simulator_COREL(conifg_spheres_fullbatch_l1,path,verbose= True, data_constant=True)
