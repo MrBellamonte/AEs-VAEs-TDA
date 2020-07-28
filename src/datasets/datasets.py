@@ -8,7 +8,7 @@ from .shapes import dsphere, torus
 
 
 
-class DataSet():
+class DataSet(metaclass=ABCMeta):
     def __init__(self):
         pass
 

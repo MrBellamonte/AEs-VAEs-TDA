@@ -16,3 +16,4 @@ gputil
 multicoretsne
 tqdm
 
+dataclasses

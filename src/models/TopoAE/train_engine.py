@@ -8,13 +8,11 @@ import pickle
 
 
 import torch
-import numpy as np
 from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
 
 from collections import defaultdict
 
-from torchph.pershom import pershom_backend
 
 from dep.topo_ae_code.src_topoae.models import TopologicallyRegularizedAutoencoder
 from src.models.TopoAE.config import ConfigTopoAE, ConfigGrid_TopoAE
