@@ -5,8 +5,9 @@ modified version, tailored to our needs
 """
 import os
 import pickle
+import time
 
-
+import pandas as pd
 import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
@@ -38,8 +39,10 @@ def train_TopoAE(data: TensorDataset, config: ConfigTopoAE, root_folder, verbose
 
     model.train()
 
-    for epoch in range(1,config.n_epochs+1):
+    df_log = pd.DataFrame()
 
+    for epoch in range(1,config.n_epochs+1):
+        t0 = time.time()
         for x, _ in dl:
             loss, loss_components = model(x)
 
@@ -52,12 +55,17 @@ def train_TopoAE(data: TensorDataset, config: ConfigTopoAE, root_folder, verbose
             log['loss.autoencoder'].append(loss_components['loss.autoencoder'])
             log['loss.topo_error'].append(loss_components['loss.topo_error'])
 
+
         if verbose:
             print('{}: rec_loss: {:.4f} | top_loss: {:.4f}'.format(
                 epoch,
                 loss_components['loss.autoencoder'].detach().numpy().mean(),
                 loss_components['loss.topo_error'].detach().numpy().mean()))
-
+        t1 = time.time()
+        row = {str(epoch): dict(rec_loss=loss_components['loss.autoencoder'].detach().numpy().mean(),
+                                topo_loss=loss_components['loss.topo_error'].detach().numpy().mean(),
+                                time_epoch = (t1-t0))}
+        df_log = df_log.append(pd.DataFrame.from_dict(row, orient='index'))
 
     path = os.path.join(root_folder, config.creat_uuid())
     os.makedirs(path)
@@ -72,6 +80,10 @@ def train_TopoAE(data: TensorDataset, config: ConfigTopoAE, root_folder, verbose
     #todo fix log!
     out_data = [config_dict, log]
     file_ext = ['config', 'log']
+
+
+    df_log.to_csv(path+'/df_logs.csv')
+
     for x, y in zip(out_data, file_ext):
         with open('.'.join([path + '/'+ y, 'pickle']), 'wb') as fid:
             pickle.dump(x, fid)
