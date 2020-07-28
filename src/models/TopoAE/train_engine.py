@@ -20,7 +20,6 @@ from src.models.TopoAE.config import ConfigTopoAE, ConfigGrid_TopoAE
 
 
 def train_TopoAE(data: TensorDataset, config: ConfigTopoAE, root_folder, verbose = False):
-
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
 
@@ -80,7 +79,6 @@ def train_TopoAE(data: TensorDataset, config: ConfigTopoAE, root_folder, verbose
     #todo fix log!
     out_data = [config_dict, log]
     file_ext = ['config', 'log']
-
 
     df_log.to_csv(path+'/df_logs.csv')
 
