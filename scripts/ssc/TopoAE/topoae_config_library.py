@@ -5,7 +5,7 @@ from src.models.autoencoders import Autoencoder_MLP_topoae
 test_grid = ConfigGrid_TopoAE(
     learning_rate=[1/1000],
     batch_size=[64,128],
-    n_epochs=[10],
+    n_epochs=[5],
     rec_loss_weight=[1],
     top_loss_weight=[1/2,1,2],
     model_class=[Autoencoder_MLP_topoae],
