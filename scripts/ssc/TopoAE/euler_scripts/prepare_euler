@@ -1,6 +1,5 @@
 module load python/3.6.0
 
-cd ~/MT_VAE-TDA
-pip --no-cache-dir install -r AEs-VAEs-TDA/requirements.txt --user
+pip --no-cache-dir install -r requirements.txt --user
 
 echo 'done'
