@@ -9,7 +9,7 @@ import torch
 from torch import nn
 
 from src.datasets.datasets import DataSet
-from src.models.autoencoders import autoencoder
+from src.models.autoencoders import Autoencoder_MLP
 from src.models.loss_collection import Loss
 from src.utils.config_utils import (
     get_keychain_value, fraction_to_string, get_kwargs,
@@ -17,7 +17,7 @@ from src.utils.config_utils import (
 
 
 
-admissible_model_classes_COREL  = [autoencoder.__name__]
+admissible_model_classes_COREL  = [Autoencoder_MLP.__name__]
 
 @dataclass
 class ConfigCOREL:
