@@ -64,3 +64,22 @@ eulergrid_280720_2 = ConfigGrid_TopoAE(
         'n_samples': [500]
     }
 )
+
+# large batch sizes
+eulergrid_280720_3 = ConfigGrid_TopoAE(
+    learning_rate=[1/1000],
+    batch_size=[8192,10000],
+    n_epochs=[40],
+    rec_loss_weight=[1],
+    top_loss_weight=[1/4,1/2,1,2,4],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [101],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[128, 64, 32]]
+    },
+    dataset=[Spheres()],
+    sampling_kwargs={
+        'n_samples': [500]
+    }
+)
