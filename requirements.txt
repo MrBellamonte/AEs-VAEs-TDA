@@ -10,3 +10,11 @@ torch
 torchvision
 pre-commit
 seaborn
+sacred
+requests
+gputil
+multicoretsne
+tqdm
+
+dataclasses
+tadasets

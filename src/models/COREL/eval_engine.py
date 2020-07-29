@@ -3,7 +3,7 @@ import pickle
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from src.models.autoencoders import autoencoder
+from src.models.autoencoders import Autoencoder_MLP
 
 
 def get_config(path_to_folder):
@@ -28,7 +28,7 @@ def get_model(path_to_folder, config_fix = False):
     config_fix: allows to hardcode model in case configuration file is corrupted
     '''
     if config_fix:
-        model = autoencoder(input_dim=101, latent_dim=2, size_hidden_layers=[128 ,64 ,32])
+        model = Autoencoder_MLP(input_dim=101, latent_dim=2, size_hidden_layers=[128 , 64 , 32])
 
         path_model = path_to_folder+'models.pht'
         model.load_state_dict(torch.load(path_model))
@@ -46,7 +46,7 @@ def get_model(path_to_folder, config_fix = False):
         path_model = path_to_folder+'models.pht'
 
         #todo: works only for autoencoder... Fix if necessary
-        model = autoencoder(**model_kwargs['kwargs'])
+        model = Autoencoder_MLP(**model_kwargs['kwargs'])
         model.load_state_dict(torch.load(path_model))
 
     return model

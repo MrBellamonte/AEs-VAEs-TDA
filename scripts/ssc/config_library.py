@@ -4,7 +4,7 @@ import numpy as np
 
 from src.datasets.datasets import Spheres
 from src.models.COREL.config import ConfigGrid_COREL
-from src.models.autoencoders import autoencoder
+from src.models.autoencoders import Autoencoder_MLP
 from src.models.loss_collection import L1Loss, TwoSidedHingeLoss, HingeLoss
 
 
@@ -18,7 +18,7 @@ conifg_spheres_fullbatch_l1 = ConfigGrid_COREL(
     rec_loss_weight=[1],
     top_loss=[L1Loss()],
     top_loss_weight=[float(Fraction(1/i))for i in np.logspace(-2,9,num=12,base = 2.0)],
-    model_class=[autoencoder],
+    model_class=[Autoencoder_MLP],
     model_kwargs={
         'input_dim'         : [101],
         'latent_dim'        : [2],
@@ -40,7 +40,7 @@ test_run_leonhard = ConfigGrid_COREL(
     rec_loss_weight=[1],
     top_loss=[L1Loss()],
     top_loss_weight=[1],
-    model_class=[autoencoder],
+    model_class=[Autoencoder_MLP],
     model_kwargs={
         'input_dim'         : [101],
         'latent_dim'        : [2],
@@ -60,7 +60,7 @@ config_grid_Spheres_n3_250_l1 = ConfigGrid_COREL(
     rec_loss_weight=[1],
     top_loss=[L1Loss()],
     top_loss_weight=[1/64,1/32,1/16,1/8,1/4,1/2,1,2,4],
-    model_class=[autoencoder],
+    model_class=[Autoencoder_MLP],
     model_kwargs={
         'input_dim'         : [101],
         'latent_dim'        : [2],
@@ -81,7 +81,7 @@ config_grid_Spheres_n3_250_tshinge = ConfigGrid_COREL(
     rec_loss_weight=[1],
     top_loss=[TwoSidedHingeLoss(ratio=1/2),TwoSidedHingeLoss(ratio=1/4)],
     top_loss_weight=[1/64,1/32,1/16,1/8,1/4,1/2,1,2,4],
-    model_class=[autoencoder],
+    model_class=[Autoencoder_MLP],
     model_kwargs={
         'input_dim'         : [101],
         'latent_dim'        : [2],
@@ -103,7 +103,7 @@ config_grid_Spheres_L1 = ConfigGrid_COREL(
     rec_loss_weight=[1],
     top_loss=[L1Loss()],
     top_loss_weight=[1/2048, 1/1024,1/512,1/256,1/128,1/64,1/32,1/16,1/8,1/4,1/2,1,2,4,8,16,32],
-    model_class=[autoencoder],
+    model_class=[Autoencoder_MLP],
     model_kwargs={
         'input_dim'         : [101],
         'latent_dim'        : [2],
@@ -124,7 +124,7 @@ config_grid_Spheres_benchmark = ConfigGrid_COREL(
     rec_loss_weight=[1],
     top_loss=[L1Loss()],
     top_loss_weight=[0],
-    model_class=[autoencoder],
+    model_class=[Autoencoder_MLP],
     model_kwargs={
         'input_dim'         : [101],
         'latent_dim'        : [2],
@@ -144,7 +144,7 @@ config_grid_Spheres_Hinge = ConfigGrid_COREL(
     rec_loss_weight=[1],
     top_loss=[HingeLoss(), HingeLoss(penalty_type='squared')],
     top_loss_weight=[1/2048, 1/1024,1/512,1/256,1/128,1/64,1/32,1/16,1/8,1/4,1/2,1,2,4,8,16,32],
-    model_class=[autoencoder],
+    model_class=[Autoencoder_MLP],
     model_kwargs={
         'input_dim'         : [101],
         'latent_dim'        : [2],
@@ -165,7 +165,7 @@ config_grid_Spheres_TwoSidedHinge = ConfigGrid_COREL(
     rec_loss_weight=[1],
     top_loss=[TwoSidedHingeLoss(), TwoSidedHingeLoss(penalty_type='squared'),TwoSidedHingeLoss(ratio=1/4), TwoSidedHingeLoss(ratio=1/4,penalty_type='squared')],
     top_loss_weight=[1/2048, 1/1024,1/512,1/256,1/128,1/64,1/32,1/16,1/8], #[1/4,1/2,1,2,4,8,16,32]
-    model_class=[autoencoder],
+    model_class=[Autoencoder_MLP],
     model_kwargs={
         'input_dim'         : [101],
         'latent_dim'        : [2],
@@ -198,7 +198,7 @@ config_grid_testSpheres = {
         },
     },
     'model_args': {
-        'model_class': [autoencoder],
+        'model_class': [Autoencoder_MLP],
         'kwargs'  : {
             'input_dim'         : [101],
             'latent_dim'        : [2],
@@ -229,7 +229,7 @@ config_grid_test_tshinge = {
         },
     },
     'model_args': {
-        'model_class': [autoencoder],
+        'model_class': [Autoencoder_MLP],
         'kwargs'  : {
             'input_dim'         : [101],
             'latent_dim'        : [2],
