@@ -1,11 +1,5 @@
+module load python/3.6.0
+module unload python/3.6.0
 module load python/3.7.1
-
-pip --no-cache-dir install -r requirements.txt --user
-pip install dataclasses --user
-pip3 install torch torchvision --user
-pip install numpy --upgrade --user
-pip install scikit-learn --upgrade --user
-pip install umap --user
-pip install umap-learn --user
 
 echo 'done'
