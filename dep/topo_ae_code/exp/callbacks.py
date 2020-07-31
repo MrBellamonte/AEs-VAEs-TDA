@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from src.callbacks import Callback
+from dep.topo_ae_code.src_topoae.callbacks import Callback
 
 
 def convert_to_base_type(value):

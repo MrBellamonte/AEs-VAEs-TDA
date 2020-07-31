@@ -23,10 +23,10 @@ class ConfigTopoAE:
     __slots__ = ['learning_rate',
                  'batch_size',
                  'n_epochs',
-                 # 'rec_loss',
+                 'weight_decay',
                  'rec_loss_weight',
-                 # 'top_loss',
                  'top_loss_weight',
+                 'toposig_kwargs',
                  'model_class',
                  'model_kwargs',
                  'dataset',
@@ -35,10 +35,10 @@ class ConfigTopoAE:
     learning_rate: float
     batch_size: int
     n_epochs: int
-    # rec_loss: Type[Loss]
+    weight_decay: float
     rec_loss_weight: float
-    # top_loss: Type[Loss]
     top_loss_weight: float
+    toposig_kwargs: dict
     model_class: Type[torch.nn.Module]
     model_kwargs: dict
     dataset: Type[DataSet]
@@ -53,11 +53,7 @@ class ConfigTopoAE:
             learning_rate=fraction_to_string(self.learning_rate),
             batch_size=self.batch_size,
             n_epochs=self.n_epochs,
-#            rec_loss_type=self.rec_loss.__class__.__name__,
-#            rec_loss_kwargs=get_kwargs(self.rec_loss),
             rec_loss_weight=fraction_to_string(self.rec_loss_weight),
-#            top_loss_type=self.top_loss.__class__.__name__,
-#            top_loss_kwargs=get_kwargs(self.top_loss),
             top_loss_weight=fraction_to_string(self.top_loss_weight)
         )
 
@@ -101,10 +97,10 @@ class ConfigGrid_TopoAE:
     __slots__ = ['learning_rate',
                  'batch_size',
                  'n_epochs',
-#                 'rec_loss',
+                 'weight_decay',
                  'rec_loss_weight',
-#                 'top_loss',
                  'top_loss_weight',
+                 'toposig_kwargs',
                  'model_class',
                  'model_kwargs',
                  'dataset',
@@ -113,10 +109,10 @@ class ConfigGrid_TopoAE:
     learning_rate: List[float]
     batch_size: List[int]
     n_epochs: List[int]
-#    rec_loss: List[Type[Loss]]
+    weight_decay: List[float]
     rec_loss_weight: List[float]
-#    top_loss: List[Type[Loss]]
     top_loss_weight: List[float]
+    toposig_kwargs: List[dict]
     model_class: List[Type[torch.nn.Module]]
     model_kwargs: List[dict]
     dataset: List[Type[DataSet]]
