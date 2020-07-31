@@ -18,16 +18,24 @@ from collections import defaultdict
 from dep.topo_ae_code.src_topoae.models import TopologicallyRegularizedAutoencoder
 from src.models.TopoAE.config import ConfigTopoAE, ConfigGrid_TopoAE
 
+#DEVICE = 'cuda'
 
-def train_TopoAE(data: TensorDataset, config: ConfigTopoAE, root_folder, verbose = False):
+
+def train_TopoAE(data: TensorDataset, config: ConfigTopoAE, root_folder, verbose = False, num_threads = None):
+
+    if num_threads is not None:
+        torch.set_num_threads(num_threads)
+
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
 
-    model = TopologicallyRegularizedAutoencoder(autoencoder, lam = config.top_loss_weight)
+    model = TopologicallyRegularizedAutoencoder(autoencoder, lam = config.top_loss_weight, toposig_kwargs=config.toposig_kwargs)
 
     optimizer = Adam(
         model.parameters(),
-        lr=config.learning_rate)
+        lr=config.learning_rate,
+        weight_decay=config.weight_decay
+    )
 
     dl = DataLoader(data,
                     batch_size=config.batch_size,
@@ -43,6 +51,7 @@ def train_TopoAE(data: TensorDataset, config: ConfigTopoAE, root_folder, verbose
     for epoch in range(1,config.n_epochs+1):
         t0 = time.time()
         for x, _ in dl:
+
             loss, loss_components = model(x)
 
             # Optimize
@@ -89,7 +98,7 @@ def train_TopoAE(data: TensorDataset, config: ConfigTopoAE, root_folder, verbose
     #todo calculate and save metrics after training
 
 
-def simulator_TopoAE(config_grid: ConfigGrid_TopoAE, path: str, verbose: bool = False, data_constant: bool = False):
+def simulator_TopoAE(config_grid: ConfigGrid_TopoAE, path: str, verbose: bool = False, data_constant: bool = False, num_threads = None):
 
     if verbose:
         print('Load and verify configurations...')
@@ -130,7 +139,7 @@ def simulator_TopoAE(config_grid: ConfigGrid_TopoAE, path: str, verbose: bool = 
             print('Run model...')
 
 
-        train_TopoAE(dataset, config, path, verbose = verbose)
+        train_TopoAE(dataset, config, path, verbose = verbose, num_threads = num_threads)
 
 
 

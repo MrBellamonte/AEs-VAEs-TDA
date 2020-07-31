@@ -4,6 +4,8 @@ from typing import Tuple
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+from sklearn import datasets
+
 from .shapes import dsphere, torus
 
 
@@ -13,7 +15,7 @@ class DataSet(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def sample(self, n_samples: int, seed: int, noise: float) -> Tuple[np.ndarray, np.ndarray]:
+    def sample(self, n_samples: int, seed: int, noise: float, train: bool) -> Tuple[np.ndarray, np.ndarray]:
         pass
 
     @property
@@ -24,7 +26,8 @@ class DataSet(metaclass=ABCMeta):
 
 DEFAULT = {
     "spheres"   : dict(d = 100, n_spheres = 11, r = 5, seed = 42, noise = 0, ratio_largesphere = 10),
-    "doubletorus" : dict(c1 = 6, a1 = 4, c2 = 6, a2 = 1, seed = 1, noise = 0)
+    "doubletorus" : dict(c1 = 6, a1 = 4, c2 = 6, a2 = 1, seed = 1, noise = 0),
+    "swissroll" : dict(seed = 1, noise = 0)
 }
 
 
@@ -42,9 +45,14 @@ class Spheres(DataSet):
         self.n_spheres = n_spheres
         self.r = r
 
-    def sample(self, n_samples, noise = 0,seed = DEFAULT['spheres']['seed'], ratio_largesphere = DEFAULT['spheres']['ratio_largesphere']):
+    def sample(self, n_samples, noise = 0,seed = DEFAULT['spheres']['seed'], ratio_largesphere = DEFAULT['spheres']['ratio_largesphere'], train = True):
         #todo Parametrize ratio of samples between small and big spheres
         #todo: Implement noise
+        if train:
+            pass
+        else:
+            seed = seed + 94
+
 
         np.random.seed(seed)
         seeds = np.random.random_integers(0, high=1000, size=self.n_spheres)
@@ -96,7 +104,11 @@ class DoubleTorus(DataSet):
         self.c2 = c2
         self.a2 = a2
 
-    def sample(self, n_samples, noise = DEFAULT['doubletorus']['noise'], seed = DEFAULT['doubletorus']['seed']):
+    def sample(self, n_samples, noise = DEFAULT['doubletorus']['noise'], seed = DEFAULT['doubletorus']['seed'], train = True):
+        if train:
+            pass
+        else:
+            print('Test mode not implemented for DoubleTorus')
         #todo: Implement "manually" s.t. seed selection possible.
 
         # outer torus
@@ -105,4 +117,22 @@ class DoubleTorus(DataSet):
         data2, labels2 = torus(n=n_samples, c=6, a=1, label=1, noise=noise)
 
         return np.concatenate((data1, data2), axis=0), np.concatenate((labels1, labels2), axis=0)
+
+
+class SwissRoll(DataSet):
+    '''
+    Swiss roll
+    '''
+    fancy_name = "Swiss Roll Dataset"
+
+    __slots__ = []
+    def __init__(self):
+        pass
+
+    def sample(self, n_samples, noise = DEFAULT['swissroll']['noise'], seed = DEFAULT['swissroll']['seed'], train = True):
+        if train:
+            pass
+        else:
+            seed = seed + 94
+        return datasets.make_swiss_roll(n_samples=n_samples, noise=noise, random_state=seed)
 

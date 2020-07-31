@@ -2,10 +2,10 @@ numpy
 scikit-tda
 cechmate
 cmake
-dionysus
+#dionysus
 persim
 Cython
-Ripser
+#Ripser
 torch
 torchvision
 pre-commit

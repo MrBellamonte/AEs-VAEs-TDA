@@ -9,6 +9,68 @@ from src.models.loss_collection import L1Loss, TwoSidedHingeLoss, HingeLoss
 
 
 
+config_test = ConfigGrid_COREL(
+    learning_rate=[1/1000],
+    batch_size=[2048],
+    n_epochs=[40],
+    rec_loss=[L1Loss()],
+    rec_loss_weight=[1],
+    top_loss=[TwoSidedHingeLoss(ratio=1/4)],
+    top_loss_weight=[float(Fraction(1/i))for i in np.logspace(-2,9,num=12,base = 2.0)],
+    model_class=[Autoencoder_MLP],
+    model_kwargs={
+        'input_dim'         : [101],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[128, 64, 32]]
+    },
+    dataset=[Spheres()],
+    sampling_kwargs={
+        'n_samples': [500]
+    }
+)
+
+conifg_spheres_fullbatch2_l1 = ConfigGrid_COREL(
+    learning_rate=[1/1000],
+    batch_size=[25,50,100,250,500],
+    n_epochs=[40],
+    rec_loss=[L1Loss()],
+    rec_loss_weight=[1],
+    top_loss=[TwoSidedHingeLoss(ratio=1/4)],
+    top_loss_weight=[float(Fraction(1/i))for i in np.logspace(-2,9,num=12,base = 2.0)],
+    model_class=[Autoencoder_MLP],
+    model_kwargs={
+        'input_dim'         : [101],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[128, 64, 32]]
+    },
+    dataset=[Spheres()],
+    sampling_kwargs={
+        'n_samples': [25]
+    }
+)
+
+conifg_spheres_fullbatch2_tshinge = ConfigGrid_COREL(
+    learning_rate=[1/1000],
+    batch_size=[25,50,100,250,500],
+    n_epochs=[40],
+    rec_loss=[L1Loss()],
+    rec_loss_weight=[1],
+    top_loss=[TwoSidedHingeLoss(ratio=1/4)],
+    top_loss_weight=[float(Fraction(1/i))for i in np.logspace(-2,9,num=12,base = 2.0)],
+    model_class=[Autoencoder_MLP],
+    model_kwargs={
+        'input_dim'         : [101],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[128, 64, 32]]
+    },
+    dataset=[Spheres()],
+    sampling_kwargs={
+        'n_samples': [25]
+    }
+)
+
+
+
 conifg_spheres_fullbatch_l1 = ConfigGrid_COREL(
     learning_rate=[1/1000],
     #batch_size=[int(i) for i in np.logspace(3,9,num=7,base = 2.0)],

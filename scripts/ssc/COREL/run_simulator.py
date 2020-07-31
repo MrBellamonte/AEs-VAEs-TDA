@@ -1,10 +1,9 @@
-import datetime
 import os
 
 from src.models.COREL.train_engine import simulator_COREL
 
 
-from scripts.ssc.config_library import *
+from scripts.ssc.COREL.config_library import *
 
 
 if __name__ == "__main__":
@@ -44,11 +43,20 @@ if __name__ == "__main__":
     #
     # simulator_COREL(config_grid_Spheres_n3_250_l1, path, verbose=True, data_constant = True)
 
-    path = 'PycharmProjects/MT-VAEs-TDA/output_simulator/spheres_fullbatch/l1/2020-07-27/'
+    path = 'PycharmProjects/MT-VAEs-TDA/output_simulator/spheres_fullbatch/l1/2020-07-29/'
 
     try:
         os.makedirs(path)
     except:
         pass
 
-    simulator_COREL(conifg_spheres_fullbatch_l1,path,verbose= True, data_constant=True)
+    simulator_COREL(conifg_spheres_fullbatch2_l1,path,verbose= True, data_constant=True)
+
+    path = 'PycharmProjects/MT-VAEs-TDA/output_simulator/spheres_fullbatch/tshinge/2020-07-29/'
+
+    try:
+        os.makedirs(path)
+    except:
+        pass
+
+    simulator_COREL(conifg_spheres_fullbatch2_tshinge, path, verbose=True, data_constant=True)
