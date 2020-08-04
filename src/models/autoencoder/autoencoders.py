@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from dep.topo_ae_code.src_topoae.models.base import AutoencoderModel
+from .base import AutoencoderModel
 
 
 class Autoencoder_MLP(nn.Module):

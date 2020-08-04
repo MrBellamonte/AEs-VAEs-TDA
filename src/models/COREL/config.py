@@ -1,15 +1,13 @@
 import inspect
 import itertools
 import uuid
-from dataclasses import dataclass, asdict
-from fractions import Fraction
+from dataclasses import dataclass
 from typing import Type, List
 
 import torch
-from torch import nn
 
 from src.datasets.datasets import DataSet
-from src.models.autoencoders import Autoencoder_MLP
+from src.models.autoencoder.autoencoders import Autoencoder_MLP
 from src.models.loss_collection import Loss
 from src.utils.config_utils import (
     get_keychain_value, fraction_to_string, get_kwargs,

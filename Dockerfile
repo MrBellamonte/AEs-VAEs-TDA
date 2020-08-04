@@ -1,16 +1,3 @@
-#FROM ubuntu:14.04
-##MAINTAINER "Joshua C. Randall" <jcrandall@alum.mit.edu>
-#
-## Prerequisites
-#RUN \
-#  apt-get update && \
-#  apt-get -y upgrade && \
-#  apt-get install -y python3.7 python3-pip python-dev
-#
-#
-#In case someone else is ok with getting Python3.6 installed as a side effect (python3.7-distutils introduces it as pointed out by OP). This will install Python3.7 making it default and have the latest available pip using your python3.7 installation
-
-#FROM ubuntu:18.04
 FROM ubuntu:18.04
 
 LABEL maintainer "NVIDIA CORPORATION <cudatools@nvidia.com>"

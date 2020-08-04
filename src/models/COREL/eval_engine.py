@@ -2,12 +2,10 @@ import pickle
 import sys
 
 import torch
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader
 
-from dep.topo_ae_code.src_topoae.models import TopologicallyRegularizedAutoencoder
-from src.models.autoencoders import (
-    Autoencoder_MLP, Autoencoder_MLP_topoae,
-    Autoencoder_MLP_topoae_eval, Autoencoder_MLP_topoaeeval2)
+from src.models.autoencoder.autoencoders import (
+    Autoencoder_MLP, Autoencoder_MLP_topoae_eval, Autoencoder_MLP_topoaeeval2)
 
 
 def get_config(path_to_folder):
@@ -63,8 +61,8 @@ def get_model(path_to_folder, config_fix = False):
 
     return model
 
-def get_latentspace_representation(model, data: TensorDataset, device = 'cpu'):
-    dl = DataLoader(data, batch_size=500, num_workers=4)
+def get_latentspace_representation(model, dl: DataLoader, device = 'cpu'):
+    #dl = DataLoader(data, batch_size=500, num_workers=4)
     X, Z, Y = [], [], []
     model.eval()
     sys.setrecursionlimit(10000)
@@ -72,11 +70,18 @@ def get_latentspace_representation(model, data: TensorDataset, device = 'cpu'):
     for x, y in dl:
         x = x.to(device)
 
+
+
         #x_hat, z = model(x.float())
 
-        x_hat, z = model(x.float())
+        #x_hat, z = model(x.float())
         # x_hat = model.decoder(z.float())
         # print(x_hat)
+
+        z = model.encode(x)
+        x_hat = model.decode(z)
+
+
         X.append(x_hat)
         Y.append(y)
         Z.append(z)

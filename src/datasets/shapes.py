@@ -4,7 +4,7 @@ import numpy as np
 import tadasets
 from tadasets import embed
 
-from src.datasets.utils import label_gen_torus
+from src.datasets.utils_datagen import label_gen_torus
 
 
 def dsphere(n: int = 100, d: int = 2, r: float = 1, noise: float = None, ambient: int = None,
