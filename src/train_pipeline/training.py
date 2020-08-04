@@ -67,7 +67,7 @@ class TrainingLoop():
         # the dataset. This is necassary because the surrogate approach does
         # not yet support changes in the batch dimension.
         train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
-                                  pin_memory=True, drop_last=True)
+                                  pin_memory=True, drop_last=False)
         n_batches = len(train_loader)
 
         optimizer = torch.optim.Adam(

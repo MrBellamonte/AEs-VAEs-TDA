@@ -17,6 +17,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
 
 
+
 from scripts.ssc.TopoAE.topoae_config_library import placeholder_config_topoae
 from src.models.TopoAE.approx_based import TopologicallyRegularizedAutoencoder
 from src.models.TopoAE.config import ConfigTopoAE, ConfigGrid_TopoAE
@@ -79,7 +80,7 @@ def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experi
     model.to(device)
 
     # Train and evaluate model
-    result = train(model = model, data_train = dataset_train, data_test = dataset_test, config = config, device = device, quiet = operator.not_(verbose), val_size = 0.15, _seed = _seed,
+    result = train(model = model, data_train = dataset_train, data_test = dataset_test, config = config, device = device, quiet = operator.not_(verbose), val_size = 0.2, _seed = _seed,
           _rnd = _rnd, _run = _run, rundir = experiment_dir)
 
 
@@ -111,6 +112,8 @@ def simulator_TopoAE(config_grid: ConfigGrid_TopoAE):
                                'seed' : config_grid.seed, 'device' : config_grid.device, 'num_threads' : config_grid.num_threads,
                                'verbose' : config_grid.verbose
                                })
+
+
 
 
 
