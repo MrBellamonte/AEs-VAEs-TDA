@@ -20,6 +20,9 @@ run_TopoAE_euler_swissroll_1:
 run_TopoAE_euler_swissroll_2:
 	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_swissroll_2
 
+run_TopoAE_euler_spheres_parallel:
+	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_spheres_parallel
+
 
 build:
 	docker build -t vae-tda	.
