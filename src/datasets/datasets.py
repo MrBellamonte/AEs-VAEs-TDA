@@ -45,17 +45,14 @@ class Spheres(DataSet):
         self.n_spheres = n_spheres
         self.r = r
 
-    def sample(self, n_samples, noise = 0,seed = DEFAULT['spheres']['seed'], ratio_largesphere = DEFAULT['spheres']['ratio_largesphere'], train = True):
+    def sample(self, n_samples, noise = 0,seed = DEFAULT['spheres']['seed'], ratio_largesphere = DEFAULT['spheres']['ratio_largesphere'], train: bool = True):
         #todo Parametrize ratio of samples between small and big spheres
-        #todo: Implement noise
-        if train:
-            pass
-        else:
-            seed = seed + 94
-
-
         np.random.seed(seed)
-        seeds = np.random.random_integers(0, high=1000, size=self.n_spheres)
+        seeds = np.random.randint(0, high=1000, size=(2,self.n_spheres))
+        if train:
+            seeds = seeds[0][:]
+        else:
+            seeds = seeds[1][:]
 
         # it seemed that rescaling the shift variance by sqrt of d lets big sphere stay around the inner spheres
         # Fixed seed for shift matrix!
@@ -67,13 +64,13 @@ class Spheres(DataSet):
         spheres = []
         n_datapoints = 0
         for i in np.arange(self.n_spheres-1):
-            sphere, labels = dsphere(n=n_samples, d=self.d, r=self.r, seed = seeds[i])
+            sphere, labels = dsphere(n=n_samples, d=self.d, r=self.r, seed = seeds[i], noise = noise)
             spheres.append(sphere+shift_matrix[i, :])
             n_datapoints += n_samples
 
         # Additional big surrounding sphere:
         n_samples_big = ratio_largesphere*n_samples
-        big, labels = dsphere(n=n_samples_big, d=self.d, r=self.r*5, seed = seeds[-1])
+        big, labels = dsphere(n=n_samples_big, d=self.d, r=self.r*5, seed = seeds[-1],noise = noise)
         spheres.append(big)
         n_datapoints += n_samples_big
 
@@ -130,9 +127,11 @@ class SwissRoll(DataSet):
         pass
 
     def sample(self, n_samples, noise = DEFAULT['swissroll']['noise'], seed = DEFAULT['swissroll']['seed'], train = True):
+        seeds = np.random.randint(0, high=1000, size=2)
         if train:
-            pass
+            seed = seeds[0]
         else:
-            seed = seed + 94
+            seed = seeds[1]
+
         return datasets.make_swiss_roll(n_samples=n_samples, noise=noise, random_state=seed)
 

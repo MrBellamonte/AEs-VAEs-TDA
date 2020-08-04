@@ -1,15 +1,14 @@
 import inspect
 import itertools
 import uuid
-from dataclasses import dataclass, asdict
-from fractions import Fraction
+from dataclasses import dataclass
 from typing import Type, List
 
 import torch
-from torch import nn
 
 from src.datasets.datasets import DataSet
-from src.models.autoencoders import Autoencoder_MLP, Autoencoder_MLP_topoae
+from src.evaluation.config import ConfigEval
+from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 from src.models.loss_collection import Loss
 from src.utils.config_utils import (
     get_keychain_value, fraction_to_string, get_kwargs,
@@ -24,18 +23,21 @@ class ConfigTopoAE:
                  'batch_size',
                  'n_epochs',
                  'weight_decay',
+                 'early_stopping',
                  'rec_loss_weight',
                  'top_loss_weight',
                  'toposig_kwargs',
                  'model_class',
                  'model_kwargs',
                  'dataset',
-                 'sampling_kwargs']
-
+                 'sampling_kwargs',
+                 'eval',
+                 'uid']
     learning_rate: float
     batch_size: int
     n_epochs: int
     weight_decay: float
+    early_stopping: int
     rec_loss_weight: float
     top_loss_weight: float
     toposig_kwargs: dict
@@ -43,9 +45,17 @@ class ConfigTopoAE:
     model_kwargs: dict
     dataset: Type[DataSet]
     sampling_kwargs: dict
+    eval: ConfigEval
+    uid: str
+
+
+    def __post_init__(self):
+        self.check()
+        self.uid = self.creat_uuid()
+
 
     def creat_uuid(self):
-        uuid_suffix = str(uuid.uuid4())[:8]
+        unique_id = str(uuid.uuid4())[:8]
 
         uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}'.format(
             model=self.model_class.__name__,
@@ -63,7 +73,7 @@ class ConfigTopoAE:
             sampling_kwargs=dictionary_to_string(self.sampling_kwargs)
         )
 
-        return uuid_data+uuid_model+'-'+uuid_suffix
+        return uuid_data+uuid_model+'-'+ unique_id
 
     def create_dict(self):
         ret_dict = dict()
@@ -92,24 +102,47 @@ class ConfigTopoAE:
         assert self.create_dict()
 
 
+    def create_id_dict(self):
+
+        return dict(
+            uid = self.uid,
+            learning_rate = self.learning_rate,
+            batch_size = self.batch_size,
+            n_epochs = self.n_epochs,
+            weight_decay = self.weight_decay,
+            early_stopping = self.early_stopping,
+            rec_loss_weight = self.rec_loss_weight,
+            top_loss_weight = self.top_loss_weight,
+        )
+
+
 @dataclass
 class ConfigGrid_TopoAE:
     __slots__ = ['learning_rate',
                  'batch_size',
                  'n_epochs',
                  'weight_decay',
+                 'early_stopping',
                  'rec_loss_weight',
                  'top_loss_weight',
                  'toposig_kwargs',
                  'model_class',
                  'model_kwargs',
                  'dataset',
-                 'sampling_kwargs']
+                 'sampling_kwargs',
+                 'eval',
+                 'uid',
+                 'experiment_dir',
+                 'seed',
+                 'device',
+                 'num_threads',
+                 'verbose']
 
     learning_rate: List[float]
     batch_size: List[int]
     n_epochs: List[int]
     weight_decay: List[float]
+    early_stopping: List[int]
     rec_loss_weight: List[float]
     top_loss_weight: List[float]
     toposig_kwargs: List[dict]
@@ -117,11 +150,19 @@ class ConfigGrid_TopoAE:
     model_kwargs: List[dict]
     dataset: List[Type[DataSet]]
     sampling_kwargs: List[dict]
+    eval: List[ConfigEval]
+    uid: List[str]
+    experiment_dir: str
+    seed: int
+    device: str
+    num_threads: int
+    verbose: str
 
     def configs_from_grid(self):
 
         grid = dict()
-        for slot in self.__slots__:
+
+        for slot in (set(self.__slots__)-set(['experiment_dir', 'seed', 'device', 'num_threads', 'verbose'])):
             grid.update({slot: getattr(self, slot)})
         tmp = list(get_keychain_value(grid))
         values = [x[1] for x in tmp]
@@ -146,5 +187,3 @@ class ConfigGrid_TopoAE:
             ret.append(ConfigTopoAE(**ret_i))
 
         return ret
-
-

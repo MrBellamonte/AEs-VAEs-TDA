@@ -4,7 +4,7 @@ import numpy as np
 
 from src.datasets.datasets import Spheres
 from src.models.COREL.config import ConfigGrid_COREL
-from src.models.autoencoders import Autoencoder_MLP
+from src.models.autoencoder.autoencoders import Autoencoder_MLP
 from src.models.loss_collection import L1Loss, TwoSidedHingeLoss, HingeLoss
 
 

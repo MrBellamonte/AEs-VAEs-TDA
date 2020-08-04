@@ -1,9 +1,57 @@
+from collections import defaultdict
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
+from matplotlib.ticker import MaxNLocator
 
+
+def plot_classes_qual(data, labels, path_to_save= None, title = None, show = False):
+
+
+    if len(np.unique(labels)) > 8:
+        palette = "Spectral"
+    else:
+        palette  = "Dark2"
+
+
+    sns_plot = sns.scatterplot(data[:, 0], data[:, 1], hue=labels, palette=sns.color_palette(palette, len(np.unique(labels))), marker=".",
+                    size=5, edgecolor="none", legend=False)
+    sns.despine(left=True, bottom=True)
+    plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False, left=False)
+
+    plt.title(title)
+
+    if show:
+        plt.show()
+
+    if path_to_save != None:
+        fig = sns_plot.get_figure()
+        fig.savefig(path_to_save)
+
+    plt.close()
+
+
+def plot_losses(losses, losses_std=defaultdict(lambda: None), save_file=None):
+    """Plot a dictionary with per epoch losses.
+
+
+    """
+
+    fig, ax = plt.subplots()
+    for key, values in losses.items():
+        plt.errorbar(range(len(values)), values, yerr=losses_std[key], label=key)
+
+    plt.xlabel('# epochs')
+    plt.ylabel('loss')
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    plt.legend()
+    if save_file:
+        plt.savefig(save_file, dpi=200)
+        plt.close()
 
 
 def plot_simplicial_complex_2D(simp_complex: list, points: np.ndarray, scale: float):
