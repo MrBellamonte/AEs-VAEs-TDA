@@ -24,7 +24,7 @@ test_grid_local = ConfigGrid_TopoAE(
     },
     dataset=[Spheres()],
     sampling_kwargs={
-        'n_samples': [64]
+        'n_samples': [50]
     },
     eval=[ConfigEval(
         active = True,

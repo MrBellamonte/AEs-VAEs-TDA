@@ -8,6 +8,9 @@ prepare_euler:
 test_TopoAE_euler:
 	python -m scripts.ssc.TopoAE.euler_scripts.test_topoae_euler
 
+test_TopoAE_euler_parallel:
+	python -m scripts.ssc.TopoAE.euler_scripts.test_topoae_euler_parallel
+
 run_TopoAE_euler_spheres_1:
 	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_spheres_1
 
