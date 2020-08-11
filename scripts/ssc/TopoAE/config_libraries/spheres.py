@@ -20,7 +20,7 @@ spheres_euler_seed6_parallel_shuffled = [ConfigGrid_TopoAE(
     toposig_kwargs = [dict(match_edges = 'symmetric')],
     model_class=[Autoencoder_MLP_topoae],
     model_kwargs={
-        'input_dim'         : [3],
+        'input_dim'         : [11],
         'latent_dim'        : [2],
         'size_hidden_layers': [[32, 32]]
     },
