@@ -11,9 +11,6 @@ test_TopoAE_euler:
 test_TopoAE_euler_parallel:
 	python -m scripts.ssc.TopoAE.euler_scripts.test_topoae_euler_parallel
 
-test_TopoAE_euler_swissroll:
-	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_parallel_swissroll
-
 
 run_TopoAE_euler_spheres_1:
 	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_spheres_1
@@ -29,6 +26,9 @@ run_TopoAE_euler_swissroll_2:
 
 run_TopoAE_euler_spheres_parallel:
 	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_spheres_parallel
+
+run_TopoAE_euler_swissroll:
+	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_parallel_swissroll
 
 
 build:

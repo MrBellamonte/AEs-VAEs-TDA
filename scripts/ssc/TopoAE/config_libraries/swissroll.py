@@ -9,7 +9,7 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
 
 ### SWISSROLL
-swissroll_midsize_lowbs_euler_seed1_parallel_shuffled = [ConfigGrid_TopoAE(
+swissroll_midsize_euler_seed1_parallel_shuffled = [ConfigGrid_TopoAE(
     learning_rate=[1/1000],
     batch_size=random.sample([int(i) for i in np.logspace(3,11,num=9,base = 2.0)], len([int(i) for i in np.logspace(3,11,num=9,base = 2.0)])),
     n_epochs=[100],
