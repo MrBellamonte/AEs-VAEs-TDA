@@ -117,6 +117,6 @@ class SaveLatentRepresentation(Callback):
     def on_epoch_end(self, model, dataset, img, epoch, **kwargs):
         """Save reconstruction images."""
         model.eval()
-        _, labels, latents = get_latentspace_representation(model, self.data_loader)
+        _, labels, latents = get_latentspace_representation(model, self.data_loader, device=device)
         plot_classes_qual(latents, labels, path_to_save=os.path.join(
             self.path, f'latent_epoch_{epoch}.pdf'), title=None, show=False)
