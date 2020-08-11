@@ -5,7 +5,7 @@ import torch.nn as nn
 
 
 from .topology import PersistentHomologyCalculation
-from dep.topo_ae_code.src_topoae.models.base import AutoencoderModel
+from src.models.autoencoder.base import AutoencoderModel
 
 
 class TopologicallyRegularizedAutoencoder(AutoencoderModel):

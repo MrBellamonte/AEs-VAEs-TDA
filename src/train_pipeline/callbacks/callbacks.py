@@ -66,7 +66,7 @@ class Progressbar(Callback):
     def on_batch_end(self, batch_size, loss, loss_components, **kwargs):
         """Increment progressbar and update description."""
         self.epoch_progress.update(batch_size)
-        description = self._description(loss, loss_components)
+        description = self._description(loss.detach.cpu().numpy(), loss_components)
         self.epoch_progress.set_description(description)
 
     def on_epoch_end(self, epoch, n_epochs, **kwargs):

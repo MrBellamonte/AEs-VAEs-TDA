@@ -48,7 +48,7 @@ class Autoencoder_MLP(nn.Module):
         return self.encoder(x)
 
     def decode(self, z):
-        return self.decode(z)
+        return self.decoder(z)
 
 
 class Autoencoder_MLP_topoae(AutoencoderModel):

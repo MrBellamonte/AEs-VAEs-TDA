@@ -10,7 +10,7 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 test_grid_local = ConfigGrid_TopoAE(
     learning_rate=[1/1000],
     batch_size=[8,16],
-    n_epochs=[1],
+    n_epochs=[20],
     weight_decay=[0],
     early_stopping=[5],
     rec_loss_weight=[1],
@@ -24,7 +24,7 @@ test_grid_local = ConfigGrid_TopoAE(
     },
     dataset=[Spheres()],
     sampling_kwargs={
-        'n_samples': [50]
+        'n_samples': [640]
     },
     eval=[ConfigEval(
         active = True,
@@ -152,7 +152,7 @@ test_grid_euler = ConfigGrid_TopoAE(
     experiment_dir='/cluster/home/schsimo/MT/output/test/1',
     seed = 1,
     device = 'cpu',
-    num_threads=2,
+    num_threads=1,
     verbose = False
 )
 
