@@ -11,7 +11,7 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 ### SWISSROLL
 spheres_euler_seed6_parallel_shuffled = [ConfigGrid_TopoAE(
     learning_rate=[1/1000],
-    batch_size=random.sample([int(i) for i in np.logspace(3,13,num=11,base = 2.0)], 11),
+    batch_size=random.sample([int(i) for i in np.logspace(3,12,num=10,base = 2.0)], 10),
     n_epochs=[100],
     weight_decay=[0],
     early_stopping=[5],
