@@ -75,9 +75,10 @@ class TrainingLoop():
             weight_decay=self.weight_decay)
 
         epoch = 1
+        mu = 0.5
         run_times_epoch = []
         for epoch in range(1, n_epochs+1):
-
+            mu = 0.1*max(0,(int(n_epochs/2)-epoch)/int(n_epochs/2))
             if self.on_epoch_begin(remove_self(locals())):
                 break
             t_start = time.time()
@@ -89,7 +90,7 @@ class TrainingLoop():
                 # Set model into training mode and compute loss
                 model.train()
                 x = img.to(self.device)
-                loss, loss_components = self.model(x.float())
+                loss, loss_components = self.model(x.float(),mu)
 
                 # Optimize
                 optimizer.zero_grad()

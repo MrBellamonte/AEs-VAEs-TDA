@@ -38,7 +38,6 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
         data_train, val_size, _rnd)
     test_dataset = data_test
 
-
     callbacks = [
         LogTrainingLoss(_run, print_progress=quiet),
         LogDatasetLoss('validation', validation_dataset, _run,

@@ -131,6 +131,7 @@ class SwissRoll(DataSet):
         pass
 
     def sample(self, n_samples, noise = DEFAULT['swissroll']['noise'], seed = DEFAULT['swissroll']['seed'], train = True):
+        np.random.seed(seed=seed)
         seeds = np.random.randint(0, high=1000, size=2)
         if train:
             seed = seeds[0]

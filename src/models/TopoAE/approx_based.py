@@ -23,6 +23,7 @@ class TopologicallyRegularizedAutoencoder(AutoencoderModel):
         self.lam_t = lam_t
         self.lam_r = lam_r
         toposig_kwargs = toposig_kwargs if toposig_kwargs else {}
+        self.push_edges = (toposig_kwargs['match_edges'] == 'asymmetric_push')
         self.topo_sig = TopologicalSignatureDistance(**toposig_kwargs)
         self.autoencoder = autoencoder
         self.latent_norm = torch.nn.Parameter(data=torch.ones(1),
@@ -34,7 +35,7 @@ class TopologicallyRegularizedAutoencoder(AutoencoderModel):
         distances = torch.norm(x_flat[:, None] - x_flat, dim=2, p=p)
         return distances
 
-    def forward(self, x):
+    def forward(self, x, mu = 0):
         """Compute the loss of the Topologically regularized autoencoder.
 
         Args:
@@ -67,7 +68,8 @@ class TopologicallyRegularizedAutoencoder(AutoencoderModel):
         ae_loss, ae_loss_comp = self.autoencoder(x)
 
         topo_error, topo_error_components = self.topo_sig(
-            x_distances, latent_distances)
+            x_distances, latent_distances, mu)
+
 
         # normalize topo_error according to batch_size
         batch_size = dimensions[0]
@@ -151,10 +153,29 @@ class TopologicalSignatureDistance(nn.Module):
         return ((signature1 - signature2)**2).sum(dim=-1)
 
     @staticmethod
+    def sig_error2(signature1, signature2):
+        """Compute distance between two topological signatures. Only consider distance if sig1 > sig2"""
+        return (torch.clamp((signature1 - signature2),min = 0)**2).sum(dim=-1)
+
+    @staticmethod
     def _count_matching_pairs(pairs1, pairs2):
         def to_set(array):
             return set(tuple(elements) for elements in array)
         return float(len(to_set(pairs1).intersection(to_set(pairs2))))
+
+    @staticmethod
+    def _get_pairdiff(pairs_base, pairs_sub):
+        def to_set(array):
+            return set(tuple(elements) for elements in array)
+        l1 = to_set(pairs_base[0])
+        l2 = to_set(pairs_sub[0])
+        ldiff = l1 - l2
+        if ldiff == set():
+            return None
+        else:
+            lldiff_np = np.array(list(ldiff))
+            return [lldiff_np,0]
+
 
     @staticmethod
     def _get_nonzero_cycles(pairs):
@@ -162,7 +183,7 @@ class TopologicalSignatureDistance(nn.Module):
         return np.sum(np.logical_not(all_indices_equal))
 
     # pylint: disable=W0221
-    def forward(self, distances1, distances2):
+    def forward(self, distances1, distances2, mu):
         """Return topological distance of two pairwise distance matrices.
 
         Args:
@@ -221,6 +242,80 @@ class TopologicalSignatureDistance(nn.Module):
 
             distance = distance1_2
 
+        elif self.match_edges == 'asymmetric2':
+            sig1 = self._select_distances_from_pairs(distances1, pairs1)
+            sig2 = self._select_distances_from_pairs(distances2, pairs2)
+            # Selected pairs of 1 on distances of 2 and vice versa
+            sig1_2 = self._select_distances_from_pairs(distances2, pairs1)
+            sig2_1 = self._select_distances_from_pairs(distances1, pairs2)
+
+            distance1_2 = self.sig_error(sig1, sig1_2)
+            distance2_1 = self.sig_error2(sig2_1,sig2)
+
+            distance_components['metrics.distance1-2'] = distance1_2
+            distance_components['metrics.distance2-1'] = distance2_1
+
+            distance = distance1_2+distance2_1
+
+        elif self.match_edges == 'asymmetric_push':
+            sig1 = self._select_distances_from_pairs(distances1, pairs1)
+            sig2 = self._select_distances_from_pairs(distances2, pairs2)
+            # Selected pairs of 1 on distances of 2 and vice versa
+            sig1_2 = self._select_distances_from_pairs(distances2, pairs1)
+            sig2_1 = self._select_distances_from_pairs(distances1, pairs2)
+
+            distance1_2 = self.sig_error(sig1, sig1_2)
+            pairs1_0, pairs1_1 = pairs1
+            #idx = (pairs1_0[:, 0], pairs1_0[:, 1])
+            distance_push = torch.clamp(distances2,min=0.1)
+
+            distance_components['metrics.distance1-2'] = distance1_2
+            distance_components['metrics.distance2-1'] = distance_push.pow_(-1).sum()
+
+            distance = distance1_2 + mu*distance_push.pow_(-1).sum()
+        elif self.match_edges == 'asymmetric_push2':
+            sig1 = self._select_distances_from_pairs(distances1, pairs1)
+            pairs_push = self._get_pairdiff(pairs2,pairs1)
+            if pairs_push == None:
+                loss_push = 0
+            else:
+                sig2 = self._select_distances_from_pairs(distances2, pairs_push)
+                distance_push = torch.clamp(sig2, min=0.5)
+                loss_push = distance_push.pow_(-1).sum()
+            # Selected pairs of 1 on distances of 2 and vice versa
+            sig1_2 = self._select_distances_from_pairs(distances2, pairs1)
+
+            distance1_2 = self.sig_error(sig1, sig1_2)
+
+
+
+            distance_components['metrics.distance1-2'] = distance1_2
+            distance_components['metrics.distance2-1'] = loss_push
+
+            distance = distance1_2 + loss_push
+        elif self.match_edges == 'asymmetric_push3':
+
+            B = 2
+
+            sig1 = self._select_distances_from_pairs(distances1, pairs1)
+            # Selected pairs of 1 on distances of 2 and vice versa
+            sig1_2 = self._select_distances_from_pairs(distances2, pairs1)
+
+            distance1_2 = self.sig_error(sig1, sig1_2)
+
+            distances2_selected = distances2
+            distances2_selected[(pairs1[0][:, 0], pairs1[0][:, 1])] = 0
+            distances2_selected = distances2_selected - B
+            distances2_selected = torch.clamp(distances2_selected, max = 0)
+            distances2_selected = distances2_selected+B
+
+            loss_push = distances2_selected.sum()
+
+
+            distance_components['metrics.distance1-2'] = distance1_2
+            distance_components['metrics.distance2-1'] = mu*loss_push
+
+            distance = distance1_2 - mu*loss_push
         elif self.match_edges == 'random':
             # Create random selection in oder to verify if what we are seeing
             # is the topological constraint or an implicit latent space prior
