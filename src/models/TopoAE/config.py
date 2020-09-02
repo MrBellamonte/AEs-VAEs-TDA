@@ -55,25 +55,30 @@ class ConfigTopoAE:
 
 
     def creat_uuid(self):
-        unique_id = str(uuid.uuid4())[:8]
 
-        uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}'.format(
-            model=self.model_class.__name__,
-            hidden_layers='-'.join(str(x) for x in self.model_kwargs['size_hidden_layers']),
-            learning_rate=fraction_to_string(self.learning_rate),
-            batch_size=self.batch_size,
-            n_epochs=self.n_epochs,
-            rec_loss_weight=fraction_to_string(self.rec_loss_weight),
-            top_loss_weight=fraction_to_string(self.top_loss_weight)
-        )
+        if self.uid == '':
 
-        uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
-            dataset=self.dataset.__class__.__name__,
-            object_kwargs=get_kwargs(self.dataset),
-            sampling_kwargs=dictionary_to_string(self.sampling_kwargs)
-        )
+            unique_id = str(uuid.uuid4())[:8]
 
-        return uuid_data+uuid_model+'-'+ unique_id
+            uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}'.format(
+                model=self.model_class.__name__,
+                hidden_layers='-'.join(str(x) for x in self.model_kwargs['size_hidden_layers']),
+                learning_rate=fraction_to_string(self.learning_rate),
+                batch_size=self.batch_size,
+                n_epochs=self.n_epochs,
+                rec_loss_weight=fraction_to_string(self.rec_loss_weight),
+                top_loss_weight=fraction_to_string(self.top_loss_weight)
+            )
+
+            uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
+                dataset=self.dataset.__class__.__name__,
+                object_kwargs=get_kwargs(self.dataset),
+                sampling_kwargs=dictionary_to_string(self.sampling_kwargs)
+            )
+
+            return uuid_data+uuid_model+'-'+ unique_id
+        else:
+            return self.uid
 
     def create_dict(self):
         ret_dict = dict()
@@ -187,3 +192,4 @@ class ConfigGrid_TopoAE:
             ret.append(ConfigTopoAE(**ret_i))
 
         return ret
+

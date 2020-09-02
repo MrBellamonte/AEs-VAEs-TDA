@@ -67,7 +67,7 @@ class TrainingLoop():
         # the dataset. This is necassary because the surrogate approach does
         # not yet support changes in the batch dimension.
         train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
-                                  pin_memory=True, drop_last=True)
+                                  pin_memory=True, drop_last=False)
         n_batches = len(train_loader)
 
         optimizer = torch.optim.Adam(
@@ -75,22 +75,22 @@ class TrainingLoop():
             weight_decay=self.weight_decay)
 
         epoch = 1
-
+        mu = 0.5
         run_times_epoch = []
         for epoch in range(1, n_epochs+1):
+            mu = 0.1*max(0,(int(n_epochs/2)-epoch)/int(n_epochs/2))
             if self.on_epoch_begin(remove_self(locals())):
                 break
             t_start = time.time()
             for batch, (img, label) in enumerate(train_loader):
-                if self.device == 'cuda':
-                    img = img.cuda(non_blocking=True)
+
 
                 self.on_batch_begin(remove_self(locals()))
 
                 # Set model into training mode and compute loss
                 model.train()
-
-                loss, loss_components = self.model(img)
+                x = img.to(self.device)
+                loss, loss_components = self.model(x.float(),mu)
 
                 # Optimize
                 optimizer.zero_grad()
@@ -101,7 +101,7 @@ class TrainingLoop():
                 self.on_batch_end(remove_self(locals()))
             t_end = time.time()
             run_times_epoch.append((t_end-t_start))
-
+            print('TIME: {}'.format(t_end-t_start))
             if self.on_epoch_end(remove_self(locals())):
                 break
         return epoch, run_times_epoch

@@ -2,7 +2,7 @@
 import os
 from tqdm import tqdm
 from torch.utils.data import DataLoader
-from torchvision.utils import save_image
+# from torchvision.utils import save_image
 
 from dep.topo_ae_code.src_topoae.evaluation.utils import get_space
 from dep.topo_ae_code.src_topoae.visualization import visualize_latents
@@ -66,7 +66,7 @@ class Progressbar(Callback):
     def on_batch_end(self, batch_size, loss, loss_components, **kwargs):
         """Increment progressbar and update description."""
         self.epoch_progress.update(batch_size)
-        description = self._description(loss, loss_components)
+        description = self._description(loss.detach.cpu().numpy(), loss_components)
         self.epoch_progress.set_description(description)
 
     def on_epoch_end(self, epoch, n_epochs, **kwargs):
@@ -78,25 +78,25 @@ class Progressbar(Callback):
             self.total_progress.close()
 
 
-class SaveReconstructedImages(Callback):
-    """Callback to save images of the reconstruction."""
-
-    def __init__(self, path):
-        """Save images of the reconstruction.
-
-        Args:
-            path: Path to store the images to
-        """
-        self.path = path
-
-    def on_epoch_end(self, model, dataset, img, epoch, **kwargs):
-        """Save reconstruction images."""
-        model.eval()
-        latent = model.encode(img)
-        reconst = model.decode(latent)
-        reconstructed_image = dataset.inverse_normalization(reconst)
-        save_image(
-            reconstructed_image, os.path.join(self.path, f'epoch_{epoch}.png'))
+# class SaveReconstructedImages(Callback):
+#     """Callback to save images of the reconstruction."""
+#
+#     def __init__(self, path):
+#         """Save images of the reconstruction.
+#
+#         Args:
+#             path: Path to store the images to
+#         """
+#         self.path = path
+#
+#     def on_epoch_end(self, model, dataset, img, epoch, **kwargs):
+#         """Save reconstruction images."""
+#         model.eval()
+#         latent = model.encode(img)
+#         reconst = model.decode(latent)
+#         reconstructed_image = dataset.inverse_normalization(reconst)
+#         save_image(
+#             reconstructed_image, os.path.join(self.path, f'epoch_{epoch}.png'))
 
 
 class SaveLatentRepresentation(Callback):
@@ -117,6 +117,6 @@ class SaveLatentRepresentation(Callback):
     def on_epoch_end(self, model, dataset, img, epoch, **kwargs):
         """Save reconstruction images."""
         model.eval()
-        _, labels, latents = get_latentspace_representation(model, self.data_loader)
+        _, labels, latents = get_latentspace_representation(model, self.data_loader, device=device)
         plot_classes_qual(latents, labels, path_to_save=os.path.join(
             self.path, f'latent_epoch_{epoch}.pdf'), title=None, show=False)

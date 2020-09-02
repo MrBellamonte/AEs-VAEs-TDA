@@ -45,14 +45,18 @@ class Spheres(DataSet):
         self.n_spheres = n_spheres
         self.r = r
 
-    def sample(self, n_samples, noise = 0,seed = DEFAULT['spheres']['seed'], ratio_largesphere = DEFAULT['spheres']['ratio_largesphere'], train: bool = True):
+    def sample(self, n_samples, noise = 0,seed = DEFAULT['spheres']['seed'], ratio_largesphere = DEFAULT['spheres']['ratio_largesphere'], train: bool = True, old_implementation = False):
         #todo Parametrize ratio of samples between small and big spheres
         np.random.seed(seed)
-        seeds = np.random.randint(0, high=1000, size=(2,self.n_spheres))
-        if train:
-            seeds = seeds[0][:]
+        if old_implementation:
+            #Deprecated! Don't use, except for evaluating old experiments.
+            seeds = np.random.random_integers(0, high=1000, size=self.n_spheres)
         else:
-            seeds = seeds[1][:]
+            seeds = np.random.randint(0, high=1000, size=(2,self.n_spheres))
+            if train:
+                seeds = seeds[0][:]
+            else:
+                seeds = seeds[1][:]
 
         # it seemed that rescaling the shift variance by sqrt of d lets big sphere stay around the inner spheres
         # Fixed seed for shift matrix!
@@ -127,6 +131,7 @@ class SwissRoll(DataSet):
         pass
 
     def sample(self, n_samples, noise = DEFAULT['swissroll']['noise'], seed = DEFAULT['swissroll']['seed'], train = True):
+        np.random.seed(seed=seed)
         seeds = np.random.randint(0, high=1000, size=2)
         if train:
             seed = seeds[0]

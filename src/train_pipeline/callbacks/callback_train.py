@@ -105,7 +105,7 @@ class LogDatasetLoss(Callback):
         # TODO: Ideally drop last should be set to false, yet this is currently
         # incompatible with the surrogate approach as it assumes a constant
         # batch size.
-        self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
+        self.data_loader = DataLoader(self.dataset, batch_size=128,
                                       drop_last=True, pin_memory=True)
         self.run = run
         self.print_progress = print_progress
@@ -175,6 +175,7 @@ class LogDatasetLoss(Callback):
                 value,
                 self.iterations
             )
+        print(losses)
         if self.early_stopping is not None:
             if losses['loss'] < self.best_loss:
                 self.best_loss = losses['loss']
