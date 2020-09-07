@@ -5,12 +5,12 @@ prepare_euler:
 	bash scripts/ssc/TopoAE/euler_scripts/prepare_euler
 
 
+# TopoAE
 test_TopoAE_euler:
 	python -m scripts.ssc.TopoAE.euler_scripts.test_topoae_euler
 
 test_TopoAE_euler_parallel:
 	python -m scripts.ssc.TopoAE.euler_scripts.test_topoae_euler_parallel
-
 
 run_TopoAE_euler_spheres_1:
 	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_spheres_1
@@ -29,6 +29,11 @@ run_TopoAE_euler_spheres_parallel:
 
 run_TopoAE_euler_swissroll:
 	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_parallel_swissroll
+
+
+# WitnessComplexTopoAE
+test_WCTopoAE_euler_swissroll:
+	python -m scripts.ssc.TopoAE_ext.euler_scripts.test_topoae_ext
 
 
 build:
