@@ -5,7 +5,11 @@ import numpy as np
 import multiprocessing as mp
 
 import matplotlib.pyplot as plt
-import gudhi
+#dirty fix since gudhi cannot be installed on euler...
+try:
+    import gudhi
+except:
+    print('Failed to import gudhi')
 from sklearn.metrics import pairwise_distances
 
 #hard-coded
@@ -95,7 +99,10 @@ class WitnessComplex():
     def compute_simplicial_complex(self, d_max, create_metric = False, r_max = None, create_simplex_tree = False):
         if create_simplex_tree:
             simplicial_complex = []
-            simplex_tree = gudhi.SimplexTree()
+            try:
+                simplex_tree = gudhi.SimplexTree()
+            except:
+                print('Cannot create simplex tree')
 
         if create_metric:
             landmarks_dist = np.ones((len(self.landmarks),len(self.landmarks)))*MAX_DIST_INIT
@@ -219,7 +226,10 @@ class WitnessComplex():
             return simplicial_complex, landmarks_dist
 
         if create_simplex_tree:
-            simplex_tree = gudhi.SimplexTree()
+            try:
+                simplex_tree = gudhi.SimplexTree()
+            except:
+                print('Cannot create simplex tree')
 
         if n_jobs == -1:
             n_jobs = mp.cpu_count()
