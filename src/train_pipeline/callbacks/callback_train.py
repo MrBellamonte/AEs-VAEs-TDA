@@ -7,6 +7,8 @@ import torch
 from torch.utils.data import DataLoader
 
 from dep.topo_ae_code.src_topoae.callbacks import Callback
+from src.models.TopoAE_WitnessComplex.train_util import compute_wc_offline
+from src.topology.witness_complex import WitnessComplex
 
 
 def convert_to_base_type(value):
@@ -82,7 +84,8 @@ class LogTrainingLoss(Callback):
 class LogDatasetLoss(Callback):
     """Logging of loss during training into sacred run."""
 
-    def __init__(self, dataset_name, dataset, run, print_progress=True,
+    def __init__(self, dataset_name, dataset, run,
+                 method_args,print_progress=True,
                  batch_size=128, early_stopping=None, save_path=None,
                  device='cpu'):
         """Create logger callback.
@@ -105,7 +108,7 @@ class LogDatasetLoss(Callback):
         # TODO: Ideally drop last should be set to false, yet this is currently
         # incompatible with the surrogate approach as it assumes a constant
         # batch size.
-        self.data_loader = DataLoader(self.dataset, batch_size=128,
+        self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
                                       drop_last=True, pin_memory=True)
         self.run = run
         self.print_progress = print_progress
@@ -115,17 +118,46 @@ class LogDatasetLoss(Callback):
         self.iterations = 0
         self.patience = 0
         self.best_loss = np.inf
+        self.method_args = method_args
+
+        if self.method_args['name'] == 'topoae_wc':
+            self.dist_X_all, self.pair_mask_X_all = compute_wc_offline(self.dataset, self.data_loader, batch_size,
+                                                             self.method_args,
+                                                             name='{name} Dataset'.format(name = dataset_name))
+
+            # self.dist_X_all = torch.ones((len(self.data_loader), batch_size, batch_size))
+            # self.pair_mask_X_all = torch.ones((len(self.data_loader), batch_size, batch_size))
+            #
+            # for batch, (img, label) in enumerate(self.data_loader):
+            #     witness_complex = WitnessComplex(img, dataset[:][:][0])
+            #     witness_complex.compute_simplicial_complex_parallel(d_max = 1, r_max=self.method_args['r_max'],
+            #                                 create_simplex_tree=False,create_metric = True, n_jobs=self.method_args['n_jobs'])
+            #     landmarks_dist = torch.tensor(witness_complex.landmarks_dist)
+            #     sorted, indices = torch.sort(landmarks_dist)
+            #     kNN_mask = torch.zeros(
+            #         (batch_size, batch_size), device='cpu'
+            #     ).scatter(1, indices[:, 1:(self.method_args['k']+1)], 1)
+            #     self.dist_X_all[batch, :, :] = landmarks_dist
+            #     self.pair_mask_X_all[batch, :, :] = kNN_mask
+
 
     def _compute_average_losses(self, model):
         losses = defaultdict(list)
         model.eval()
 
-        for batch in self.data_loader:
-            data, _ = batch
+        for batch, (batch_data, label) in enumerate(self.data_loader):
+            data = batch_data
+
             if self.device == 'cuda':
                 data = data.cuda(non_blocking=True)
-            loss, loss_components = model(data)
-            loss = convert_to_base_type(loss)
+            if self.method_args['name'] == 'topoae_wc':
+                dist_X = self.dist_X_all[batch, :, :].to(self.device)
+                pair_mask_X = self.pair_mask_X_all[batch, :, :].to(self.device)
+                loss, loss_components = model(data, dist_X, pair_mask_X)
+                loss = convert_to_base_type(loss)
+            else:
+                loss, loss_components = model(data)
+                loss = convert_to_base_type(loss)
 
             # Rescale the losses as batch_size might not divide dataset
             # perfectly, this currently is a nop as drop_last is set to True in

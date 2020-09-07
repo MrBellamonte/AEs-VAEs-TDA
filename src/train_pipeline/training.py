@@ -4,11 +4,14 @@ import time
 import torch
 from torch.utils.data import DataLoader
 
+from src.models.TopoAE_WitnessComplex.train_util import compute_wc_offline
+from src.topology.witness_complex import WitnessComplex
+
 
 class TrainingLoop():
     """Training a model using a dataset."""
 
-    def __init__(self, model, dataset, n_epochs, batch_size, learning_rate,
+    def __init__(self, model, dataset, n_epochs, batch_size, learning_rate, method_args = None,
                  weight_decay=1e-5, device='cuda', callbacks=None):
         """Training of a model using a dataset and the defined callbacks.
 
@@ -28,6 +31,11 @@ class TrainingLoop():
         self.weight_decay = weight_decay
         self.device = device
         self.callbacks = callbacks if callbacks else []
+
+        if method_args == None:
+            self.method_args = dict(name = None)
+        else:
+            self.method_args = method_args
 
     def _execute_callbacks(self, hook, local_variables):
         stop = False
@@ -63,22 +71,48 @@ class TrainingLoop():
         learning_rate = self.learning_rate
 
         n_instances = len(dataset)
-        # TODO: Currently we drop the last batch as it might not evenly divide
+
         # the dataset. This is necassary because the surrogate approach does
         # not yet support changes in the batch dimension.
-        train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
-                                  pin_memory=True, drop_last=False)
+        if self.method_args['name'] == 'topoae_wc':
+            print('WARNING: drop last batch if not complete!')
+            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
+                                      pin_memory=True, drop_last=True)
+        else:
+            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
+                                      pin_memory=True, drop_last=False)
         n_batches = len(train_loader)
 
         optimizer = torch.optim.Adam(
             model.parameters(), lr=learning_rate,
             weight_decay=self.weight_decay)
 
-        epoch = 1
-        mu = 0.5
+
+        if self.method_args['name'] == 'topoae_wc':
+
+            dist_X_all, pair_mask_X_all = compute_wc_offline(dataset, train_loader, batch_size, self.method_args, name='Training Dataset')
+
+
+            # #todo make function for this
+            # dist_X_all = torch.ones((n_batches, batch_size, batch_size))
+            # pair_mask_X_all = torch.ones((n_batches, batch_size, batch_size))
+            #
+            # for batch, (img, label) in enumerate(train_loader):
+            #     witness_complex = WitnessComplex(img, dataset[:][:][0])
+            #     witness_complex.compute_simplicial_complex_parallel(d_max = 1, r_max=self.method_args['r_max'],
+            #                                 create_simplex_tree=False,create_metric = True, n_jobs=self.method_args['n_jobs'])
+            #     landmarks_dist = torch.tensor(witness_complex.landmarks_dist)
+            #     sorted, indices = torch.sort(landmarks_dist)
+            #     kNN_mask = torch.zeros(
+            #         (batch_size, batch_size), device='cpu'
+            #     ).scatter(1,indices[:,1:(self.method_args['k']+1)],1)
+            #     dist_X_all[batch, :, :] = landmarks_dist
+            #     pair_mask_X_all[batch, :, :] = kNN_mask
+
+        #mu = 0.5
         run_times_epoch = []
         for epoch in range(1, n_epochs+1):
-            mu = 0.1*max(0,(int(n_epochs/2)-epoch)/int(n_epochs/2))
+            #mu = 0.1*max(0,(int(n_epochs/2)-epoch)/int(n_epochs/2))
             if self.on_epoch_begin(remove_self(locals())):
                 break
             t_start = time.time()
@@ -89,8 +123,15 @@ class TrainingLoop():
 
                 # Set model into training mode and compute loss
                 model.train()
-                x = img.to(self.device)
-                loss, loss_components = self.model(x.float(),mu)
+
+                if self.method_args['name'] == 'topoae_wc':
+                    x = img.to(self.device)
+                    dist_X = dist_X_all[batch, :, :].to(self.device)
+                    pair_mask_X = pair_mask_X_all[batch, :, :].to(self.device)
+                    loss, loss_components = self.model(x, dist_X, pair_mask_X)
+                else:
+                    x = img.to(self.device)
+                    loss, loss_components = self.model(x.float())
 
                 # Optimize
                 optimizer.zero_grad()

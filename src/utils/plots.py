@@ -35,20 +35,35 @@ def plot_classes_qual(data, labels, path_to_save= None, title = None, show = Fal
     plt.close()
 
 
-def plot_losses(losses, losses_std=defaultdict(lambda: None), save_file=None):
+def plot_losses(losses, losses_std=defaultdict(lambda: None), save_file=None, pairs_axes = False):
     """Plot a dictionary with per epoch losses.
 
 
     """
-
+    palette = sns.color_palette()
     fig, ax = plt.subplots()
+    if pairs_axes:
+        ax2 = ax.twinx()
+        ax2.set_ylim([0, 1])
+    i = 0
     for key, values in losses.items():
-        plt.errorbar(range(len(values)), values, yerr=losses_std[key], label=key)
 
+        if 'matched_pairs_0D' in key and pairs_axes:
+            ax2.set_ylabel('matched_pairs_0D')
+            ax2.errorbar(range(len(values)), values, yerr=losses_std[key], label=key, color = palette[i])
+        else:
+            ax.errorbar(range(len(values)), values, yerr=losses_std[key], label=key, color = palette[i])
+        i += 1
     plt.xlabel('# epochs')
-    plt.ylabel('loss')
+    ax.set_ylabel('loss')
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    plt.legend()
+    if pairs_axes:
+        lines, labels = ax.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax2.legend(lines+lines2, labels+labels2, loc=0)
+        ax2.set_ylabel('matched pairs percentage')
+    else:
+        plt.legend()
     if save_file:
         plt.savefig(save_file, dpi=200)
         plt.close()
