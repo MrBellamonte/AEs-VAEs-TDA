@@ -18,7 +18,7 @@ admissible_model_classes_TopoAE = [Autoencoder_MLP_topoae.__name__]
 
 
 @dataclass
-class ConfigTopoAE:
+class ConfigTopoAE_ext:
     __slots__ = ['learning_rate',
                  'batch_size',
                  'n_epochs',
@@ -27,13 +27,16 @@ class ConfigTopoAE:
                  'rec_loss_weight',
                  'top_loss_weight',
                  'toposig_kwargs',
+                 'match_edges',
+                 'k',
+                 'r_max',
                  'model_class',
                  'model_kwargs',
+                 'method_args',
                  'dataset',
                  'sampling_kwargs',
                  'eval',
-                 'uid',
-                 'method_args']
+                 'uid']
     learning_rate: float
     batch_size: int
     n_epochs: int
@@ -41,6 +44,10 @@ class ConfigTopoAE:
     early_stopping: int
     rec_loss_weight: float
     top_loss_weight: float
+    match_edges: str
+    k: int
+    r_max: float
+    method_args: dict
     toposig_kwargs: dict
     model_class: Type[torch.nn.Module]
     model_kwargs: dict
@@ -48,14 +55,15 @@ class ConfigTopoAE:
     sampling_kwargs: dict
     eval: ConfigEval
     uid: str
-    method_args: List
 
 
     def __post_init__(self):
         self.check()
         self.uid = self.creat_uuid()
-        self.method_args = dict(name = 'topoae')
-
+        self.toposig_kwargs = dict(k = self.k, match_edges = self.match_edges)
+        self.method_args = dict(name = 'topoae_wc',r_max = self.r_max,k = self.k, match_edges = self.match_edges)
+        if 'n_jobs' not in self.method_args:
+            self.method_args['n_jobs'] = 1
 
     def creat_uuid(self):
 
@@ -63,20 +71,24 @@ class ConfigTopoAE:
 
             unique_id = str(uuid.uuid4())[:8]
 
-            uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}'.format(
+            uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}-me{match_edges}-k{k}-rmax{r_max}'.format(
                 model=self.model_class.__name__,
                 hidden_layers='-'.join(str(x) for x in self.model_kwargs['size_hidden_layers']),
                 learning_rate=fraction_to_string(self.learning_rate),
                 batch_size=self.batch_size,
                 n_epochs=self.n_epochs,
                 rec_loss_weight=fraction_to_string(self.rec_loss_weight),
-                top_loss_weight=fraction_to_string(self.top_loss_weight)
+                top_loss_weight=fraction_to_string(self.top_loss_weight),
+                match_edges = self.match_edges,
+                k = str(self.k),
+                r_max = str(int(self.r_max))
             )
 
             uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
                 dataset=self.dataset.__class__.__name__,
                 object_kwargs=get_kwargs(self.dataset),
-                sampling_kwargs=dictionary_to_string(self.sampling_kwargs)
+                sampling_kwargs=dictionary_to_string(self.sampling_kwargs),
+
             )
 
             return uuid_data+uuid_model+'-'+ unique_id
@@ -125,7 +137,7 @@ class ConfigTopoAE:
 
 
 @dataclass
-class ConfigGrid_TopoAE:
+class ConfigGrid_TopoAE_ext:
     __slots__ = ['learning_rate',
                  'batch_size',
                  'n_epochs',
@@ -133,7 +145,9 @@ class ConfigGrid_TopoAE:
                  'early_stopping',
                  'rec_loss_weight',
                  'top_loss_weight',
-                 'toposig_kwargs',
+                 'match_edges',
+                 'k',
+                 'r_max',
                  'model_class',
                  'model_kwargs',
                  'dataset',
@@ -145,7 +159,9 @@ class ConfigGrid_TopoAE:
                  'device',
                  'num_threads',
                  'verbose',
-                 'method_args']
+                 'toposig_kwargs',
+                 'method_args'
+                 ]
 
     learning_rate: List[float]
     batch_size: List[int]
@@ -154,19 +170,23 @@ class ConfigGrid_TopoAE:
     early_stopping: List[int]
     rec_loss_weight: List[float]
     top_loss_weight: List[float]
-    toposig_kwargs: List[dict]
+    match_edges: List[str]
+    k: List[int]
+    r_max: List[float]
     model_class: List[Type[torch.nn.Module]]
     model_kwargs: List[dict]
     dataset: List[Type[DataSet]]
     sampling_kwargs: List[dict]
     eval: List[ConfigEval]
     uid: List[str]
+    toposig_kwargs: List[dict]
+    method_args: List[dict]
     experiment_dir: str
     seed: int
     device: str
     num_threads: int
     verbose: str
-    method_args: List
+
 
     def configs_from_grid(self):
 
@@ -194,7 +214,7 @@ class ConfigGrid_TopoAE:
 
                 tmp[kc[-1]] = kc_v
 
-            ret.append(ConfigTopoAE(**ret_i))
+            ret.append(ConfigTopoAE_ext(**ret_i))
 
         return ret
 

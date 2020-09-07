@@ -1,3 +1,9 @@
 [submodule "COREL_icml2019"]
 	path = COREL_icml2019
 	url = https://github.com/c-hofer/COREL_icml2019
+[submodule "Markov-Lipschitz-Deep-Learning"]
+	path = Markov-Lipschitz-Deep-Learning
+	url = https://github.com/westlake-cairi/Markov-Lipschitz-Deep-Learning
+[submodule "dep/Markov-Lipschitz-Deep-Learning"]
+	path = dep/Markov-Lipschitz-Deep-Learning
+	url = https://github.com/westlake-cairi/Markov-Lipschitz-Deep-Learning

@@ -41,10 +41,11 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
     callbacks = [
         LogTrainingLoss(_run, print_progress=quiet),
         LogDatasetLoss('validation', validation_dataset, _run,
+                       method_args=config.method_args,
                        print_progress=True, batch_size=config.batch_size,
                        early_stopping=config.early_stopping, save_path=rundir,
                        device=device),
-        LogDatasetLoss('testing', test_dataset, _run, print_progress=True,
+        LogDatasetLoss('testing', test_dataset, _run,method_args = config.method_args, print_progress=True,
                        batch_size=config.batch_size, device=device),
     ]
 
@@ -65,10 +66,11 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
                     test_dataset, rundir, batch_size=64, device=device)
             )
 
+    marg = config.method_args
     training_loop = TrainingLoop(
-        model, train_dataset, config.n_epochs, config.batch_size, config.learning_rate, config.weight_decay,
-        device, callbacks
-    )
+        model, train_dataset, config.n_epochs, config.batch_size, config.learning_rate,
+        config.method_args,config.weight_decay,device, callbacks
+)
     # Run training
     epoch, run_times_epoch = training_loop()
 
@@ -96,6 +98,8 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
     metric_stds = {
         key: value for key, value in logged_stds.items() if 'metric' in key
     }
+
+
     if rundir:
         plot_losses(
             loss_averages,
@@ -105,17 +109,19 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
         plot_losses(
             loss_averages,
             loss_stds,
-            save_file=os.path.join(rundir, 'loss.pdf')
+            save_file=os.path.join(rundir, 'loss.pdf'),
         )
         plot_losses(
             metric_averages,
             metric_stds,
-            save_file=os.path.join(rundir, 'metrics.png')
+            save_file=os.path.join(rundir, 'metrics.png'),
+            pairs_axes=True
         )
         plot_losses(
             metric_averages,
             metric_stds,
-            save_file=os.path.join(rundir, 'metrics.pdf')
+            save_file=os.path.join(rundir, 'metrics.pdf'),
+            pairs_axes = True
         )
 
     result = {
