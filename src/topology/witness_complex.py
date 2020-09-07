@@ -1,12 +1,9 @@
 import math
-import time
 
 import dill
 import numpy as np
 import multiprocessing as mp
 
-from memory_profiler import profile
-from pathos.multiprocessing import ProcessingPool as Pool
 import matplotlib.pyplot as plt
 import gudhi
 from sklearn.metrics import pairwise_distances
@@ -85,19 +82,6 @@ class WitnessComplex():
 
         return simplex_add
 
-
-    #
-    # def _update_register_simplex(self, register, i_add, i_dist, max_dim=math.inf):
-    #     register_add = []
-    #     simplex_add = []
-    #     for element in register:
-    #         if len(element) < max_dim+1:
-    #             element_copy = element.copy()
-    #             element_copy.append(i_add)
-    #             register_add.append(element_copy)
-    #             simplex_add.append([element_copy, i_dist])
-    #
-    #     return register_add, simplex_add
 
     def _update_landmark_dist(self, landmarks_dist, simplex_add):
 
