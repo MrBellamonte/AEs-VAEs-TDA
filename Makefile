@@ -33,7 +33,7 @@ run_TopoAE_euler_swissroll:
 
 # WitnessComplexTopoAE
 test_WCTopoAE_euler_swissroll:
-	python -m scripts.ssc.TopoAE_ext.euler_scripts.test_topoae_ext
+	python -m scripts.ssc.TopoAE_ext.euler_scripts.test_wctopoae_euler
 
 
 build:
