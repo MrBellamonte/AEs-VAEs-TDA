@@ -1,19 +1,22 @@
 import argparse
-from typing import List
+import importlib
 
 from joblib import Parallel, delayed
 
-from scripts.ssc.TopoAE_ext.config_libraries.swissroll import swissroll_run1
-from src.models.TopoAE_WitnessComplex.config import ConfigGrid_TopoAE_ext
 from src.models.TopoAE_WitnessComplex.train_engine import simulator_TopoAE_ext
 
 
 def parse_input():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--threads", default=1, help="Number of threads", type=int)
-    parser.add_argument("--configs", default=swissroll_run1, help="Array of config grids", type=List[ConfigGrid_TopoAE_ext])
+    parser.add_argument('-c',"--configs", default='swissroll.swissroll_testing_euler_parallel', help="Array of config grids", type = str)
     return parser.parse_args()
+
+
 
 if __name__ == "__main__":
     args = parse_input()
-    Parallel(n_jobs=args.threads)(delayed(simulator_TopoAE_ext)(config) for config in args.configs)
+    conifg_srt = 'scripts.ssc.TopoAE_ext.config_libraries.' + args.configs
+    mod_name, config_name = conifg_srt.rsplit('.', 1)
+    mod = importlib.import_module(mod_name)
+    configs = getattr(mod, config_name)
+    Parallel(n_jobs=len(configs))(delayed(simulator_TopoAE_ext)(config) for config in configs)
