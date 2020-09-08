@@ -8,13 +8,13 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 euler_kn_seed1_parallel = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
     batch_size=[int(i) for i in np.logspace(4, 9, base=2, num=6)],
-    n_epochs=[5],
+    n_epochs=[1000],
     weight_decay=[0],
     early_stopping=[35],
-    rec_loss_weight=[n],
-    top_loss_weight=[384],
+    rec_loss_weight=[1],
+    top_loss_weight=[int(i) for i in np.logspace(0, 9, base=2, num=10)],
     match_edges = ['symmetric'],
-    k = [10],
+    k = [n],
     r_max = [10],
     model_class=[Autoencoder_MLP_topoae],
     model_kwargs={
