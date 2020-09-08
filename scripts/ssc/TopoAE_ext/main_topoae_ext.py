@@ -22,6 +22,8 @@ if __name__ == "__main__":
 
     #args.configs = 'scripts.ssc.TopoAE_ext.config_libraries.swissroll.swissroll_testing'
     print(args.configs)
+
+    conifg_srt = 'scripts.ssc.TopoAE_ext.config_libraries.' + args.configs
     mod_name, config_name = args.configs.rsplit('.', 1)
     mod = importlib.import_module(mod_name)
     configs = getattr(mod, config_name)
