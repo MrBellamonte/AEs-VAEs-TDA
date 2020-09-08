@@ -7,14 +7,14 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
 
 
-swissroll_run1 = [ConfigGrid_TopoAE_ext(
+euler_k1_seed1 = ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
-    batch_size=[16],
-    n_epochs=[15],
+    batch_size=[int(i) for i in np.logspace(4, 9, base=2, num=6)],
+    n_epochs=[300],
     weight_decay=[0],
-    early_stopping=[10],
+    early_stopping=[20],
     rec_loss_weight=[1],
-    top_loss_weight=[j],
+    top_loss_weight=[int(i) for i in np.logspace(0, 9, base=2, num=10)],
     match_edges = ['symmetric'],
     k = [1],
     r_max = [10],
@@ -40,13 +40,13 @@ swissroll_run1 = [ConfigGrid_TopoAE_ext(
     )],
     uid = [''],
     toposig_kwargs=[dict()],
-    method_args=[dict(n_jobs = 1)],
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/run1',
+    method_args=[dict(n_jobs = 4)],
+    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/k1_seed1',
     seed = 1,
     device = 'cpu',
     num_threads=1,
     verbose = False,
-) for j in [int(i) for i in np.logspace(17, 20, base=2, num=4)]]
+)
 
 
 
