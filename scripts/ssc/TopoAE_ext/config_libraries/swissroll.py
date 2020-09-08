@@ -135,7 +135,7 @@ swissroll_testing2 = ConfigGrid_TopoAE_ext(
 
 swissroll_testing_euler = ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
-    batch_size=[16],
+    batch_size=[64],
     n_epochs=[5],
     weight_decay=[0],
     early_stopping=[35],
@@ -152,7 +152,7 @@ swissroll_testing_euler = ConfigGrid_TopoAE_ext(
     },
     dataset=[SwissRoll()],
     sampling_kwargs={
-        'n_samples': [640] #2560
+        'n_samples': [2560] #2560
     },
     eval=[ConfigEval(
         active = True,
