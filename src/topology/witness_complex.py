@@ -63,13 +63,15 @@ class WitnessComplex():
         'landmarks_dist',
         'simplex_tree',
         'simplex_true_computed',
-        'new'
+        'new',
+        'metric_computed'
     ]
 
     def __init__(self, landmarks, witnesses,new=False):
         self.landmarks = landmarks
         self.witnesses = witnesses
         self.new = new
+        self.metric_computed = False
 
         self.distances = pairwise_distances(witnesses,landmarks)
 
@@ -134,6 +136,7 @@ class WitnessComplex():
         if create_metric:
             np.fill_diagonal(landmarks_dist, 0)
             self.landmarks_dist = landmarks_dist
+            self.metric_computed = True
 
 
         if create_simplex_tree:
@@ -260,6 +263,7 @@ class WitnessComplex():
         self.simplicial_complex = simplicial_complex
         np.fill_diagonal(landmarks_dist, 0)
         self.landmarks_dist = landmarks_dist
+        self.metric_computed = True
 
 
 
@@ -279,4 +283,7 @@ class WitnessComplex():
         plt.close()
 
 
+    def check_distance_matrix(self):
+        assert self.metric_computed
 
+        return not np.any(self.landmarks_dist == MAX_DIST_INIT)

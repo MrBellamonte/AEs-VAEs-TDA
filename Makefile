@@ -35,6 +35,11 @@ run_TopoAE_euler_swissroll:
 test_WCTopoAE_euler_swissroll:
 	python -m scripts.ssc.TopoAE_ext.euler_scripts.test_wctopoae_euler
 
+#Var = 'scripts.ssc.TopoAE_ext.config_libraries.swissroll.swissroll_testing'
+run_WCTopoAE_main:
+	echo $(config_grid)
+	python -m scripts.ssc.TopoAE_ext.main_topoae_ext -c $(config_grid)
+
 
 build:
 	docker build -t vae-tda	.
