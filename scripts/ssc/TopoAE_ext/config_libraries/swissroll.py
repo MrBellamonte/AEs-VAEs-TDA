@@ -12,9 +12,9 @@ euler_kn_seed1_parallel_push1 = [ConfigGrid_TopoAE_ext(
     weight_decay=[0],
     early_stopping=[35],
     rec_loss_weight=[1],
-    top_loss_weight=[int(i) for i in np.logspace(0, 9, base=2, num=10)],
+    top_loss_weight=[tlw],
     match_edges = ['push1'],
-    k = [n],
+    k = [2,4,8,16],
     r_max = [10],
     model_class=[Autoencoder_MLP_topoae],
     model_kwargs={
@@ -39,12 +39,12 @@ euler_kn_seed1_parallel_push1 = [ConfigGrid_TopoAE_ext(
     uid = [''],
     toposig_kwargs=[dict()],
     method_args=[dict(n_jobs = 1)],
-    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/push/kn_seed1',
+    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/push1/kn_seed1',
     seed = 1,
     device = 'cpu',
     num_threads=1,
     verbose = False,
-) for n in [2,4,8,16]]
+) for tlw in [int(i) for i in np.logspace(0, 11, base=2, num=12)]]
 
 euler_kn_seed1_parallel = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
