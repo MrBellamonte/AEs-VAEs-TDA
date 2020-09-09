@@ -124,11 +124,6 @@ class TopologicalSignatureDistanceWC(nn.Module):
         mask_diff = mask_Z-mask_X
         return ((mask_Z.size(0)*self.k)-(mask_diff != 0).sum()*0.5)/(mask_Z.size(0)*self.k)
 
-    @staticmethod
-    def _get_pairs_to_push(mask_X, mask_Z):
-        mask_diff = mask_Z-mask_X
-        return torch.clamp(mask_diff, min=0)
-
     def forward(self, latent,latent_norm, dist_X, pair_mask_X):
         """Return topological distance of two pairwise distance matrices.
 
@@ -162,24 +157,28 @@ class TopologicalSignatureDistanceWC(nn.Module):
             distance_components['metrics.distance2-1'] = distance2_1
 
             distance = distance1_2 + distance2_1
-        elif self.match_edges == 'push_diff':
-            #todo: fix
+        elif self.match_edges == 'push1':
+            # L_X->Z: same as for 'symmetric'
+            # L_Z->X: pushes pairs apart that are closer together in the Z than in X,
+            # but does NOT pull pairs together that are closer in X than in Z
 
             # L_X->Z
             sig1 = dist_X.mul(pair_mask_X)
-            sig2_1 = dist_Z.mul(pair_mask_X)
-            distance1_2 = self.sig_error(sig1, sig2_1)
+            sig1_2 = dist_Z.mul(pair_mask_X)
 
-            mask_push = self._get_pairs_to_push
+            distance1_2 = torch.square((sig1-sig1_2)).sum()
 
-            sig2 = dist_X.mul(mask_push)
-            sig1_2 = dist_Z.mul(mask_push)
-            distance2_1 = self.sig_error2(sig1_2,sig2)
+            # L_Z->X
+            sig2 = dist_Z.mul(pair_mask_Z)
+            sig2_1 = dist_X.mul(pair_mask_Z)
+
+            distance2_1 = torch.square(torch.clamp((sig2_1-sig2),min = 0)).sum()
 
             distance_components['metrics.distance1-2'] = distance1_2
             distance_components['metrics.distance2-1'] = distance2_1
 
             distance = distance1_2 + distance2_1
+
         else:
             raise ValueError
 

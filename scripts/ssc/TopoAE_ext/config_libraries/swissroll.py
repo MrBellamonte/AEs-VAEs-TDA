@@ -5,6 +5,47 @@ from src.evaluation.config import ConfigEval
 from src.models.TopoAE_WitnessComplex.config import ConfigGrid_TopoAE_ext
 from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
+euler_kn_seed1_parallel_push1 = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/1000],
+    batch_size=[int(i) for i in np.logspace(4, 9, base=2, num=6)],
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[35],
+    rec_loss_weight=[1],
+    top_loss_weight=[int(i) for i in np.logspace(0, 9, base=2, num=10)],
+    match_edges = ['push1'],
+    k = [n],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560] #2560
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 80,
+        k_step = 25,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs = 1)],
+    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/push/kn_seed1',
+    seed = 1,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False,
+) for n in [2,4,8,16]]
+
 euler_kn_seed1_parallel = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
     batch_size=[int(i) for i in np.logspace(4, 9, base=2, num=6)],
@@ -99,7 +140,7 @@ swissroll_testing = ConfigGrid_TopoAE_ext(
     early_stopping=[35],
     rec_loss_weight=[1],
     top_loss_weight=[384],
-    match_edges = ['symmetric'],
+    match_edges = ['push1'],
     k = [10],
     r_max = [10],
     model_class=[Autoencoder_MLP_topoae],
@@ -165,11 +206,11 @@ swissroll_testing2 = ConfigGrid_TopoAE_ext(
     )],
     uid = [''],
     toposig_kwargs=[dict()],
-    method_args=[dict(n_jobs = 2)],
+    method_args=[dict(n_jobs = 8)],
     experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/verification',
     seed = 1,
     device = 'cpu',
-    num_threads=1,
+    num_threads=8,
     verbose = False,
 )
 
