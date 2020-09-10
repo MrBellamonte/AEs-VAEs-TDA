@@ -134,14 +134,14 @@ euler_k1_seed1 = ConfigGrid_TopoAE_ext(
 ### TEST
 swissroll_testing = ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
-    batch_size=[16],
-    n_epochs=[5],
+    batch_size=[32],
+    n_epochs=[300],
     weight_decay=[0],
-    early_stopping=[35],
+    early_stopping=[15],
     rec_loss_weight=[1],
-    top_loss_weight=[384],
-    match_edges = ['push1'],
-    k = [10],
+    top_loss_weight=[256],
+    match_edges = ['symmetric'],
+    k = [1],
     r_max = [10],
     model_class=[Autoencoder_MLP_topoae],
     model_kwargs={
@@ -165,11 +165,11 @@ swissroll_testing = ConfigGrid_TopoAE_ext(
     )],
     uid = [''],
     toposig_kwargs=[dict()],
-    method_args=[dict(n_jobs = 4)],
+    method_args=[dict(n_jobs =1)],
     experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/verification',
     seed = 1,
     device = 'cpu',
-    num_threads=1,
+    num_threads=2,
     verbose = False,
 )
 
@@ -181,7 +181,7 @@ swissroll_testing2 = ConfigGrid_TopoAE_ext(
     early_stopping=[35],
     rec_loss_weight=[1],
     top_loss_weight=[384],
-    match_edges = ['symmetric'],
+    match_edges = ['push1'],
     k = [10],
     r_max = [10],
     model_class=[Autoencoder_MLP_topoae],

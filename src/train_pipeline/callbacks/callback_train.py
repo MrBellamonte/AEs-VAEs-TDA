@@ -109,7 +109,7 @@ class LogDatasetLoss(Callback):
         # incompatible with the surrogate approach as it assumes a constant
         # batch size.
         self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
-                                      drop_last=True, pin_memory=True)
+                                      drop_last=True, pin_memory=True, shuffle=True)
         self.run = run
         self.print_progress = print_progress
         self.early_stopping = early_stopping

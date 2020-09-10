@@ -80,10 +80,13 @@ class WitnessComplex():
         simplex_add = []
         for e in simplicial_complex_temp:
             element = e[0]
-            if len(element) < max_dim+1:
+
+            if (element[0] is not i_add and len(element) is 1) or (1 < len(element) < max_dim+1):
                 element_copy = element.copy()
                 element_copy.append(i_add)
                 simplex_add.append([element_copy, i_dist])
+            else:
+                pass
 
 
         return simplex_add
@@ -123,16 +126,19 @@ class WitnessComplex():
 
             simplices_temp = []
             for i in range(len(sorted_row)):
+                simplices_temp.append([[sorted_row[i][0]], sorted_row[i][1]])
                 simplex_add = self._update_register_simplex(simplices_temp.copy(), sorted_row[i][0],
                                                                         sorted_row[i][1], d_max)
                 if create_metric:
                     landmarks_dist = self._update_landmark_dist(landmarks_dist,simplex_add)
                 simplices_temp += simplex_add
-                simplices_temp.append([[sorted_row[i][0]],sorted_row[i][1]])
 
-        if create_simplex_tree:
-            simplicial_complex += simplices_temp
-            self.simplicial_complex = simplicial_complex
+            # for element in sorted_row:
+            #     simplices_temp.append([[element[0]],element[1]])
+
+            if create_simplex_tree:
+                simplicial_complex += simplices_temp
+
         if create_metric:
             np.fill_diagonal(landmarks_dist, 0)
             self.landmarks_dist = landmarks_dist
@@ -140,10 +146,11 @@ class WitnessComplex():
 
 
         if create_simplex_tree:
+            self.simplicial_complex = simplicial_complex
             sorted_simplicial_compex = sorted(simplicial_complex, key=lambda x: x[1])
 
-            for i in range(len(self.landmarks)):
-                simplex_tree.insert([i], filtration=0)
+            # for i in range(len(self.landmarks)):
+            #     simplex_tree.insert([i], filtration=0)
 
             for simplex in sorted_simplicial_compex:
                 simplex_tree.insert(simplex[0], filtration = simplex[1])
@@ -250,8 +257,8 @@ class WitnessComplex():
         if create_simplex_tree:
             sorted_simplicial_compex = sorted(simplicial_complex, key=lambda x: x[1])
 
-            for i in range(len(self.landmarks)):
-                simplex_tree.insert([i], filtration=0)
+            # for i in range(len(self.landmarks)):
+            #     simplex_tree.insert([i], filtration=0)
 
             for simplex in sorted_simplicial_compex:
                 simplex_tree.insert(simplex[0], filtration = simplex[1])
@@ -273,7 +280,7 @@ class WitnessComplex():
 
 
         diag = self.simplex_tree.persistence()
-        gudhi.plot_persistence_diagram(diag, axes = ax)
+        gudhi.plot_persistence_diagram(diag, axes = ax,legend=True)
 
         if show:
             plt.show()

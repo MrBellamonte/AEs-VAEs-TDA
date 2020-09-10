@@ -4,8 +4,8 @@ import shutil
 
 if __name__ == "__main__":
 
-    path = '/Users/simons/polybox/Studium/20FS/MT/sync/euler_sync/schsimo/MT/output/WCTopoAE/SwissRoll/kn_seed1'
-    path_to_save = '/Users/simons/polybox/Studium/20FS/MT/plot_selected/WCTopoAE/SwissRoll/symmetric/kn_seed1/latents'
+    path = '/Users/simons/polybox/Studium/20FS/MT/sync/euler_sync/schsimo/MT/output/WCTopoAE/SwissRoll/push1/kn_seed1'
+    path_to_save = '/Users/simons/polybox/Studium/20FS/MT/plot_selected/WCTopoAE/SwissRoll/push1/kn_seed1/latents'
     for dirpath, dirnames, filenames in os.walk(path):
 
         for filename in [f for f in filenames if f.endswith("rain_latent_visualization.pdf")]:

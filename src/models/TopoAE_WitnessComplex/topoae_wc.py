@@ -121,8 +121,31 @@ class TopologicalSignatureDistanceWC(nn.Module):
         :param mask_Z:
         :return:
         """
-        mask_diff = mask_Z-mask_X
-        return ((mask_Z.size(0)*self.k)-(mask_diff != 0).sum()*0.5)/(mask_Z.size(0)*self.k)
+        #mask_diff = mask_Z-mask_X
+        # print(mask_Z)
+        # print('-----')
+        # print(mask_X)
+
+        tot_pairings = mask_X.sum()
+        missed_pairings = ((mask_X - mask_Z)==1).sum()
+
+        mask_X1 = mask_X.bool()
+        mask_X2 = mask_X.t().bool()
+        mask_Xtot = mask_X1 + mask_X2
+        mask_Xtot = mask_Xtot.float()
+        mask_Z1 = mask_Z.bool()
+        mask_Z2 = mask_Z.t().bool()
+        mask_Ztot = mask_Z1+mask_Z2
+        mask_Ztot = mask_Ztot.float()
+
+        tot_pairings = mask_Xtot.sum()
+        missed_pairings = ((mask_Xtot-mask_Ztot) == 1).sum()
+
+        #print(missed_pairings)
+        return (tot_pairings-missed_pairings)/tot_pairings
+
+        #return (mask_X.size(0)*self.k-torch.clamp((mask_X - mask_Z),0).sum()/2)/mask_X.size(0)*self.k
+        #return ((mask_Z.size(0)*self.k)-(mask_diff != 0).sum()*0.5)/(mask_Z.size(0)*self.k)
 
     def forward(self, latent,latent_norm, dist_X, pair_mask_X):
         """Return topological distance of two pairwise distance matrices.
@@ -153,6 +176,15 @@ class TopologicalSignatureDistanceWC(nn.Module):
 
             distance2_1 = torch.square((sig2_1-sig2)).sum()
 
+
+
+            # res12 = torch.autograd.gradcheck(torch.square, (sig2-sig2_1),
+            #                                raise_exception=True,eps=1e-4, atol=1e-4)
+            # res21 = torch.autograd.gradcheck(torch.square, (sig2_1-sig2),
+            #                                raise_exception=True,eps=1e-4, atol=1e-4)
+            # print('Gradient 1-2:{}'.format(res12))
+            # print('Gradient 2-1:{}'.format(res21))
+
             distance_components['metrics.distance1-2'] = distance1_2
             distance_components['metrics.distance2-1'] = distance2_1
 
@@ -178,7 +210,32 @@ class TopologicalSignatureDistanceWC(nn.Module):
             distance_components['metrics.distance2-1'] = distance2_1
 
             distance = distance1_2 + distance2_1
+        elif self.match_edges == 'push2':
+            # L_X->Z: same as for 'symmetric'
+            # L_Z->X: pushes pairs apart that are closer together in the Z than in X,
+            # but does NOT pull pairs together that are closer in X than in Z
 
+            # L_X->Z
+            sig1 = dist_X.mul(pair_mask_X)
+            sig1_2 = dist_Z.mul(pair_mask_X)
+
+            distance1_2 = torch.square((sig1-sig1_2)).sum()
+
+            # L_Z->X
+            pair_mask_X2 = torch.ones_like(pair_mask_X) - pair_mask_X
+            sig_push = dist_Z.mul(pair_mask_X2)
+            sig_push_sum = torch.square(sig_push).sum()
+
+            # L_Z->X
+            sig2 = dist_Z.mul(pair_mask_Z)
+            sig2_1 = dist_X.mul(pair_mask_Z)
+
+            distance2_1 = 100000/sig_push_sum + torch.square(torch.clamp((sig2_1-sig2),min = 0)).sum()
+
+            distance_components['metrics.distance1-2'] = distance1_2
+            distance_components['metrics.distance2-1'] = distance2_1
+
+            distance = distance1_2 + distance2_1
         else:
             raise ValueError
 
