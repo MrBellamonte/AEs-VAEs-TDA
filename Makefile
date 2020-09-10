@@ -29,7 +29,7 @@ run_TopoAE_euler_swissroll_1:
 run_TopoAE_euler_swissroll_2:
 	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_swissroll_2
 
-run_TopoAE_euler_spheres_parallel:
+run_TopoAE_euler_parallel:
 	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_parallel_spheres
 
 run_TopoAE_euler_swissroll:

@@ -41,7 +41,7 @@ swissroll_multiseed_parallel = [ConfigGrid_TopoAE(
     )],
     uid = [''],
     method_args = [None],
-    experiment_dir='/cluster/home/schsimo/MT/output/TopoAE/SwissRoll/seed1',
+    experiment_dir='/cluster/home/schsimo/MT/output/TopoAE/SwissRoll/multiseed',
     seed = seed,
     device = 'cpu',
     num_threads=1,
