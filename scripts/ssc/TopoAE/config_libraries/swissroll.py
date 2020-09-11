@@ -46,7 +46,7 @@ swissroll_multiseed_parallel = [ConfigGrid_TopoAE(
     device = 'cpu',
     num_threads=1,
     verbose = False
-) for tlw, seed in zip(list(np.repeat([i for i in np.logspace(0,11,num=12,base = 2.0)],4)),[265,293,312,376]*12)]
+) for tlw, seed in zip(list(np.repeat([i for i in np.logspace(1,12,num=12,base = 2.0)],16)),[6,34,79,102,143,157,193,265,293,312,376,577,600,654,789,872]*12)]
 
 
 
