@@ -191,7 +191,8 @@ placeholder_config_topoae = ConfigTopoAE(
         k_step = 1,
     )],
     uid = 'uid',
-    method_args= None
+    method_args= None,
+    seed = 666666
 )
 
 

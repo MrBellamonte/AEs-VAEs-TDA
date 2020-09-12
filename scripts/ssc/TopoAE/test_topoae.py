@@ -1,5 +1,4 @@
 from scripts.ssc.TopoAE.config_libraries.swissroll import swissroll_testing
-from scripts.ssc.TopoAE.topoae_config_library import test_grid_local
 from src.models.TopoAE.train_engine import simulator_TopoAE
 
 if __name__ == "__main__":
