@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 PATH_ROOT_SWISSROLL = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/SwissRoll_pairings/'
 #PATH_ROOT_SWISSROLL = '/Users/simons/polybox/Studium/20FS/MT/plots_/test'
 
-def make_plot(data, pairings, color,name, path_root = PATH_ROOT_SWISSROLL, knn = False):
+def make_plot(data, pairings, color,name = 'noname', path_root = PATH_ROOT_SWISSROLL, knn = False):
     ax = plt.gca(projection="3d")
     ax.scatter(data[:, 0], data[:, 1], data[:, 2], c=color, s=100, cmap=plt.cm.Spectral)
 

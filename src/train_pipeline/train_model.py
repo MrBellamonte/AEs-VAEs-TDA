@@ -52,7 +52,8 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
 
     if quiet:
         # Add newlines between epochs
-        callbacks.append(NewlineCallback())
+        #callbacks.append(NewlineCallback())
+        pass
     else:
         callbacks.append(NewlineCallback())
         #callbacks.append(Progressbar(print_loss_components=True))

@@ -64,8 +64,8 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
         topo_error = topo_error / (float(batch_size)*self.k)
         loss = self.lam_r * ae_loss + self.lam_t * topo_error
         loss_components = {
-            'loss.autoencoder': self.lam_r * ae_loss,
-            'loss.topo_error': self.lam_t * topo_error
+            'loss.autoencoder': ae_loss,
+            'loss.topo_error': topo_error
         }
         loss_components.update(topo_error_components)
         loss_components.update(ae_loss_comp)
