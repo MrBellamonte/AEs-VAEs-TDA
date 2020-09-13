@@ -669,7 +669,7 @@ euler_swissroll_testing_parallel = [ConfigGrid_TopoAE(
     verbose = False
 ) for bs in np.logspace(3,9,num=2,base = 2.0)]
 
-swissroll_testing = ConfigGrid_TopoAE(
+euler_swissroll_testing = ConfigGrid_TopoAE(
     learning_rate=[1/1000],
     batch_size=[32],
     n_epochs=[5],
