@@ -1,61 +1,3 @@
-OUTBASE := /vae-tda/output
-
-
-prepare_euler:
-	module load python/3.6.0
-	module unload python/3.6.0
-	module load python/3.7.1
-	module load cmake/3.11.4
-	module load intel/15.0.0
-
-
-
-# TopoAE
-test_TopoAE_euler:
-	python -m scripts.ssc.TopoAE.euler_scripts.test_topoae_euler
-
-test_TopoAE_euler_parallel:
-	python -m scripts.ssc.TopoAE.euler_scripts.test_topoae_euler_parallel
-
-run_TopoAE_euler_spheres_1:
-	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_spheres_1
-
-run_TopoAE_euler_spheres_2:
-	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_spheres_2
-
-run_TopoAE_euler_swissroll_1:
-	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_swissroll_1
-
-run_TopoAE_euler_swissroll_2:
-	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_swissroll_2
-
-run_TopoAE_euler_parallel:
-	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_parallel_spheres
-
-run_TopoAE_euler_swissroll:
-	python -m scripts.ssc.TopoAE.euler_scripts.run_topoae_euler_parallel_swissroll
-
-
-# WitnessComplexTopoAE
-test_WCTopoAE_euler_swissroll:
-	module load python/3.6.0
-	module unload python/3.6.0
-	module load python/3.7.1
-	module load cmake/3.11.4
-	module load intel/15.0.0
-	python -m scripts.ssc.TopoAE_ext.euler_scripts.test_wctopoae_euler
-
-#Var = 'scripts.ssc.TopoAE_ext.config_libraries.swissroll.swissroll_testing'
-run_WCTopoAE_main:
-	echo $(config_grid)
-	python -m scripts.ssc.TopoAE_ext.main_topoae_ext -c $(config_grid)
-
-
-run_WCTopoAE_parallel:
-	echo $(config_grid)
-	python -m scripts.ssc.TopoAE_ext.main_topoae_ext_parallel -c $(config_grid)
-
-
 run_simulator_main:
 	python -m scripts.ssc.run_simulator_main -c $(config_grid) -m $(model)
 
@@ -69,5 +11,13 @@ build:
 test_docker: build
 	docker run --runtime=nvidia python scripts/ssc/COREL/test_simulator.py
 
-#-m scripts.ssc.COREL.test_simulator
+# deprecated but can still be used....
+run_WCTopoAE_main:
+	echo $(config_grid)
+	python -m scripts.ssc.TopoAE_ext.main_topoae_ext -c $(config_grid)
+
+
+run_WCTopoAE_parallel:
+	echo $(config_grid)
+	python -m scripts.ssc.TopoAE_ext.main_topoae_ext_parallel -c $(config_grid)
 
