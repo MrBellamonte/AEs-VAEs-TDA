@@ -26,7 +26,6 @@ ex = Experiment()
 grid = swissroll_testing
 configs = grid.configs_from_grid()
 
-print(configs)
 COLS_DF_RESULT = list(configs[0].create_id_dict().keys())+['metric', 'value']
 
 

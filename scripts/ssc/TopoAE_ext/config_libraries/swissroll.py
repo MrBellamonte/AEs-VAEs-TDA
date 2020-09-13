@@ -134,14 +134,14 @@ euler_k1_seed1 = ConfigGrid_TopoAE_ext(
 ### TEST
 swissroll_testing = ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
-    batch_size=[32],
+    batch_size=[128],
     n_epochs=[300],
     weight_decay=[0],
     early_stopping=[15],
     rec_loss_weight=[1],
-    top_loss_weight=[256],
-    match_edges = ['symmetric'],
-    k = [1],
+    top_loss_weight=[512],
+    match_edges = ['push_active','push1'],
+    k = [1,2,4,8],
     r_max = [10],
     model_class=[Autoencoder_MLP_topoae],
     model_kwargs={
@@ -165,13 +165,56 @@ swissroll_testing = ConfigGrid_TopoAE_ext(
     )],
     uid = [''],
     toposig_kwargs=[dict()],
-    method_args=[dict(n_jobs =1)],
+    method_args=[dict(n_jobs =1,online_wc = True)],
     experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/verification',
     seed = 1,
     device = 'cpu',
     num_threads=2,
     verbose = False,
 )
+
+swissroll_testing_verification = ConfigGrid_TopoAE_ext(
+    learning_rate=[1/1000],
+    batch_size=[64],
+    n_epochs=[100],
+    weight_decay=[0],
+    early_stopping=[15],
+    rec_loss_weight=[1],
+    top_loss_weight=[256],
+    match_edges = ['verification'],
+    k = [1],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [640] #2560
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 80,
+        k_step = 25,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs =1, verification = True)],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/verification',
+    seed = 1,
+    device = 'cpu',
+    num_threads=2,
+    verbose = False,
+)
+
+
 
 swissroll_testing2 = ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
@@ -192,7 +235,7 @@ swissroll_testing2 = ConfigGrid_TopoAE_ext(
     },
     dataset=[SwissRoll()],
     sampling_kwargs={
-        'n_samples': [640] #2560
+        'n_samples': [2560] #2560
     },
     eval=[ConfigEval(
         active = True,

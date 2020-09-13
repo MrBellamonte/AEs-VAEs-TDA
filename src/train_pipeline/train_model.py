@@ -1,5 +1,6 @@
 """Module to train a model with a dataset configuration."""
 import json
+import operator
 import os
 import statistics
 
@@ -39,13 +40,13 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
     test_dataset = data_test
 
     callbacks = [
-        LogTrainingLoss(_run, print_progress=quiet),
+        LogTrainingLoss(_run, print_progress=operator.not_(quiet)),
         LogDatasetLoss('validation', validation_dataset, _run,
                        method_args=config.method_args,
-                       print_progress=True, batch_size=config.batch_size,
+                       print_progress=operator.not_(quiet), batch_size=config.batch_size,
                        early_stopping=config.early_stopping, save_path=rundir,
                        device=device),
-        LogDatasetLoss('testing', test_dataset, _run,method_args = config.method_args, print_progress=True,
+        LogDatasetLoss('testing', test_dataset, _run,method_args = config.method_args, print_progress=operator.not_(quiet),
                        batch_size=config.batch_size, device=device),
     ]
 
@@ -53,7 +54,8 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
         # Add newlines between epochs
         callbacks.append(NewlineCallback())
     else:
-        callbacks.append(Progressbar(print_loss_components=True))
+        callbacks.append(NewlineCallback())
+        #callbacks.append(Progressbar(print_loss_components=True))
 
     # If we are logging this run save reconstruction images
     if rundir is not None:
@@ -69,14 +71,15 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
     marg = config.method_args
     training_loop = TrainingLoop(
         model, train_dataset, config.n_epochs, config.batch_size, config.learning_rate,
-        config.method_args,config.weight_decay,device, callbacks
+        config.method_args,config.weight_decay,device, callbacks, verbose=operator.not_(quiet)
 )
     # Run training
     epoch, run_times_epoch = training_loop()
 
     if rundir:
         # Save model state (and entire model)
-        print('Loading model checkpoint prior to evaluation...')
+        if not quiet:
+            print('Loading model checkpoint prior to evaluation...')
         state_dict = torch.load(os.path.join(rundir, 'model_state.pth'))
         model.load_state_dict(state_dict)
     model.eval()
@@ -194,4 +197,5 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
 
         result_avg = avg_array_in_dict(result)
     result_avg.update({'run_times_epoch' : statistics.mean(run_times_epoch)})
+
     return result_avg

@@ -65,6 +65,12 @@ class ConfigTopoAE_ext:
         if 'n_jobs' not in self.method_args:
             self.method_args['n_jobs'] = 1
 
+        if 'verification' not in self.method_args:
+            self.method_args['verification'] = False
+
+        if 'online_wc' not in self.method_args:
+            self.method_args['online_wc'] = False
+
     def creat_uuid(self):
 
         if self.uid == '':

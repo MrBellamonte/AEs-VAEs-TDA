@@ -35,7 +35,8 @@ def make_plot(data, pairings, color,name, path_root = PATH_ROOT_SWISSROLL, knn =
     for line in ax.zaxis.get_ticklines():
         line.set_visible(False)
     plt.show()
-    fig = ax.get_figure()
-    fig.savefig(path_root + 'plotsc_{}'.format(name) + '.pdf', dpi=200,bbox_inches = 'tight',
-    pad_inches = 0)
+    if path_root is not None:
+        fig = ax.get_figure()
+        fig.savefig(path_root + 'plotsc_{}'.format(name) + '.pdf', dpi=200,bbox_inches = 'tight',
+        pad_inches = 0)
     plt.close()

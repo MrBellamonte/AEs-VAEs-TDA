@@ -12,7 +12,7 @@ class TrainingLoop():
     """Training a model using a dataset."""
 
     def __init__(self, model, dataset, n_epochs, batch_size, learning_rate, method_args = None,
-                 weight_decay=1e-5, device='cuda', callbacks=None):
+                 weight_decay=1e-5, device='cuda', callbacks=None, verbose = False):
         """Training of a model using a dataset and the defined callbacks.
 
         Args:
@@ -31,6 +31,7 @@ class TrainingLoop():
         self.weight_decay = weight_decay
         self.device = device
         self.callbacks = callbacks if callbacks else []
+        self.verbose = verbose
 
         if method_args == None:
             self.method_args = dict(name = None)
@@ -76,7 +77,7 @@ class TrainingLoop():
         # not yet support changes in the batch dimension.
         if self.method_args['name'] == 'topoae_wc':
             print('WARNING: drop last batch if not complete!')
-            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
+            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
                                       pin_memory=True, drop_last=True)
         else:
             train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
@@ -90,8 +91,7 @@ class TrainingLoop():
 
         if self.method_args['name'] == 'topoae_wc':
 
-            dist_X_all, pair_mask_X_all = compute_wc_offline(dataset, train_loader, batch_size, self.method_args, name='Training Dataset')
-
+            dist_X_all, pair_mask_X_all = compute_wc_offline(dataset, train_loader, batch_size, self.method_args, name='Training Dataset', verfication = True)
 
             # #todo make function for this
             # dist_X_all = torch.ones((n_batches, batch_size, batch_size))
@@ -128,11 +128,14 @@ class TrainingLoop():
                     x = img.to(self.device)
                     dist_X = dist_X_all[batch, :, :].to(self.device)
                     pair_mask_X = pair_mask_X_all[batch, :, :].to(self.device)
-                    loss, loss_components = self.model(x, dist_X, pair_mask_X)
+                    if (batch == 1) and (epoch in [5,10,15,20,25,30,35,40]):
+                        l = label
+                    else:
+                        l = None
+                    loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
                 else:
                     x = img.to(self.device)
                     loss, loss_components = self.model(x.float())
-
                 # Optimize
                 optimizer.zero_grad()
                 loss.backward()
@@ -142,7 +145,8 @@ class TrainingLoop():
                 self.on_batch_end(remove_self(locals()))
             t_end = time.time()
             run_times_epoch.append((t_end-t_start))
-            print('TIME: {}'.format(t_end-t_start))
+            if self.verbose:
+                print('TIME: {}'.format(t_end-t_start))
             if self.on_epoch_end(remove_self(locals())):
                 break
         return epoch, run_times_epoch

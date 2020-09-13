@@ -1,9 +1,12 @@
+import numpy as np
+import pandas as pd
 import torch
 
 from src.topology.witness_complex import WitnessComplex
+from scripts.ssc.persistence_pairings_visualization.utils_definitions import make_plot
 
 
-def compute_wc_offline(dataset, data_loader, batch_size, method_args, name=''):
+def compute_wc_offline(dataset, data_loader, batch_size, method_args, name='', verfication = False):
     print('Compute Witness Complex Pairings {name}'.format(name=name))
 
     dist_X_all = torch.ones((len(data_loader), batch_size, batch_size))
@@ -33,6 +36,15 @@ def compute_wc_offline(dataset, data_loader, batch_size, method_args, name=''):
         kNN_mask = torch.zeros((batch_size, batch_size), device='cpu').scatter(1, indices[:, 1:(method_args['k']+1)], 1)
         dist_X_all[batch, :, :] = landmarks_dist
         pair_mask_X_all[batch, :, :] = kNN_mask
+
+        if method_args['match_edges'] == 'verification' and verfication:
+            ind_X = np.where(pair_mask_X_all[batch, :, :] == 1)
+            ind_X = np.column_stack((ind_X[0], ind_X[1]))
+
+            make_plot(img, ind_X, label,'name', path_root = None, knn = False)
+
+
+
 
     return dist_X_all, pair_mask_X_all
 

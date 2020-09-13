@@ -1,6 +1,10 @@
 """Topolologically regularized autoencoder using approximation."""
 import torch
 import torch.nn as nn
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 from torch.autograd import gradcheck
 
 from src.models.autoencoder.base import AutoencoderModel
@@ -33,7 +37,7 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
         distances = torch.norm(x_flat[:, None] - x_flat, dim=2, p=p)
         return distances
 
-    def forward(self, x, dist_X, pair_mask_X):
+    def forward(self, x, dist_X, pair_mask_X, labels = None):
         """Compute the loss of the Topologically regularized autoencoder.
 
         Args:
@@ -52,7 +56,7 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
         # Use reconstruction loss of autoencoder
         ae_loss, ae_loss_comp = self.autoencoder(x)
         latent = self.autoencoder.encode(x)
-        topo_error, topo_error_components = self.topo_sig(latent,self.latent_norm, dist_X, pair_mask_X)
+        topo_error, topo_error_components = self.topo_sig(latent,self.latent_norm, dist_X, pair_mask_X, labels = labels)
 
 
         # normalize topo_error according to batch_size
@@ -147,7 +151,7 @@ class TopologicalSignatureDistanceWC(nn.Module):
         #return (mask_X.size(0)*self.k-torch.clamp((mask_X - mask_Z),0).sum()/2)/mask_X.size(0)*self.k
         #return ((mask_Z.size(0)*self.k)-(mask_diff != 0).sum()*0.5)/(mask_Z.size(0)*self.k)
 
-    def forward(self, latent,latent_norm, dist_X, pair_mask_X):
+    def forward(self, latent,latent_norm, dist_X, pair_mask_X, labels = None):
         """Return topological distance of two pairwise distance matrices.
 
         Args:
@@ -210,10 +214,44 @@ class TopologicalSignatureDistanceWC(nn.Module):
             distance_components['metrics.distance2-1'] = distance2_1
 
             distance = distance1_2 + distance2_1
+        elif self.match_edges == 'push_active':
+            # L_X->Z: same as for 'symmetric'
+            # L_Z->X: pushes pairs apart that are closer together in the Z than in X,
+            # but does NOT pull pairs together that are closer in X than in Z
+            MU_PUSH = 1.5
+            # L_X->Z
+            sig1 = dist_X.mul(pair_mask_X)
+            sig1_2 = dist_Z.mul(pair_mask_X)
+
+            distance1_2 = torch.square((sig1-sig1_2)).sum()
+
+            # L_Z->X
+            sig2 = dist_Z.mul(pair_mask_Z)
+            sig2_1 = dist_X.mul(pair_mask_Z)
+
+            # L_Z->X
+            pairs_to_push = torch.clamp(pair_mask_Z - pair_mask_X, min = 0)
+
+            distance2_1 = torch.square(torch.clamp((sig2_1-sig2),min = 0)).sum()
+
+            dist_X_ref = dist_X.detach().clone()
+            dist_X_ref = MU_PUSH*dist_X_ref
+
+            sig2 = dist_Z.mul(pairs_to_push)
+            sig2_ref = dist_X_ref.mul(pairs_to_push)
+
+            distance_push = torch.square((sig2_ref-sig2)).sum()
+            distance_components['metrics.distance1-2'] = distance1_2
+            distance_components['metrics.distance2-1'] = distance2_1
+            distance_components['metrics.distance_push'] = distance_push
+
+            distance = distance1_2 + distance2_1 + distance_push
+
         elif self.match_edges == 'push2':
             # L_X->Z: same as for 'symmetric'
             # L_Z->X: pushes pairs apart that are closer together in the Z than in X,
             # but does NOT pull pairs together that are closer in X than in Z
+            #todo: push apart actively the pairs that appear in Z but not in X
 
             # L_X->Z
             sig1 = dist_X.mul(pair_mask_X)
@@ -236,6 +274,68 @@ class TopologicalSignatureDistanceWC(nn.Module):
             distance_components['metrics.distance2-1'] = distance2_1
 
             distance = distance1_2 + distance2_1
+        elif 'verification':
+            # L_X->Z
+            sig1 = dist_X.mul(pair_mask_X)
+            sig1_2 = dist_Z.mul(pair_mask_X)
+
+            distance1_2 = torch.square((sig1-sig1_2)).sum()
+
+            # L_Z->X
+            sig2 = dist_Z.mul(pair_mask_Z)
+            sig2_1 = dist_X.mul(pair_mask_Z)
+
+            distance2_1 = torch.square((sig2_1-sig2)).sum()
+
+            distance_components['metrics.distance1-2'] = distance1_2
+            distance_components['metrics.distance2-1'] = distance2_1
+
+            distance = distance1_2 + distance2_1
+
+            # reformat pairs
+            ind_Z = np.where(pair_mask_Z == 1)
+            ind_Z = np.column_stack((ind_Z[0], ind_Z[1]))
+
+            ind_X = np.where(pair_mask_X == 1)
+            ind_X = np.column_stack((ind_X[0], ind_X[1]))
+
+            lanten_np = latent.detach().numpy()
+            if labels is None:
+                # data = pd.DataFrame({'x': lanten_np[:,0], 'y': lanten_np[:,1]})
+                # sns.scatterplot('x', 'y', data=data)
+                pass
+            else:
+                data = pd.DataFrame({'x': lanten_np[:, 0], 'y': lanten_np[:, 1], 'label': labels})
+
+
+
+                for pair in ind_Z:
+                    plt.plot(lanten_np[pair, 0], lanten_np[pair, 1], color='green',zorder = 4)
+                for pair in ind_X:
+                    plt.plot(lanten_np[pair, 0], lanten_np[pair, 1], color='blue',zorder = 3)
+                sns.scatterplot('x', 'y', hue='label', data=data, palette=sns.color_palette('Spectral', len(np.unique(labels))), zorder = 10, legend = None)
+                sns.despine(left=True, bottom=True)
+                plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False,
+                                left=False)
+
+                plt.show()
+                plt.close()
+
+            # if path_to_save != None:
+            #     fig = sns_plot.get_figure()
+            #     fig.savefig(path_to_save)
+
+
+
+        # create plot and saves
+
+
+
+
+
+
+
+
         else:
             raise ValueError
 

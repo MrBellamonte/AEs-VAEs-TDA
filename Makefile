@@ -56,6 +56,13 @@ run_WCTopoAE_parallel:
 	python -m scripts.ssc.TopoAE_ext.main_topoae_ext_parallel -c $(config_grid)
 
 
+run_simulator_main:
+	python -m scripts.ssc.run_simulator_main -c $(config_grid) -m $(model)
+
+run_simulator_main_parallel:
+	python -m scripts.ssc.run_simulator_main_parallel -c $(config_grid) -m $(model) -n $(n_jobs)
+
+
 build:
 	docker build -t vae-tda	.
 

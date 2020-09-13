@@ -109,7 +109,7 @@ class LogDatasetLoss(Callback):
         # incompatible with the surrogate approach as it assumes a constant
         # batch size.
         self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
-                                      drop_last=True, pin_memory=True, shuffle=True)
+                                      drop_last=True, pin_memory=True, shuffle=False)
         self.run = run
         self.print_progress = print_progress
         self.early_stopping = early_stopping
@@ -200,20 +200,23 @@ class LogDatasetLoss(Callback):
     def on_epoch_end(self, model, epoch, **kwargs):
         """Score evaluation metrics at end of epoch."""
         losses = self._compute_average_losses(model)
-        print(self._progress_string(epoch, losses))
+        if self.print_progress:
+            print(self._progress_string(epoch, losses))
         for key, value in losses.items():
             self.run.log_scalar(
                 f'{self.prefix}.{key}',
                 value,
                 self.iterations
             )
-        print(losses)
+        if self.print_progress:
+            print(losses)
         if self.early_stopping is not None:
             if losses['loss'] < self.best_loss:
                 self.best_loss = losses['loss']
                 if self.save_path is not None:
                     save_path = os.path.join(self.save_path, 'model_state.pth')
-                    print('Saving model to', save_path)
+                    if self.print_progress:
+                        print('Saving model to', save_path)
                     torch.save(
                         model.state_dict(),
                         save_path
