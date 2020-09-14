@@ -4,6 +4,20 @@ run_simulator_main:
 run_simulator_main_parallel:
 	python -m scripts.ssc.run_simulator_main_parallel -c $(config_grid) -m $(model) -n $(n_jobs)
 
+test_euler_topoae:
+	python -m scripts.ssc.run_simulator_main -c 'euler_swissroll_testing' -m 'topoae'
+
+test_euler_topoae_parallel:
+	python -m scripts.ssc.run_simulator_main_parallel -c 'euler_swissroll_testing_parallel' -m 'topoae' -n 2
+
+test_euler_topoae_ext:
+	python -m scripts.ssc.run_simulator_main -c 'swissroll_testing_euler' -m 'topoae_ext'
+
+test_euler_topoae_ext_parllel:
+	python -m scripts.ssc.run_simulator_main_parallel -c 'swissroll_testing_euler_parallel' -m 'topoae_ext' -n 2
+
+
+
 
 build:
 	docker build -t vae-tda	.
