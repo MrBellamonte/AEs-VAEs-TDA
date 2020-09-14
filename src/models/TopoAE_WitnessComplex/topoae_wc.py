@@ -181,7 +181,7 @@ class TopologicalSignatureDistanceWC(nn.Module):
             distance2_1 = torch.square((sig2_1-sig2)).sum()
 
 
-
+            # # CHECK GRAD CALCULATION
             # res12 = torch.autograd.gradcheck(torch.square, (sig2-sig2_1),
             #                                raise_exception=True,eps=1e-4, atol=1e-4)
             # res21 = torch.autograd.gradcheck(torch.square, (sig2_1-sig2),

@@ -247,22 +247,22 @@ class MeasureCalculator():
         C = n*sum([abs(2*j-n-1)/j for j in range(1, k+1)])
         return mrre_ZX/C, mrre_XZ/C
 
-        # Get Metric K-min and K-max
 
+    # Get Metric K-min and K-max
     def Lipschitz(self, k=5):
 
         X_neighbourhood, _ = self.get_X_neighbours_and_ranks(k)
         Z_neighbourhood, _ = self.get_Z_neighbours_and_ranks(k)
 
-        disX = self.pairwise_X[:, self.neighbours_X][range(self.pairwise_X.shape[0]),
+        disX = self.pairwise_X[:, X_neighbourhood][range(self.pairwise_X.shape[0]),
                range(self.pairwise_X.shape[0]), :]
-        disZ = self.pairwise_Z[:, self.neighbours_X][range(self.pairwise_Z.shape[0]),
+        disZ = self.pairwise_Z[:, Z_neighbourhood][range(self.pairwise_Z.shape[0]),
                range(self.pairwise_X.shape[0]), :]
 
         K = np.maximum((disX/disZ), (disZ/disX))
 
-        disX_norm = (disX - disX.min())/(disX.max() - disX.min()) + 0.001
-        disZ_norm = (disZ-disZ.min())/(disZ.max()-disZ.min()) + 0.001
+        disX_norm = disX/disX.max()
+        disZ_norm = disZ/disZ.max()
 
         K_norm = np.maximum((disX_norm/disZ_norm), (disZ_norm/disX_norm))
 
@@ -276,15 +276,15 @@ class MeasureCalculator():
     @measures.register(False)
     def K_avg(self):
         return self.K.mean()
-    # @measures.register(False)
-    # def K_norm_min(self):
-    #     return self.K_norm.min()
-    # @measures.register(False)
-    # def K_norm_max(self):
-    #     return self.K_norm.max()
-    # @measures.register(False)
-    # def K_norm_avg(self):
-    #     return self.K_norm.mean()
+    @measures.register(False)
+    def K_norm_min(self):
+        return self.K_norm.min()
+    @measures.register(False)
+    def K_norm_max(self):
+        return self.K_norm.max()
+    @measures.register(False)
+    def K_norm_avg(self):
+        return self.K_norm.mean()
 
     @measures.register(False)
     def density_global(self, sigma=0.1):
