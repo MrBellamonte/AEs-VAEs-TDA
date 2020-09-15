@@ -7,6 +7,45 @@ from src.evaluation.config import ConfigEval
 from src.models.TopoAE.config import ConfigGrid_TopoAE, ConfigTopoAE
 from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
+#### SWISSROLL EVAL-VERIFICATION
+swissroll_evalver_parallel = [ConfigGrid_TopoAE(
+    learning_rate=[1/1000],
+    batch_size=random.sample([int(i) for i in np.logspace(3,9,num=7,base = 2.0)], 7),
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[15],
+    rec_loss_weight=[1],
+    top_loss_weight=[tlw],
+    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 10,
+        k_max = 30,
+        k_step = 5,
+    )],
+    uid = [''],
+    method_args = [None],
+    experiment_dir='/cluster/home/schsimo/MT/output/TopoAE/SwissRoll/eval_verification',
+    seed = seed,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False
+) for tlw, seed in zip(list(np.repeat([i for i in np.logspace(1,13,num=13,base = 2.0)],2)),[6,102]*13)]
+
 
 ### SWISSROLL - MULTISEED (DO NOT CHANGE!)
 swissroll_multiseed_parallel_batch1 = [ConfigGrid_TopoAE(
@@ -358,8 +397,8 @@ swissroll_asymmetric_push = [ConfigGrid_TopoAE(
 ### TEST
 swissroll_testing = ConfigGrid_TopoAE(
     learning_rate=[1/1000],
-    batch_size=[256],
-    n_epochs=[1000],
+    batch_size=[128],
+    n_epochs=[5],
     weight_decay=[0],
     early_stopping=[20],
     rec_loss_weight=[1],
@@ -391,7 +430,7 @@ swissroll_testing = ConfigGrid_TopoAE(
     seed = 1,
     device = 'cpu',
     num_threads=1,
-    verbose = False
+    verbose = True
 )
 
 

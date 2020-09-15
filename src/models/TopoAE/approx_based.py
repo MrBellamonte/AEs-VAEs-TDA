@@ -161,7 +161,7 @@ class TopologicalSignatureDistance(nn.Module):
     def _count_matching_pairs(pairs1, pairs2):
         def to_set(array):
             return set(tuple(elements) for elements in array)
-        return float(len(to_set(pairs1).intersection(to_set(pairs2))))
+        return float(float(len(to_set(pairs1).intersection(to_set(pairs2))))/float(len(to_set(pairs1))))
 
     @staticmethod
     def _get_pairdiff(pairs_base, pairs_sub):

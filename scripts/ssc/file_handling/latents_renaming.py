@@ -13,6 +13,7 @@ if __name__ == "__main__":
     path = path_topoae_swissroll_multiseed
     path_to_save = path_to_save_topoae_swissroll_multiseed
     print('START!')
+    i = 0
     for dirpath, dirnames, filenames in os.walk(path):
 
         for filename in [f for f in filenames if f.endswith("rain_latent_visualization.pdf")]:
@@ -37,6 +38,10 @@ if __name__ == "__main__":
             os.chdir(dest_dir)
 
             print('Next one...')
+            i += 1
+
+
+    print('Total: {}'.format(i))
 
 
 
