@@ -47,6 +47,44 @@ seed_comparison1 = [ConfigGrid_TopoAE(
     verbose = False
 ) for seed in [102,312,600,577]]
 
+seed_comparison2 = [ConfigGrid_TopoAE(
+    learning_rate=[1/1000],
+    batch_size=[256],
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[15],
+    rec_loss_weight=[1],
+    top_loss_weight=[4096],
+    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = online_vis,
+        k_min = 10,
+        k_max = 30,
+        k_step = 5,
+    )],
+    uid = [''],
+    method_args = [None],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE/SwissRoll/seed_comparison2',
+    seed = 102,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False
+) for online_vis in [True, True, False, False]]
+
 seed_comparison1_euler_torchold = [ConfigGrid_TopoAE(
     learning_rate=[1/1000],
     batch_size=[256],
@@ -128,6 +166,45 @@ seed_comparison1_euler_torchnew = [ConfigGrid_TopoAE(
 
 
 #### SWISSROLL EVAL-VERIFICATION
+swissroll_evalver_parallel2 = [ConfigGrid_TopoAE(
+    learning_rate=[1/1000],
+    batch_size=random.sample([int(i) for i in np.logspace(7,9,num=7,base = 2.0)], 3),
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[15],
+    rec_loss_weight=[1],
+    top_loss_weight=[tlw],
+    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = True,
+        k_min = 10,
+        k_max = 30,
+        k_step = 5,
+    )],
+    uid = [''],
+    method_args = [None],
+    experiment_dir='/cluster/home/schsimo/MT/output/TopoAE/SwissRoll/eval_verification2',
+    seed = seed,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False
+) for tlw, seed in zip(list(np.repeat([i for i in np.logspace(10,13,num=4,base = 2.0)],2)),[6,102]*4)]
+
+
 swissroll_evalver_parallel = [ConfigGrid_TopoAE(
     learning_rate=[1/1000],
     batch_size=random.sample([int(i) for i in np.logspace(3,9,num=7,base = 2.0)], 7),
