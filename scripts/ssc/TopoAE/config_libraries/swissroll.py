@@ -168,7 +168,7 @@ seed_comparison1_euler_torchnew = [ConfigGrid_TopoAE(
 #### SWISSROLL EVAL-VERIFICATION
 swissroll_evalver_parallel2 = [ConfigGrid_TopoAE(
     learning_rate=[1/1000],
-    batch_size=random.sample([int(i) for i in np.logspace(7,9,num=7,base = 2.0)], 3),
+    batch_size=random.sample([int(i) for i in np.logspace(7,9,num=3,base = 2.0)], 3),
     n_epochs=[1000],
     weight_decay=[0],
     early_stopping=[15],
