@@ -16,7 +16,7 @@ test_euler_topoae_parallel:
 test_euler_topoae_ext:
 	python -m scripts.ssc.run_simulator_main -c 'swissroll.swissroll_testing_euler' -m 'topoae_ext'
 
-test_euler_topoae_ext_parllel:
+test_euler_topoae_ext_parallel:
 	python -m scripts.ssc.run_simulator_main_parallel -c 'swissroll.swissroll_testing_euler_parallel' -m 'topoae_ext' -n 2
 
 
