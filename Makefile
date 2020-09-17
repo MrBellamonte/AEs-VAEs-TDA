@@ -19,8 +19,13 @@ test_euler_topoae_ext:
 test_euler_topoae_ext_parallel:
 	python -m scripts.ssc.run_simulator_main_parallel -c 'swissroll.swissroll_testing_euler_parallel' -m 'topoae_ext' -n 2
 
-test_euler:
+test_euler_topoae:
 	bsub -W 0:10 -R "rusage[mem=1536]" -oo /cluster/home/schsimo/MT/output/test 'make test_euler_topoae'
+	bsub -n 2 -W 0:10 -R "rusage[mem=1536]" -oo /cluster/home/schsimo/MT/output/test 'make test_euler_topoae_parallel'
+
+test_euler_topoae_ext:
+	bsub -W 0:10 -R "rusage[mem=1536]" -oo /cluster/home/schsimo/MT/output/test 'make test_euler_topoae_ext'
+	bsub -n 2 -W 0:10 -R "rusage[mem=1536]" -oo /cluster/home/schsimo/MT/output/test 'make test_euler_topoae_ext_parallel'
 
 
 
