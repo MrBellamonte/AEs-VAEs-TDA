@@ -91,7 +91,7 @@ class ConfigTopoAE_ext:
                 match_edges = self.match_edges,
                 k = str(self.k),
                 r_max = str(int(self.r_max),
-                seed = self.seed)
+                seed = str(self.seed))
             )
 
             uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
