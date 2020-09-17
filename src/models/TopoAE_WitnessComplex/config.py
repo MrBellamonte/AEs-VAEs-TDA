@@ -202,7 +202,7 @@ class ConfigGrid_TopoAE_ext:
 
         grid = dict()
 
-        for slot in (set(self.__slots__)-set(['experiment_dir', 'device', 'num_threads', 'verbose'])):
+        for slot in (set(self.__slots__)-set(['experiment_dir','seed', 'device', 'num_threads', 'verbose'])):
             grid.update({slot: getattr(self, slot)})
         tmp = list(get_keychain_value(grid))
         values = [x[1] for x in tmp]
@@ -211,8 +211,7 @@ class ConfigGrid_TopoAE_ext:
         ret = []
 
         for v in itertools.product(*values):
-
-            ret_i = {}
+            ret_i = {'seed': self.seed}
 
             for kc, kc_v in zip(key_chains, v):
                 tmp = ret_i
