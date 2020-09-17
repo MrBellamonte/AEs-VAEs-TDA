@@ -90,9 +90,9 @@ class ConfigTopoAE_ext:
                 top_loss_weight=fraction_to_string(self.top_loss_weight),
                 match_edges = self.match_edges,
                 k = str(self.k),
-                r_max = str(int(self.r_max),
+                r_max = str(int(self.r_max)),
                 seed = str(self.seed))
-            )
+            
 
             uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
                 dataset=self.dataset.__class__.__name__,
