@@ -67,7 +67,7 @@ class ConfigTopoAE_ext:
             pass
         else:
             self.method_args = dict()
-        self.method_args.upadte(dict(name = 'topoae_wc',r_max = self.r_max,k = self.k, match_edges = self.match_edges))
+        self.method_args.update(dict(name = 'topoae_wc',r_max = self.r_max,k = self.k, match_edges = self.match_edges))
 
         add_default_to_dict(self.method_args, 'n_jobs', 1)
         add_default_to_dict(self.method_args, 'verification', False)
@@ -92,7 +92,7 @@ class ConfigTopoAE_ext:
                 k = str(self.k),
                 r_max = str(int(self.r_max)),
                 seed = str(self.seed))
-            
+
 
             uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
                 dataset=self.dataset.__class__.__name__,
