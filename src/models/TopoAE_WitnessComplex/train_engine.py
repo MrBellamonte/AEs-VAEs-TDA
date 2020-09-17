@@ -59,12 +59,18 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigTopoAE_ext, experiment_dir
         df = pd.DataFrame(columns=COLS_DF_RESULT)
         df.to_csv(os.path.join(experiment_root, 'eval_metrics_all.csv'))
 
+    # Set data sampling seed
+    if 'seed' in config.sampling_kwargs:
+        seed_sampling = config.sampling_kwargs['seed']
+    else:
+        seed_sampling = _seed
+
     # Sample data
     dataset = config.dataset
-    X_train, y_train = dataset.sample(**config.sampling_kwargs, seed=_seed, train=True)
+    X_train, y_train = dataset.sample(**config.sampling_kwargs, seed=seed_sampling, train=True)
     dataset_train = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
 
-    X_test, y_test = dataset.sample(**config.sampling_kwargs, seed=_seed, train=False)
+    X_test, y_test = dataset.sample(**config.sampling_kwargs, seed=seed_sampling, train=False)
     dataset_test = TensorDataset(torch.Tensor(X_test), torch.Tensor(y_test))
 
     torch.manual_seed(_seed)

@@ -98,31 +98,39 @@ Y_MAPPING2 = {
 
 mapping = [FANCY_recloss, FANCY_toploss, FANCY_test_KL_1, FANCY_test_KL_01, FANCY_test_KL_001,
            FANCY_test_KL_0001, FANCY_test_mrre, FANCY_test_rmse, FANCY_test_cont, FANCY_test_trust]
-mapping2 = mapping+[FANCY_test_KL_00001, FANCY_test_KL_000001, FANCY_test_KL_0000001, FANCY_K5X_min,
+mapping2 = mapping+[FANY_pairs, FANCY_test_KL_00001, FANCY_test_KL_000001, FANCY_test_KL_0000001, FANCY_K5X_min,
                     FANCY_K5X_max, FANCY_K5X_avg, FANCY_K5X_min_norm, FANCY_K5X_max_norm,
                     FANCY_K5X_avg_norm, FANCY_K5Z_min, FANCY_K5Z_max, FANCY_K5Z_avg,
                     FANCY_K5Z_min_norm, FANCY_K5Z_max_norm, FANCY_K5Z_avg_norm, FANCY_LRMSE_5X,
                     FANCY_LRMSE_5Z,
                     FANCY_LRMSE_5X_norm,
-                    FANCY_LRMSE_5Z_norm, FANY_pairs]
+                    FANCY_LRMSE_5Z_norm]
 if __name__ == "__main__":
     df_path = '/Users/simons/polybox/Studium/20FS/MT/sync/euler_sync/schsimo/MT/output/TopoAE/SwissRoll/multiseed/eval_metrics_all.csv'
     df_path2 = '/Users/simons/polybox/Studium/20FS/MT/sync/euler_sync/schsimo/MT/output/TopoAE/SwissRoll/eval_verification/eval_metrics_all.csv'
     path_to_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE/SwissRoll/multiseed'
-    df = pd.read_csv(df_path2)
 
-    # uid_exceptional = ['SwissRoll-n_samples2560-Autoencoder_MLP_topoae-32-32-lr1_1000-bs256-nep1000-rlw1-tlw4096-seed102-7f02781d']
+
+    uid_exceptional = ['SwissRoll-n_samples2560-Autoencoder_MLP_topoae-32-32-lr1_1000-bs256-nep1000-rlw1-tlw4096-seed102-7f02781d']
 
     uid_exceptional2 = [
         'SwissRoll-n_samples2560-Autoencoder_MLP_topoae-32-32-lr1_1000-bs256-nep1000-rlw1-tlw4096-seed102-4ce6955a',
         'SwissRoll-n_samples2560-Autoencoder_MLP_topoae-32-32-lr1_1000-bs256-nep1000-rlw1-tlw8192-seed102-3f14a4fb'
     ]
 
-    new = True
+
+
+    new = False
 
     if new:
         mapping = mapping2
         Y_MAPPING = Y_MAPPING2
+        df = pd.read_csv(df_path2)
+        name2 = 'metric_comparison2'
+    else:
+        uid_exceptional2 = uid_exceptional
+        df = pd.read_csv(df_path)
+        name2 = 'metric_comparison1'
 
     normalization = False
     standardize = True
@@ -162,8 +170,8 @@ if __name__ == "__main__":
     df['cat'] = 0
     df.loc[df['uid'].isin(uid_exceptional2), 'cat'] = 1
     fig, ax = plt.subplots()
-    sns.scatterplot(data=df[df['cat'] != 1], x="x", y="value", color='black', ax = ax)
-    sns.scatterplot(data=df[df['cat'] == 1], x="x", y="value", color='red',ax = ax)
+    sns.scatterplot(data=df[df['cat'] != 1], x="x", y="value", color='black', ax = ax, label = 'rest')
+    sns.scatterplot(data=df[df['cat'] == 1], x="x", y="value", color='red',ax = ax, label = 'good example')
     plt.xticks(np.arange(1, (len(selection)+1)), selection,rotation='vertical')
     plt.ylabel(y_label)
     plt.xlabel('')
@@ -174,4 +182,4 @@ if __name__ == "__main__":
     if standardize:
         name = 'standardized'
 
-    plt.savefig(os.path.join(path_to_save, '{}_metric_comparison2.pdf'.format(name)), dpi=200)
+    fig.savefig(os.path.join(path_to_save, '{}_{}.pdf'.format(name,name2)), dpi=200)
