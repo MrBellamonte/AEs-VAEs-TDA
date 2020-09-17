@@ -89,6 +89,9 @@ class TrainingLoop():
             weight_decay=self.weight_decay)
 
 
+
+
+
         if self.method_args['name'] == 'topoae_wc':
 
             dist_X_all, pair_mask_X_all = compute_wc_offline(dataset, train_loader, batch_size, self.method_args, name='Training Dataset', verfication = True)

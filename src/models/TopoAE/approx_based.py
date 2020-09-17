@@ -230,6 +230,7 @@ class TopologicalSignatureDistance(nn.Module):
             distance = distance1_2 + distance2_1
 
         elif self.match_edges == 'asymmetric':
+            # Only preserve distances from X->Z
             sig1 = self._select_distances_from_pairs(distances1, pairs1)
             # Selected pairs of 1 on distances of 2 and vice versa
             sig1_2 = self._select_distances_from_pairs(distances2, pairs1)
@@ -238,7 +239,7 @@ class TopologicalSignatureDistance(nn.Module):
             distance1_2 = self.sig_error(sig1, sig1_2)
 
             distance_components['metrics.distance1-2'] = distance1_2
-            distance_components['metrics.distance2-1'] = distance1_2 *0
+            distance_components['metrics.distance2-1'] = 0
 
             distance = distance1_2
 

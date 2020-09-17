@@ -12,7 +12,7 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 from src.models.loss_collection import Loss
 from src.utils.config_utils import (
     get_keychain_value, fraction_to_string, get_kwargs,
-    dictionary_to_string)
+    dictionary_to_string, add_default_to_dict)
 
 admissible_model_classes_TopoAE = [Autoencoder_MLP_topoae.__name__]
 
@@ -56,7 +56,13 @@ class ConfigTopoAE:
     def __post_init__(self):
         self.check()
         self.uid = self.creat_uuid()
-        self.method_args = dict(name = 'topoae')
+        if isinstance(self.method_args, dict):
+            pass
+        else:
+            self.method_args = dict()
+        add_default_to_dict(self.method_args, 'name', 'topoae')
+        add_default_to_dict(self.method_args, 'LLE_pretrain', False)
+
 
 
     def creat_uuid(self):

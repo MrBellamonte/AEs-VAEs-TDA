@@ -63,3 +63,10 @@ def dictionary_to_string(dictionary: dict):
         else:
             ret_str += '-' + str(key) + str(value)
     return ret_str
+
+
+def add_default_to_dict(dict, key, default = False):
+    if key in dict:
+        pass
+    else:
+        dict[key] = default

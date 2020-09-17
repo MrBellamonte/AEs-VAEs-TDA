@@ -8,6 +8,46 @@ from src.models.TopoAE.config import ConfigGrid_TopoAE, ConfigTopoAE
 from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
 
+### SWISSROLL - MULTISEED ASYMMETRIC-II
+swissroll_multiseed_asymmetric2_parallel_batch1 = [ConfigGrid_TopoAE(
+    learning_rate=[1/1000],
+    batch_size=random.sample([int(i) for i in np.logspace(3,9,num=7,base = 2.0)], 7),
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[10],
+    rec_loss_weight=[1],
+    top_loss_weight=[tlw],
+    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 10,
+        k_max = 30,
+        k_step = 5,
+    )],
+    uid = [''],
+    method_args = [None],
+    experiment_dir='/cluster/home/schsimo/MT/output/TopoAE/SwissRoll/multiseed_asymmetric',
+    seed = seed,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False
+) for tlw, seed in zip(list(np.repeat([i for i in np.logspace(6,13,num=8,base = 2.0)],4)),[6,34,79,102]*8)]
+
+
 #### SWISSROLL SEED COMPARISON 102/312/600/577
 seed_comparison1 = [ConfigGrid_TopoAE(
     learning_rate=[1/1000],
@@ -160,9 +200,6 @@ seed_comparison1_euler_torchnew = [ConfigGrid_TopoAE(
     num_threads=1,
     verbose = False
 ) for seed in [102,312,600,577]]
-
-
-
 
 
 #### SWISSROLL EVAL-VERIFICATION
@@ -744,4 +781,43 @@ euler_swissroll_testing = ConfigGrid_TopoAE(
     device = 'cpu',
     num_threads=1,
     verbose = False
+)
+
+
+swissroll_lle = ConfigGrid_TopoAE(
+    learning_rate=[1/1000],
+    batch_size=[256],
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[10],
+    rec_loss_weight=[1],
+    top_loss_weight=[4096],
+    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = True,
+        k_min = 5,
+        k_max = 30,
+        k_step = 25,
+    )],
+    uid = [''],
+    method_args=[dict(LLE_init = True)],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE/SwissRoll/lle_init',
+    seed = 1,
+    device = 'cpu',
+    num_threads=1,
+    verbose = True
 )
