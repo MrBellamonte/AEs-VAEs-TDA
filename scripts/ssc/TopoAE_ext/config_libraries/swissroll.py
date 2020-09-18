@@ -210,7 +210,7 @@ k1_multiseed = [ConfigGrid_TopoAE_ext(
     uid = [''],
     toposig_kwargs=[dict()],
     method_args=[dict(n_jobs = 1)],
-    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/kn_multiseed_new',
+    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/kn_multiseed',
     seed = seed,
     device = 'cpu',
     num_threads=1,
