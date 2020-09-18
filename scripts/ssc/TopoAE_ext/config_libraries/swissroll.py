@@ -176,7 +176,7 @@ k1_multiseed4 = [ConfigGrid_TopoAE_ext(
 
 ### SWISSROLL KN-MULTISEED
 
-k1_multiseed = [ConfigGrid_TopoAE_ext(
+kn_multiseed = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
     batch_size=random.sample([int(i) for i in np.logspace(3,9,num=7,base = 2.0)], 7),
     n_epochs=[1000],
