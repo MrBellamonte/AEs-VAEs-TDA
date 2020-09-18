@@ -42,12 +42,12 @@ k1_multiseed = [ConfigGrid_TopoAE_ext(
     uid = [''],
     toposig_kwargs=[dict()],
     method_args=[dict(n_jobs = 1)],
-    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/k1_multiseed',
-    seed = 1,
+    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/k1_multiseed_new',
+    seed = seed,
     device = 'cpu',
     num_threads=1,
     verbose = False,
-)  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],7)),[8,39,91,102,104,309,567]*5)]
+)  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],9)),[8,12,31,39,91,102,104,309,567]*5)]
 
 k1_multiseed2 = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
@@ -83,12 +83,12 @@ k1_multiseed2 = [ConfigGrid_TopoAE_ext(
     uid = [''],
     toposig_kwargs=[dict()],
     method_args=[dict(n_jobs = 1)],
-    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/k1_multiseed',
-    seed = 1,
+    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/k1_multiseed_new',
+    seed = seed,
     device = 'cpu',
     num_threads=1,
     verbose = False,
-)  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],7)),[643,666,678,789,809,1000,1094]*5)]
+)  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],9)),[643,666,678,789,809,1000,1094,1333,1600]*5)]
 
 
 
