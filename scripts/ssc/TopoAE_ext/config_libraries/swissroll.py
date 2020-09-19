@@ -175,7 +175,6 @@ k1_multiseed4 = [ConfigGrid_TopoAE_ext(
 
 
 ### SWISSROLL KN-MULTISEED
-
 kn_multiseed = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
     batch_size=random.sample([int(i) for i in np.logspace(3,9,num=7,base = 2.0)], 7),
@@ -216,6 +215,131 @@ kn_multiseed = [ConfigGrid_TopoAE_ext(
     num_threads=1,
     verbose = False,
 )  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],9)),[6019,6023,6187,6199,6203,6205,6207,6213,6271]*5)]
+
+
+kn_multiseed_new = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/1000],
+    batch_size=random.sample([int(i) for i in np.logspace(3,9,num=7,base = 2.0)], 7),
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[30],
+    rec_loss_weight=[1],
+    top_loss_weight=[tlw],
+    match_edges = ['symmetric'],
+    k = [1,2,4,8],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560] #2560
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 15,
+        k_step = 5,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs = 1)],
+    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/kn_multiseed_new',
+    seed = seed,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False,
+)  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],9)),[11,23,44,65,88,102,103,200,6199]*5)]
+
+
+kn_multiseed_new2 = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/1000],
+    batch_size=random.sample([int(i) for i in np.logspace(3,9,num=7,base = 2.0)], 7),
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[30],
+    rec_loss_weight=[1],
+    top_loss_weight=[tlw],
+    match_edges = ['symmetric'],
+    k = [1,2,4,8],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560] #2560
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 15,
+        k_step = 5,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs = 1)],
+    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/kn_multiseed_new',
+    seed = seed,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False,
+)  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],9)),[232,247,297,331,382,354,375,376,346]*5)]
+
+kn_multiseed_new3 = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/1000],
+    batch_size=random.sample([int(i) for i in np.logspace(3,9,num=7,base = 2.0)], 7),
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[30],
+    rec_loss_weight=[1],
+    top_loss_weight=[tlw],
+    match_edges = ['symmetric'],
+    k = [1,2,4,8],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560] #2560
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 15,
+        k_step = 5,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs = 1)],
+    experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/kn_multiseed_new',
+    seed = seed,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False,
+)  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],9)),[468,480,427,437,523,501,503,510,608]*5)]
 
 ### SWISSROLL SEED 102
 k1seed102 = [ConfigGrid_TopoAE_ext(

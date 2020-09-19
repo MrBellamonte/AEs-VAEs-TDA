@@ -4,14 +4,20 @@ import shutil
 
 if __name__ == "__main__":
 
-    path_wctopoae_swissroll_push_kns1 = '/Users/simons/polybox/Studium/20FS/MT/sync/euler_sync/schsimo/MT/output/WCTopoAE/SwissRoll/push1/kn_seed1'
+    path_wctopoae_swissroll_push_kns1 = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WCTopoAE/SwissRoll/push1/kn_seed1'
     path_to_save_wctopoae_swissroll_push_kns1 = '/Users/simons/polybox/Studium/20FS/MT/plot_selected/WCTopoAE/SwissRoll/push1/kn_seed1/latents'
 
-    path_topoae_swissroll_multiseed = '/Users/simons/polybox/Studium/20FS/MT/sync/euler_sync/schsimo/MT/output/TopoAE/SwissRoll/multiseed'
+    path_topoae_swissroll_multiseed = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/TopoAE/SwissRoll/multiseed'
     path_to_save_topoae_swissroll_multiseed = '/Users/simons/polybox/Studium/20FS/MT/plot_selected/TopoAE_symmetric/SwissRoll/multiseed/latents'
 
-    path = path_topoae_swissroll_multiseed
-    path_to_save = path_to_save_topoae_swissroll_multiseed
+    path_topoaewc_swissroll_multiseed = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WCTopoAE/SwissRoll/k1_multiseed_new'
+    path_to_save_topoaewc_swissroll_multiseed = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/k1multiseed/latents'
+
+    path_topoaewc_swissroll_kn_multiseed ='/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WCTopoAE/SwissRoll/kn_multiseed'
+    path_to_save_topoaewc_swissroll_kn_multiseed = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/knmultiseed/latents'
+
+    path = path_topoaewc_swissroll_kn_multiseed
+    path_to_save = path_to_save_topoaewc_swissroll_kn_multiseed
     print('START!')
     i = 0
     for dirpath, dirnames, filenames in os.walk(path):
