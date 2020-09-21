@@ -37,8 +37,6 @@ def plot_classes_qual(data, labels, path_to_save= None, title = None, show = Fal
 
 def plot_losses(losses, losses_std=defaultdict(lambda: None), save_file=None, pairs_axes = False):
     """Plot a dictionary with per epoch losses.
-
-
     """
     palette = sns.color_palette()
     fig, ax = plt.subplots()

@@ -13,7 +13,7 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 # grid 1 -> seeds = [1452, 1189, 1573,  959, 1946] (100 config per grid), 15 processes
 symmetric_grid1 = [ConfigGrid_TopoAE_ext(
     learning_rate=[lr],
-    batch_size=random.sample([int(i) for i in np.logspace(6,9,num=4,base = 2.0)], 5),
+    batch_size=random.sample([int(i) for i in np.logspace(6,9,num=4,base = 2.0)], 4),
     n_epochs=[1000],
     weight_decay=[1e-6],
     early_stopping=[32],
@@ -58,7 +58,7 @@ symmetric_grid1 = [ConfigGrid_TopoAE_ext(
 # grid 1 -> seeds = [1452, 1189, 1573,  959, 1946] (100 config per grid), 15 processes
 asym_grid1 = [ConfigGrid_TopoAE_ext(
     learning_rate=[lr],
-    batch_size=random.sample([int(i) for i in np.logspace(6,9,num=4,base = 2.0)], 5),
+    batch_size=random.sample([int(i) for i in np.logspace(6,9,num=4,base = 2.0)], 4),
     n_epochs=[1000],
     weight_decay=[1e-6],
     early_stopping=[32],
@@ -103,7 +103,7 @@ asym_grid1 = [ConfigGrid_TopoAE_ext(
 # grid 1 -> seeds = [1452, 1189, 1573,  959, 1946] (300 config per grid!), 15 processes
 asymapush_grid1 = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/10,1/100,1/1000],
-    batch_size=random.sample([int(i) for i in np.logspace(6,9,num=4,base = 2.0)], 5),
+    batch_size=random.sample([int(i) for i in np.logspace(6,9,num=4,base = 2.0)], 4),
     n_epochs=[1000],
     weight_decay=[1e-6],
     early_stopping=[32],
