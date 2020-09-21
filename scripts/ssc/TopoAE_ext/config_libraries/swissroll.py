@@ -172,8 +172,6 @@ k1_multiseed4 = [ConfigGrid_TopoAE_ext(
     verbose = False,
 )  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],9)),[3643,3666,3678,3789,3809,4000,4094,4333,4600]*5)]
 
-
-
 ### SWISSROLL KN-MULTISEED
 kn_multiseed = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
@@ -216,7 +214,6 @@ kn_multiseed = [ConfigGrid_TopoAE_ext(
     verbose = False,
 )  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],9)),[6019,6023,6187,6199,6203,6205,6207,6213,6271]*5)]
 
-
 kn_multiseed_new = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
     batch_size=random.sample([int(i) for i in np.logspace(3,9,num=7,base = 2.0)], 7),
@@ -257,7 +254,6 @@ kn_multiseed_new = [ConfigGrid_TopoAE_ext(
     num_threads=1,
     verbose = False,
 )  for tlw, seed in zip(list(np.repeat([i for i in np.logspace(9,13,num=5,base = 2.0)],9)),[11,23,44,65,88,102,103,200,6199]*5)]
-
 
 kn_multiseed_new2 = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
@@ -632,7 +628,6 @@ euler_kn_seed1_parallel = [ConfigGrid_TopoAE_ext(
     verbose = False,
 ) for n in [2,4,8,16]]
 
-
 euler_k1_seed1 = ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
     batch_size=[int(i) for i in np.logspace(4, 9, base=2, num=6)],
@@ -674,7 +669,130 @@ euler_k1_seed1 = ConfigGrid_TopoAE_ext(
     verbose = False,
 )
 
+####
+nonorm = ConfigGrid_TopoAE_ext(
+    learning_rate=[1/100],
+    batch_size=random.sample([16,256], 2),
+    n_epochs=[500],
+    weight_decay=[1e-2],
+    early_stopping=[20],
+    rec_loss_weight=[1],
+    top_loss_weight=[2048],
+    match_edges = ['symmetric'],
+    k = [2],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 15,
+        k_step = 5,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs = 2, normalize = False)],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm',
+    seed = 1,
+    device = 'cpu',
+    num_threads=2,
+    verbose = True,
+)
 
+
+nonorm_diffme = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/100],
+    batch_size=random.sample([256], 1),
+    n_epochs=[500],
+    weight_decay=[1e-2],
+    early_stopping=[30],
+    rec_loss_weight=[1],
+    top_loss_weight=[2048],
+    match_edges = [match],
+    k = [2],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 15,
+        k_step = 5,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs = 1, normalize = False)],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm',
+    seed = 1,
+    device = 'cpu',
+    num_threads=2,
+    verbose = True,
+) for match in ['symmetric','push','push_active']]
+
+nonorm_mupush = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/100,1/50],
+    batch_size=[128,256],
+    n_epochs=[1000],
+    weight_decay=[1e-7],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[4096,8192],
+    match_edges = ['push_active'],
+    k = [2,4,6],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 15,
+        k_step = 5,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs = 1, normalize = False, mu_push = mu_push)],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm2',
+    seed = 1,
+    device = 'cpu',
+    num_threads=2,
+    verbose = True,
+) for mu_push in [1.05,1.125,1.25,1.4]]
 
 ### TEST
 swissroll_testing = ConfigGrid_TopoAE_ext(
@@ -802,6 +920,48 @@ swissroll_testing2 = ConfigGrid_TopoAE_ext(
     verbose = False,
 )
 
+
+debug = ConfigGrid_TopoAE_ext(
+    learning_rate=[1/1000],
+    batch_size=[16],
+    n_epochs=[10],
+    weight_decay=[0],
+    early_stopping=[35],
+    rec_loss_weight=[1],
+    top_loss_weight=[384],
+    match_edges = ['push1'],
+    k = [10],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [640] #2560
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 15,
+        k_step = 5,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs = 1)],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/verification',
+    seed = 1,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False,
+)
+
 swissroll_testing_euler = ConfigGrid_TopoAE_ext(
     learning_rate=[1/1000],
     batch_size=[64],
@@ -835,7 +995,7 @@ swissroll_testing_euler = ConfigGrid_TopoAE_ext(
     )],
     uid = [''],
     toposig_kwargs=[dict()],
-    method_args=[dict(n_jobs = 1)],
+    method_args=[dict(n_jobs = 1, normalize = True)],
     experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/testing',
     seed = 1,
     device = 'cpu',
@@ -875,7 +1035,7 @@ swissroll_testing_euler_multi = ConfigGrid_TopoAE_ext(
     )],
     uid = [''],
     toposig_kwargs=[dict()],
-    method_args=[dict(n_jobs = 2)],
+    method_args=[dict(n_jobs = 2, normalize = True)],
     experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/testing',
     seed = 1,
     device = 'cpu',
@@ -917,7 +1077,7 @@ swissroll_testing_euler_parallel = [ConfigGrid_TopoAE_ext(
     )],
     uid = [''],
     toposig_kwargs=[dict()],
-    method_args=[dict(n_jobs = 1)],
+    method_args=[dict(n_jobs = 1, normalize = True)],
     experiment_dir='/cluster/home/schsimo/MT/output/WCTopoAE/SwissRoll/testing',
     seed = 1,
     device = 'cpu',

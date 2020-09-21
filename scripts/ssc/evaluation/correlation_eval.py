@@ -119,21 +119,34 @@ if __name__ == "__main__":
     ]
 
 
+    # WC-TopoAE
+    df_path3 = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WCTopoAE/SwissRoll/kn_multiseed_new/eval_metrics_all.csv'
+    uid_exceptional_3 = [
+        'SwissRoll-n_samples2560-Autoencoder_MLP_topoae-32-32-lr1_1000-bs256-nep1000-rlw1-tlw2048-mesymmetric-k1-rmax10-seed6199-1ce6aa48'
+    ]
+    path_to_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/knmultiseed'
 
     new = False
+    new2 = True
 
     if new:
         mapping = mapping2
         Y_MAPPING = Y_MAPPING2
         df = pd.read_csv(df_path2)
         name2 = 'metric_comparison2'
+    elif new2:
+        mapping = mapping2
+        Y_MAPPING = Y_MAPPING2
+        df = pd.read_csv(df_path3)
+        name2 = 'metric_comparison2'
+        uid_exceptional2 = uid_exceptional_3
     else:
         uid_exceptional2 = uid_exceptional
         df = pd.read_csv(df_path)
         name2 = 'metric_comparison1'
 
-    normalization = False
-    standardize = True
+    normalization = True
+    standardize = False
     selection = []
     for element in mapping:
         selection.append(fancy_name(element))

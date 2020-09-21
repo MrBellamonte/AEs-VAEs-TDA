@@ -16,8 +16,14 @@ if __name__ == "__main__":
     path_topoaewc_swissroll_kn_multiseed ='/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WCTopoAE/SwissRoll/kn_multiseed'
     path_to_save_topoaewc_swissroll_kn_multiseed = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/knmultiseed/latents'
 
-    path = path_topoaewc_swissroll_kn_multiseed
-    path_to_save = path_to_save_topoaewc_swissroll_kn_multiseed
+    path_topoaewc_swissroll_kn_multiseed_new = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WCTopoAE/SwissRoll/kn_multiseed_new'
+    path_to_save_topoaewc_swissroll_kn_multiseed_new = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/knmultiseed/latents_new'
+
+    path_topoaewc_vernorm = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm2'
+    path_to_save_vernorm = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm2/0ver_nonorm2_latents'
+
+    path = path_topoaewc_vernorm
+    path_to_save = path_to_save_vernorm
     print('START!')
     i = 0
     for dirpath, dirnames, filenames in os.walk(path):

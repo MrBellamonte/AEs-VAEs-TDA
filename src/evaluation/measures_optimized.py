@@ -46,7 +46,11 @@ class MeasureCalculator():
             self._neighbours_and_ranks(self.pairwise_Z, k_max)
 
         self.K_kX5, self.K_kZ5, self.K_kX_norm5, self.K_kZ_norm5, self.llrmse_X5, self.llrmse_Z5, self.llrmse_X_norm5, self.llrmse_Z_norm5 = self.Lipschitz(k = 5)
+
         self.K_kX15, self.K_kZ15, self.K_kX_norm15, self.K_kZ_norm15, self.llrmse_X15, self.llrmse_Z15, self.llrmse_X_norm15, self.llrmse_Z_norm15 = self.Lipschitz(k=15)
+
+        self.K_kX15, self.K_kZ15, self.K_kX_norm15, self.K_kZ_norm15, self.llrmse_X15, self.llrmse_Z15, self.llrmse_X_norm15, self.llrmse_Z_norm15 = self.Lipschitz(
+                k=5)
 
     @staticmethod
     def _neighbours_and_ranks(distances, k):

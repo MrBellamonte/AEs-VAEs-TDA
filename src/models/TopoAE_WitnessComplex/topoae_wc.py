@@ -26,10 +26,15 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
         self.lam_r = lam_r
         toposig_kwargs = toposig_kwargs if toposig_kwargs else {}
         self.k = toposig_kwargs['k']
+        self.normalize = toposig_kwargs['normalize']
         self.topo_sig = TopologicalSignatureDistanceWC(**toposig_kwargs)
         self.autoencoder = autoencoder
-        self.latent_norm = torch.nn.Parameter(data=torch.ones(1),
+
+        if self.normalize:
+            self.latent_norm = torch.nn.Parameter(data=torch.ones(1),
                                               requires_grad=True)
+        else:
+            self.latent_norm = 1
 
     @staticmethod
     def _compute_distance_matrix(x, p=2):
@@ -37,7 +42,7 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
         distances = torch.norm(x_flat[:, None] - x_flat, dim=2, p=p)
         return distances
 
-    def forward(self, x, dist_X, pair_mask_X, labels = None):
+    def forward(self, x, dist_X, pair_mask_X,norm_X, labels = None):
         """Compute the loss of the Topologically regularized autoencoder.
 
         Args:
@@ -49,9 +54,11 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
         """
 
         dist_X = torch.norm(x[:, None]-x, dim=2, p=2)
-        #todo check if this normlization is sensible...
-        dist_X = dist_X / dist_X.max()
 
+        if self.normalize:
+            dist_X = dist_X / norm_X
+        else:
+            pass
 
         # Use reconstruction loss of autoencoder
         ae_loss, ae_loss_comp = self.autoencoder(x)
@@ -84,7 +91,7 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
 class TopologicalSignatureDistanceWC(nn.Module):
     """Topological signature."""
 
-    def __init__(self, k, match_edges):
+    def __init__(self, k, match_edges, mu_push,normalize = True):
         """Topological signature computation.
 
         Args:
@@ -95,6 +102,7 @@ class TopologicalSignatureDistanceWC(nn.Module):
         super().__init__()
         self.k = k
         self.match_edges = match_edges
+        self.mu_push = mu_push
 
 
 
@@ -125,14 +133,6 @@ class TopologicalSignatureDistanceWC(nn.Module):
         :param mask_Z:
         :return:
         """
-        #mask_diff = mask_Z-mask_X
-        # print(mask_Z)
-        # print('-----')
-        # print(mask_X)
-
-        tot_pairings = mask_X.sum()
-        missed_pairings = ((mask_X - mask_Z)==1).sum()
-
         mask_X1 = mask_X.bool()
         mask_X2 = mask_X.t().bool()
         mask_Xtot = mask_X1 + mask_X2
@@ -145,11 +145,18 @@ class TopologicalSignatureDistanceWC(nn.Module):
         tot_pairings = mask_Xtot.sum()
         missed_pairings = ((mask_Xtot-mask_Ztot) == 1).sum()
 
-        #print(missed_pairings)
+
         return (tot_pairings-missed_pairings)/tot_pairings
 
-        #return (mask_X.size(0)*self.k-torch.clamp((mask_X - mask_Z),0).sum()/2)/mask_X.size(0)*self.k
-        #return ((mask_Z.size(0)*self.k)-(mask_diff != 0).sum()*0.5)/(mask_Z.size(0)*self.k)
+    def _get_count_nonmatching_pairs(self, mask_X, mask_Z):
+        mask_Xtot = (mask_X.bool()+mask_X.bool().t()).int()
+        mask_Ztot = (mask_Z.bool()+mask_Z.bool().t()).int()
+
+        mask_Z_nonmatching = ((mask_Ztot - mask_Xtot)==1).int()
+
+        count = int(mask_Z_nonmatching.sum())/int(mask_Ztot.sum())
+
+        return count, mask_Z_nonmatching
 
     def forward(self, latent,latent_norm, dist_X, pair_mask_X, labels = None):
         """Return topological distance of two pairwise distance matrices.
@@ -163,9 +170,9 @@ class TopologicalSignatureDistanceWC(nn.Module):
         """
         dist_Z, pair_mask_Z = self._get_pairings_dist_Z(latent,latent_norm)
 
-
+        non_matching_pairs, mask_Z_nonmatching = self._get_count_nonmatching_pairs(pair_mask_X, pair_mask_Z)
         distance_components = {
-            'metrics.matched_pairs_0D': self._count_matching_pairs(pair_mask_X,pair_mask_Z)
+            'metrics.notmatched_pairs_0D': non_matching_pairs
         }
         if self.match_edges == 'symmetric':
             # L_X->Z
@@ -193,7 +200,7 @@ class TopologicalSignatureDistanceWC(nn.Module):
             distance_components['metrics.distance2-1'] = distance2_1
 
             distance = distance1_2 + distance2_1
-        elif self.match_edges == 'push1':
+        elif self.match_edges == 'push':
             # L_X->Z: same as for 'symmetric'
             # L_Z->X: pushes pairs apart that are closer together in the Z than in X,
             # but does NOT pull pairs together that are closer in X than in Z
@@ -218,7 +225,7 @@ class TopologicalSignatureDistanceWC(nn.Module):
             # L_X->Z: same as for 'symmetric'
             # L_Z->X: pushes pairs apart that are closer together in the Z than in X,
             # but does NOT pull pairs together that are closer in X than in Z
-            MU_PUSH = 1.5
+
             # L_X->Z
             sig1 = dist_X.mul(pair_mask_X)
             sig1_2 = dist_Z.mul(pair_mask_X)
@@ -226,26 +233,18 @@ class TopologicalSignatureDistanceWC(nn.Module):
             distance1_2 = torch.square((sig1-sig1_2)).sum()
 
             # L_Z->X
-            sig2 = dist_Z.mul(pair_mask_Z)
-            sig2_1 = dist_X.mul(pair_mask_Z)
-
-            # L_Z->X
-            pairs_to_push = torch.clamp(pair_mask_Z - pair_mask_X, min = 0)
-
-            distance2_1 = torch.square(torch.clamp((sig2_1-sig2),min = 0)).sum()
-
             dist_X_ref = dist_X.detach().clone()
-            dist_X_ref = MU_PUSH*dist_X_ref
+            dist_X_ref = self.mu_push*dist_X_ref
 
-            sig2 = dist_Z.mul(pairs_to_push)
-            sig2_ref = dist_X_ref.mul(pairs_to_push)
+            sig2 = dist_Z.mul(mask_Z_nonmatching)
+            sig2_ref = dist_X_ref.mul(mask_Z_nonmatching)
 
-            distance_push = torch.square((sig2_ref-sig2)).sum()
+            distance2_1 = torch.square(torch.clamp((sig2_ref-sig2),min = 0)).sum()
             distance_components['metrics.distance1-2'] = distance1_2
             distance_components['metrics.distance2-1'] = distance2_1
-            distance_components['metrics.distance_push'] = distance_push
 
-            distance = distance1_2 + distance2_1 + distance_push
+
+            distance = distance1_2 + distance2_1
 
         elif self.match_edges == 'push2':
             # L_X->Z: same as for 'symmetric'
@@ -301,13 +300,9 @@ class TopologicalSignatureDistanceWC(nn.Module):
 
             lanten_np = latent.detach().numpy()
             if labels is None:
-                # data = pd.DataFrame({'x': lanten_np[:,0], 'y': lanten_np[:,1]})
-                # sns.scatterplot('x', 'y', data=data)
                 pass
             else:
                 data = pd.DataFrame({'x': lanten_np[:, 0], 'y': lanten_np[:, 1], 'label': labels})
-
-
 
                 for pair in ind_Z:
                     plt.plot(lanten_np[pair, 0], lanten_np[pair, 1], color='green',zorder = 4)
@@ -320,21 +315,6 @@ class TopologicalSignatureDistanceWC(nn.Module):
 
                 plt.show()
                 plt.close()
-
-            # if path_to_save != None:
-            #     fig = sns_plot.get_figure()
-            #     fig.savefig(path_to_save)
-
-
-
-        # create plot and saves
-
-
-
-
-
-
-
 
         else:
             raise ValueError

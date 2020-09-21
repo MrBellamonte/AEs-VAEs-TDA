@@ -60,9 +60,6 @@ class ConfigTopoAE_ext:
 
 
     def __post_init__(self):
-        self.check()
-        self.uid = self.creat_uuid()
-        self.toposig_kwargs = dict(k = self.k, match_edges = self.match_edges)
         if isinstance(self.method_args, dict):
             pass
         else:
@@ -72,7 +69,13 @@ class ConfigTopoAE_ext:
         add_default_to_dict(self.method_args, 'n_jobs', 1)
         add_default_to_dict(self.method_args, 'verification', False)
         add_default_to_dict(self.method_args, 'online_wc', False)
+        add_default_to_dict(self.method_args, 'normalize', True)
+        add_default_to_dict(self.method_args, 'mu_push', 1.05)
 
+        self.toposig_kwargs = dict(k=self.k, match_edges=self.match_edges, normalize = self.method_args['normalize'],mu_push = self.method_args['mu_push'])
+
+        self.uid = self.creat_uuid()
+        self.check()
 
     def creat_uuid(self):
 
@@ -80,7 +83,7 @@ class ConfigTopoAE_ext:
 
             unique_id = str(uuid.uuid4())[:8]
 
-            uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}-me{match_edges}-k{k}-rmax{r_max}-seed{seed}'.format(
+            uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}-me{match_edges}{mu_push}-k{k}-rmax{r_max}-seed{seed}'.format(
                 model=self.model_class.__name__,
                 hidden_layers='-'.join(str(x) for x in self.model_kwargs['size_hidden_layers']),
                 learning_rate=fraction_to_string(self.learning_rate),
@@ -89,6 +92,7 @@ class ConfigTopoAE_ext:
                 rec_loss_weight=fraction_to_string(self.rec_loss_weight),
                 top_loss_weight=fraction_to_string(self.top_loss_weight),
                 match_edges = self.match_edges,
+                mu_push = fraction_to_string(self.toposig_kwargs['mu_push']),
                 k = str(self.k),
                 r_max = str(int(self.r_max)),
                 seed = str(self.seed))

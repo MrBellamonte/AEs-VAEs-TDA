@@ -93,24 +93,8 @@ class TrainingLoop():
 
 
         if self.method_args['name'] == 'topoae_wc':
-
             dist_X_all, pair_mask_X_all = compute_wc_offline(dataset, train_loader, batch_size, self.method_args, name='Training Dataset', verfication = True)
-
-            # #todo make function for this
-            # dist_X_all = torch.ones((n_batches, batch_size, batch_size))
-            # pair_mask_X_all = torch.ones((n_batches, batch_size, batch_size))
-            #
-            # for batch, (img, label) in enumerate(train_loader):
-            #     witness_complex = WitnessComplex(img, dataset[:][:][0])
-            #     witness_complex.compute_simplicial_complex_parallel(d_max = 1, r_max=self.method_args['r_max'],
-            #                                 create_simplex_tree=False,create_metric = True, n_jobs=self.method_args['n_jobs'])
-            #     landmarks_dist = torch.tensor(witness_complex.landmarks_dist)
-            #     sorted, indices = torch.sort(landmarks_dist)
-            #     kNN_mask = torch.zeros(
-            #         (batch_size, batch_size), device='cpu'
-            #     ).scatter(1,indices[:,1:(self.method_args['k']+1)],1)
-            #     dist_X_all[batch, :, :] = landmarks_dist
-            #     pair_mask_X_all[batch, :, :] = kNN_mask
+            norm_X = torch.norm(dataset[:][:][0][:, None]-dataset[:][:][0], dim=2, p=2).max()
 
         #mu = 0.5
         run_times_epoch = []
@@ -135,7 +119,7 @@ class TrainingLoop():
                         l = label
                     else:
                         l = None
-                    loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
+                    loss, loss_components = self.model(x, dist_X, pair_mask_X,norm_X, labels=l)
                 else:
                     x = img.to(self.device)
                     loss, loss_components = self.model(x.float())
