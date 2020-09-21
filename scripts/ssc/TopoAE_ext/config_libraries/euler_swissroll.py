@@ -50,7 +50,7 @@ symmetric_grid1 = [ConfigGrid_TopoAE_ext(
     device = 'cpu',
     num_threads=1,
     verbose = False,
-) for lr, seed in zip(list(np.repeat([1/10,1/100,1/1000],5)),[1452, 1189, 1573,  959, 1946]*5)]
+) for lr, seed in zip(list(np.repeat([1/10,1/100,1/1000],5)),[1452, 1189, 1573,  959, 1946]*3)]
 
 # grid 2 -> seeds = [3859, 2525, 2068, 3302, 2517] (100 configs per grid), 15 processes
 symmetric_grid2 = [ConfigGrid_TopoAE_ext(
@@ -92,7 +92,7 @@ symmetric_grid2 = [ConfigGrid_TopoAE_ext(
     device = 'cpu',
     num_threads=1,
     verbose = False,
-) for lr, seed in zip(list(np.repeat([1/10,1/100,1/1000],5)),[3859, 2525, 2068, 3302, 2517]*5)]
+) for lr, seed in zip(list(np.repeat([1/10,1/100,1/1000],5)),[3859, 2525, 2068, 3302, 2517]*3)]
 
 # ASYMMETRIC EDGE MATCHING (PUSH)
 
@@ -136,7 +136,7 @@ asym_grid1 = [ConfigGrid_TopoAE_ext(
     device = 'cpu',
     num_threads=1,
     verbose = False,
-) for lr, seed in zip(list(np.repeat([1/10,1/100,1/1000],5)),[1452, 1189, 1573,  959, 1946]*5)]
+) for lr, seed in zip(list(np.repeat([1/10,1/100,1/1000],5)),[1452, 1189, 1573,  959, 1946]*3)]
 
 # grid 2 -> seeds = [3859, 2525, 2068, 3302, 2517] (100 configs per grid), 15 processes
 asym_grid2 = [ConfigGrid_TopoAE_ext(
@@ -178,7 +178,7 @@ asym_grid2 = [ConfigGrid_TopoAE_ext(
     device = 'cpu',
     num_threads=1,
     verbose = False,
-) for lr, seed in zip(list(np.repeat([1/10,1/100,1/1000],5)),[3859, 2525, 2068, 3302, 2517]*5)]
+) for lr, seed in zip(list(np.repeat([1/10,1/100,1/1000],5)),[3859, 2525, 2068, 3302, 2517]*3)]
 
 # ASYMMETRIC EDGE MATCHING (ACTIVE PUSH)
 
@@ -222,7 +222,7 @@ asymapush_grid1 = [ConfigGrid_TopoAE_ext(
     device = 'cpu',
     num_threads=1,
     verbose = False,
-) for mu_push, seed in zip(list(np.repeat([1.05,1.1,1.15],5)),[1452, 1189, 1573,  959, 1946]*5)]
+) for mu_push, seed in zip(list(np.repeat([1.05,1.1,1.15],5)),[1452, 1189, 1573,  959, 1946]*3)]
 
 # grid 2 -> seeds = [3859, 2525, 2068, 3302, 2517] (300 configs per grid!), 15 processes
 asymapush_grid2 = [ConfigGrid_TopoAE_ext(
@@ -264,4 +264,4 @@ asymapush_grid2 = [ConfigGrid_TopoAE_ext(
     device = 'cpu',
     num_threads=1,
     verbose = False,
-) for mu_push, seed in zip(list(np.repeat([1.05,1.1,1.15],5)),[3859, 2525, 2068, 3302, 2517]*5)]
+) for mu_push, seed in zip(list(np.repeat([1.05,1.1,1.15],5)),[3859, 2525, 2068, 3302, 2517]*3)]
