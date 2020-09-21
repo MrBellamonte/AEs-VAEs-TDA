@@ -13,7 +13,7 @@ from src.models.autoencoder.base import AutoencoderModel
 class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
     """Topologically regularized autoencoder."""
 
-    def __init__(self,autoencoder,lam_t=1.,lam_r=1., toposig_kwargs=None):
+    def __init__(self,autoencoder,lam_t=1.,lam_r=1., toposig_kwargs=None, norm_X=1):
         """Topologically Regularized Autoencoder.
 
         Args:
@@ -29,6 +29,7 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
         self.normalize = toposig_kwargs['normalize']
         self.topo_sig = TopologicalSignatureDistanceWC(**toposig_kwargs)
         self.autoencoder = autoencoder
+        self.norm_X = norm_X
 
         if self.normalize:
             self.latent_norm = torch.nn.Parameter(data=torch.ones(1),
@@ -42,7 +43,7 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
         distances = torch.norm(x_flat[:, None] - x_flat, dim=2, p=p)
         return distances
 
-    def forward(self, x, dist_X, pair_mask_X,norm_X, labels = None):
+    def forward(self, x, dist_X, pair_mask_X, labels = None):
         """Compute the loss of the Topologically regularized autoencoder.
 
         Args:
@@ -56,7 +57,7 @@ class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
         dist_X = torch.norm(x[:, None]-x, dim=2, p=2)
 
         if self.normalize:
-            dist_X = dist_X / norm_X
+            dist_X = dist_X / self.norm_X
         else:
             pass
 

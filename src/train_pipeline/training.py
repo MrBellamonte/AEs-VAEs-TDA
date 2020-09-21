@@ -94,7 +94,7 @@ class TrainingLoop():
 
         if self.method_args['name'] == 'topoae_wc':
             dist_X_all, pair_mask_X_all = compute_wc_offline(dataset, train_loader, batch_size, self.method_args, name='Training Dataset', verfication = True)
-            norm_X = torch.norm(dataset[:][:][0][:, None]-dataset[:][:][0], dim=2, p=2).max()
+
 
         #mu = 0.5
         run_times_epoch = []
@@ -119,7 +119,7 @@ class TrainingLoop():
                         l = label
                     else:
                         l = None
-                    loss, loss_components = self.model(x, dist_X, pair_mask_X,norm_X, labels=l)
+                    loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
                 else:
                     x = img.to(self.device)
                     loss, loss_components = self.model(x.float())

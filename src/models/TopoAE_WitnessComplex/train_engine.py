@@ -79,10 +79,11 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigTopoAE_ext, experiment_dir
 
 
     # Initialize model
+    norm_X = torch.norm(dataset_train[:][:][0][:, None]-dataset_train[:][:][0], dim=2, p=2).max()
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
     model = TopologicallyRegularizedAutoencoderWC(autoencoder, lam_r=config.rec_loss_weight, lam_t=config.top_loss_weight,
-                                                toposig_kwargs=config.toposig_kwargs)
+                                                toposig_kwargs=config.toposig_kwargs, norm_X = norm_X)
     model.to(device)
 
     # Train and evaluate model
