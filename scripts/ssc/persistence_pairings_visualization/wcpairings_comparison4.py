@@ -10,14 +10,14 @@ from src.topology.witness_complex import WitnessComplex
 if __name__ == "__main__":
     dataset_sampler = SwissRoll()
 
-    N_WITNESSES = 1024
+    N_WITNESSES = 2048
     n_samples = 256
 
     path_to_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/visualisation_nnsys/wc{}_w{}/'.format(n_samples,N_WITNESSES)
 
     N_sim = 100
 
-    ks = [1,2,3,4,6,8,10,12,14,16]
+    ks = [1,2,3,4,6,8,12,16]
     ntot = int(len(ks) * N_sim)
 
 
@@ -33,10 +33,10 @@ if __name__ == "__main__":
         landmarks_tensor = torch.from_numpy(landmarks)
 
         witness_complex = WitnessComplex(landmarks_tensor, witnesses_tensor)
-        witness_complex.compute_simplicial_complex(d_max=1,
+        witness_complex.compute_simplicial_complex_parallel(d_max=1,
                                                    r_max=10,
                                                    create_simplex_tree=False,
-                                                   create_metric=True)
+                                                   create_metric=True,n_jobs=3)
 
         for k in ks:
 
