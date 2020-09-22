@@ -15,12 +15,12 @@ BASE_PATH = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/kNN_kwc/'
 
 from math import sin, cos, radians, pi, sqrt
 
-def annulus(n, rmin, rmax,label = 0, seed = 0):
+def annulus(n, rmin, rmax,label = 0, seed = 0, c_x = 0, c_y = 0):
     np.random.seed(seed)
     phi = np.random.uniform(0, 2*np.pi, n)
     r = np.sqrt(np.random.uniform(rmin**2, rmax**2, n))
-    x = r*np.cos(phi)
-    y = r*np.sin(phi)
+    x = r*np.cos(phi) + c_x
+    y = r*np.sin(phi) + c_y
     label = np.ones((n))*label
     return pd.DataFrame({'x': x, 'y': y, 'label': label})
 
@@ -49,11 +49,11 @@ def make_scatter(df, title = None, show = True, name = None):
 
     if name != None:
         fig = sns_plot.get_figure()
-        fig.savefig(BASE_PATH + name)
+        fig.savefig(BASE_PATH + name + '.pdf', dpi = 200)
 
     plt.close()
 
-def plot_graph_kNN(df, k, df_witnesses = None, witnesses_dist = None, title = None, show = True, name = None):
+def plot_graph_kNN(df, k, df_witnesses = None, witnesses_dist = None, title = None, show = True, name = None, nc = 2):
     if witnesses_dist is not None:
         X_dist = witnesses_dist
         dist = True
@@ -69,11 +69,18 @@ def plot_graph_kNN(df, k, df_witnesses = None, witnesses_dist = None, title = No
 
     fig, ax = plt.subplots(1, 1)
     sns.set_style("white")
-    palette_1 = [sns.color_palette("RdBu_r", 4)[0], sns.color_palette("RdBu_r", 4)[3]]
+    if nc == 2:
+        palette_1 = [sns.color_palette("RdBu_r", 4)[0], sns.color_palette("RdBu_r", 4)[3]]
+    else:
+        palette_1 = [sns.color_palette("RdBu_r", 4)[0]]
+
     #custom_palette = sns.set_palette(palette)
 
     if df_witnesses is not None:
-        palette_2 = [sns.color_palette("RdBu_r", 4)[1], sns.color_palette("RdBu_r", 4)[2]]
+        if nc == 2:
+            palette_2 = [sns.color_palette("RdBu_r", 4)[1], sns.color_palette("RdBu_r", 4)[2]]
+        else:
+            palette_2 = [sns.color_palette("RdBu_r", 4)[1]]
         sns.scatterplot(data=df_witnesses, x='x', y='y', hue='label', ax=ax,
                         edgecolor="none", legend=False, palette=palette_2,zorder=0)
     sns.despine(left=True, bottom=True)
@@ -93,7 +100,7 @@ def plot_graph_kNN(df, k, df_witnesses = None, witnesses_dist = None, title = No
     if show:
         plt.show()
     if name != None:
-        fig.savefig(BASE_PATH + name)
+        fig.savefig(BASE_PATH + name+ '.pdf', dpi = 200)
 
     plt.close()
 
@@ -118,43 +125,7 @@ def collect_kNN(indices, k):
 
 
 if __name__ == "__main__":
-    #
-    # X_manifold, y_manifold = make_circles(n_samples=256, noise=0.04, random_state=2, factor=0.75)
-    # df_manifold = make_df(X_manifold, y_manifold )
-    # #make_scatter(df_manifold, name = 'manifold_256_s2_004')
-    #
-    #
-    # X_approx_sparse, y_approx_sparse = make_circles(n_samples=96, noise=0.04, random_state=123, factor=0.75)
-    # df_approx_sparse = make_df(X_approx_sparse, y_approx_sparse )
-    # make_scatter(df_approx_sparse, name = 'sparse_256_s2_004')
-    #
-    # # Create kNN
-    # kNN_ind_sparse = get_kNN_torch(X_approx_sparse)
-    # NN1 = collect_kNN(kNN_ind_sparse, 1)
-    # NN2 = collect_kNN(kNN_ind_sparse, 2)
-    # NN3 = collect_kNN(kNN_ind_sparse, 3)
-    #
-    # plot_graph_kNN(df_approx_sparse,pairings=NN1, name='1-NN_sparse_256_s2_004')
-    # plot_graph_kNN(df_approx_sparse, pairings=NN2, name='2-NN_sparse_256_s2_004')
-    # plot_graph_kNN(df_approx_sparse, pairings=NN3, name='3-NN_sparse_256_s2_004')
-    #
-    # # create k-WC
-    # X_witnesses, y_witnesses = make_circles(n_samples=(256-96), noise=0.04, random_state=100,factor=0.75)
-    # df_approx_sparse = make_df(X_approx_sparse, y_approx_sparse)
-    #
-    # wc_s = WitnessComplex(landmarks=X_approx_sparse,witnesses=X_witnesses)
-    # wc_s.compute_simplicial_complex(1, create_metric = True)
-    #
-    # kWC_ind_sparse = get_kNN_torch(wc_s.landmarks_dist,dist=True)
-    # kWC1 = collect_kNN(kWC_ind_sparse, 1)
-    # kWC2 = collect_kNN(kWC_ind_sparse, 2)
-    # kWC3 = collect_kNN(kWC_ind_sparse, 3)
-    #
-    # plot_graph_kNN(df_approx_sparse,pairings=kWC1, name='kWC1_sparse_256_s2_004')
-    # plot_graph_kNN(df_approx_sparse, pairings=kWC2, name='kWC2_sparse_256_s2_004')
-    # plot_graph_kNN(df_approx_sparse, pairings=kWC3, name='kWC3_sparse_256_s2_004')
-
-
+    #### Double Annulus
     small = [0.5,0.8]
     large = [1, 1.3]
 
@@ -166,7 +137,101 @@ if __name__ == "__main__":
     df_an = df_an1.append(df_an2,ignore_index=True)
     make_scatter(df_an, name = 'double_annulus/annulus_manifold_512_s{s}'.format(s = seed_manifold))
 
-    # Approx Annulus
+
+
+
+    # radius = [1.65, 1.9]
+    # radius_tight = [1.75, 1.85]
+    # # Manifold Annulus
+    # create_witness = True
+    # c_y = 3.4
+    #
+    # x_min = -0.2
+    # x_max = 0.2
+    #
+    # n_manifold = 256
+    # seed_manifold = 1
+    # df1 = annulus(n_manifold,radius[0],radius[1],seed = seed_manifold)
+    # df2 = annulus(n_manifold,radius[0],radius[1],seed = seed_manifold, c_x = 0, c_y = c_y)
+    # df = df1.append(df2,ignore_index=True)
+    #
+    #
+    # df_selected = df[((df.x >= x_min) & (df.x<= x_max) & (df.y>= 0)& (df.y<= c_y))== False]
+    # make_scatter(df_selected, name = 'almost8/almost8_manifold_1024_s{s}'.format(s = seed_manifold))
+    #
+    # # Approx Annulus
+    # n_sparse = 16
+    # seed_sparse = 10
+    # for seed_sparse in [1,3,4,5,6,7,8,9]:
+    #     df1_sparse = annulus(n_sparse, radius_tight[0], radius_tight[1], seed=(seed_sparse+23))
+    #     df2_sparse = annulus(n_sparse, radius_tight[0], radius_tight[1], seed=seed_sparse, c_x=0, c_y=c_y)
+    #     df_sparse = df1_sparse.append(df2_sparse, ignore_index=True)
+    #
+    #     df_selected_sparse = df_sparse[((df_sparse.x >= x_min) & (df_sparse.x <= x_max) & (df_sparse.y >= 0) & (df_sparse.y <= c_y)) == False]
+    #     make_scatter(df_selected_sparse,
+    #                  name='almost8/almost8_sparse_{n}_s{s}'.format(n=n_sparse,s=seed_sparse))
+    #     df_selected_sparse = df_selected_sparse.reset_index()
+    #     X_sparse = df_selected_sparse[['x', 'y']].to_numpy()
+    #
+    #     # Create kNN
+    #     plot_graph_kNN(df_selected_sparse, k=1,
+    #                    name='almost8/almost8_1-NN_sparse_{nsl}_s{s}'.format(
+    #                        nsl=n_sparse, s=seed_sparse))
+    #     plot_graph_kNN(df_selected_sparse, k=2,
+    #                    name='almost8/almost8_2-NN_sparse_{nsl}_s{s}'.format(
+    #                        nsl=n_sparse, s=seed_sparse))
+    #     plot_graph_kNN(df_selected_sparse, k=3,
+    #                    name='almost8/almost8_3-NN_sparse_{nsl}_s{s}'.format(
+    #                        nsl=n_sparse, s=seed_sparse))
+    #     plot_graph_kNN(df_selected_sparse, k=4,
+    #                    name='almost8/almost8_4-NN_sparse_{nsl}_s{s}'.format(
+    #                        nsl=n_sparse, s=seed_sparse))
+    #
+    #     # create k-WC
+    #     if create_witness:
+    #         n_witness = 256
+    #         seed_witnesses = seed_sparse+42
+    #
+    #         df1_witnesses = annulus(n_witness, radius[0], radius[1], seed=(seed_witnesses+23))
+    #         df2_witnesses = annulus(n_witness, radius[0], radius[1], seed=seed_witnesses, c_x=0, c_y=c_y)
+    #         df_witnesses = df1_witnesses.append(df2_witnesses, ignore_index=True)
+    #
+    #         df_selected_witnesses = df_witnesses[((df_witnesses.x >= x_min) & (df_witnesses.x <= x_max) & (df_witnesses.y >= 0) & (df_witnesses.y <= c_y)) == False]
+    #         df_selected_witnesses['label'] = df_selected_witnesses['label']-1
+    #         make_scatter(df_selected_witnesses,
+    #                      name='almost8/almost8_{n}_sw{sw}'.format(n=n_witness,sw=seed_witnesses))
+    #
+    #         X_witness = df_selected_witnesses[['x', 'y']].to_numpy()
+    #
+    #         wc_s = WitnessComplex(landmarks=X_sparse, witnesses=X_witness)
+    #         wc_s.compute_simplicial_complex(1, create_metric=True)
+    #
+    #         plot_graph_kNN(df_selected_sparse, k=1, df_witnesses=df_selected_witnesses,
+    #                        witnesses_dist=wc_s.landmarks_dist,
+    #                        name='almost8/kWC1_sp{nl}_{nw}_s{s}_sw{sw}'.format(nl=n_sparse,
+    #                                                                                    nw=n_witness,
+    #                                                                                    s=seed_sparse,
+    #                                                                                    sw=seed_witnesses))
+    #         plot_graph_kNN(df_selected_sparse, k=2, df_witnesses=df_selected_witnesses,
+    #                        witnesses_dist=wc_s.landmarks_dist,
+    #                        name='almost8/kWC2_sp{nl}_{nw}_s{s}_sw{sw}'.format(nl=n_sparse,
+    #                                                                                    nw=n_witness,
+    #                                                                                    s=seed_sparse,
+    #                                                                                    sw=seed_witnesses))
+    #         plot_graph_kNN(df_selected_sparse, k=3, df_witnesses=df_selected_witnesses,
+    #                        witnesses_dist=wc_s.landmarks_dist,
+    #                        name='almost8/kWC3_sp{nl}_{nw}_s{s}_sw{sw}'.format(nl=n_sparse,
+    #                                                                                    nw=n_witness,
+    #                                                                                    s=seed_sparse,
+    #                                                                                    sw=seed_witnesses))
+    #         plot_graph_kNN(df_selected_sparse, k=4, df_witnesses=df_selected_witnesses,
+    #                        witnesses_dist=wc_s.landmarks_dist,
+    #                        name='almost8/kWC4_sp{nl}_{nw}_s{s}_sw{sw}'.format(nl=n_sparse,
+    #                                                                                    nw=n_witness,
+    #                                                                                    s=seed_sparse,
+    #                                                                                    sw=seed_witnesses))
+
+# Approx Annulus
     n_sparse_l = 82
     n_sparse_s = 48
     seed_sparse = 10

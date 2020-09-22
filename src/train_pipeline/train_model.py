@@ -1,5 +1,6 @@
 """Module to train a model with a dataset configuration."""
 import json
+import operator
 import os
 import statistics
 
@@ -16,7 +17,7 @@ from src.train_pipeline.callbacks.callbacks import Callback, \
 from src.train_pipeline.training import TrainingLoop
 from src.train_pipeline.callbacks.callback_train import LogDatasetLoss, LogTrainingLoss
 from src.utils.dict_utils import avg_array_in_dict, default
-from src.utils.plots import plot_losses, plot_classes_qual
+from src.utils.plots import plot_losses, plot_2Dscatter
 
 
 class NewlineCallback(Callback):
@@ -39,21 +40,23 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
     test_dataset = data_test
 
     callbacks = [
-        LogTrainingLoss(_run, print_progress=quiet),
+        LogTrainingLoss(_run, print_progress=operator.not_(quiet)),
         LogDatasetLoss('validation', validation_dataset, _run,
                        method_args=config.method_args,
-                       print_progress=True, batch_size=config.batch_size,
+                       print_progress=operator.not_(quiet), batch_size=config.batch_size,
                        early_stopping=config.early_stopping, save_path=rundir,
                        device=device),
-        LogDatasetLoss('testing', test_dataset, _run,method_args = config.method_args, print_progress=True,
+        LogDatasetLoss('testing', test_dataset, _run,method_args = config.method_args, print_progress=operator.not_(quiet),
                        batch_size=config.batch_size, device=device),
     ]
 
     if quiet:
         # Add newlines between epochs
-        callbacks.append(NewlineCallback())
+        #callbacks.append(NewlineCallback())
+        pass
     else:
-        callbacks.append(Progressbar(print_loss_components=True))
+        callbacks.append(NewlineCallback())
+        #callbacks.append(Progressbar(print_loss_components=True))
 
     # If we are logging this run save reconstruction images
     if rundir is not None:
@@ -69,14 +72,15 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
     marg = config.method_args
     training_loop = TrainingLoop(
         model, train_dataset, config.n_epochs, config.batch_size, config.learning_rate,
-        config.method_args,config.weight_decay,device, callbacks
+        config.method_args,config.weight_decay,device, callbacks, verbose=operator.not_(quiet)
 )
     # Run training
     epoch, run_times_epoch = training_loop()
 
     if rundir:
         # Save model state (and entire model)
-        print('Loading model checkpoint prior to evaluation...')
+        if not quiet:
+            print('Loading model checkpoint prior to evaluation...')
         state_dict = torch.load(os.path.join(rundir, 'model_state.pth'))
         model.load_state_dict(state_dict)
     model.eval()
@@ -101,22 +105,22 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
 
 
     if rundir:
-        plot_losses(
-            loss_averages,
-            loss_stds,
-            save_file=os.path.join(rundir, 'loss.png')
-        )
+        # plot_losses(
+        #     loss_averages,
+        #     loss_stds,
+        #     save_file=os.path.join(rundir, 'loss.png')
+        # )
         plot_losses(
             loss_averages,
             loss_stds,
             save_file=os.path.join(rundir, 'loss.pdf'),
         )
-        plot_losses(
-            metric_averages,
-            metric_stds,
-            save_file=os.path.join(rundir, 'metrics.png'),
-            pairs_axes=True
-        )
+        # plot_losses(
+        #     metric_averages,
+        #     metric_stds,
+        #     save_file=os.path.join(rundir, 'metrics.png'),
+        #     pairs_axes=True
+        # )
         plot_losses(
             metric_averages,
             metric_stds,
@@ -152,10 +156,10 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
                 os.path.join(rundir, 'latents.npz'),
                 latents=Y_eval, labels=Z_eval
             )
-            plot_classes_qual(Z_eval, Y_eval, path_to_save=os.path.join(
+            plot_2Dscatter(Z_eval, Y_eval, path_to_save=os.path.join(
                     rundir, 'test_latent_visualization.pdf'), title=None, show=False)
-            plot_classes_qual(Z_eval, Y_eval, path_to_save=os.path.join(
-                    rundir, 'test_latent_visualization.png'), title=None, show=False)
+            # plot_2Dscatter(Z_eval, Y_eval, path_to_save=os.path.join(
+            #         rundir, 'test_latent_visualization.png'), title=None, show=False)
 
         if rundir and config.eval.save_train_latent:
             dataloader_train = torch.utils.data.DataLoader(
@@ -172,10 +176,10 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
                 latents=Z_train, labels=Y_train
             )
             # Visualize latent space
-            plot_classes_qual(Z_train, Y_train, path_to_save=os.path.join(
+            plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
                     rundir, 'train_latent_visualization.pdf'), title=None, show=False)
-            plot_classes_qual(Z_train, Y_train, path_to_save=os.path.join(
-                    rundir, 'train_latent_visualization.png'), title=None, show=False)
+            # plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
+            #         rundir, 'train_latent_visualization.png'), title=None, show=False)
 
 
         ks = list(range(config.eval.k_min, config.eval.k_max + config.eval.k_step, config.eval.k_step))
@@ -194,4 +198,5 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
 
         result_avg = avg_array_in_dict(result)
     result_avg.update({'run_times_epoch' : statistics.mean(run_times_epoch)})
+
     return result_avg

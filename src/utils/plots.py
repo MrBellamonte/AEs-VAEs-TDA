@@ -9,7 +9,7 @@ from matplotlib.collections import PatchCollection
 from matplotlib.ticker import MaxNLocator
 
 
-def plot_classes_qual(data, labels, path_to_save= None, title = None, show = False):
+def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False):
 
 
     if len(np.unique(labels)) > 8:
@@ -18,7 +18,7 @@ def plot_classes_qual(data, labels, path_to_save= None, title = None, show = Fal
         palette  = "Dark2"
 
 
-    sns_plot = sns.scatterplot(data[:, 0], data[:, 1], hue=labels, palette=sns.color_palette(palette, len(np.unique(labels))), marker=".",
+    sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=sns.color_palette(palette, len(np.unique(labels))), marker=".",
                     size=5, edgecolor="none", legend=False)
     sns.despine(left=True, bottom=True)
     plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False, left=False)
@@ -37,8 +37,6 @@ def plot_classes_qual(data, labels, path_to_save= None, title = None, show = Fal
 
 def plot_losses(losses, losses_std=defaultdict(lambda: None), save_file=None, pairs_axes = False):
     """Plot a dictionary with per epoch losses.
-
-
     """
     palette = sns.color_palette()
     fig, ax = plt.subplots()
@@ -48,11 +46,16 @@ def plot_losses(losses, losses_std=defaultdict(lambda: None), save_file=None, pa
     i = 0
     for key, values in losses.items():
 
-        if 'matched_pairs_0D' in key and pairs_axes:
+        if ('matched_pairs_0D' in key and pairs_axes) or ('metrics.push_pairs' in key and pairs_axes):
             ax2.set_ylabel('matched_pairs_0D')
-            ax2.errorbar(range(len(values)), values, yerr=losses_std[key], label=key, color = palette[i])
+
+            #ax2.errorbar(range(len(values)), values, yerr=losses_std[key], label=key, color = palette[i])
+            ax2.plot(range(len(values)), values,  label=key,color=palette[i], marker = '.')
+            ax2.fill_between(range(len(values)), np.array(values)-np.array(losses_std[key]),  np.array(values)+np.array(losses_std[key]), alpha=.3, facecolor=palette[i])
         else:
-            ax.errorbar(range(len(values)), values, yerr=losses_std[key], label=key, color = palette[i])
+            #ax.errorbar(range(len(values)), values, yerr=losses_std[key], label=key, color = palette[i])
+            ax.plot(range(len(values)), values,  label=key,color=palette[i], marker = '.')
+            ax.fill_between(range(len(values)), np.array(values)-np.array(losses_std[key]),  np.array(values)+np.array(losses_std[key]), alpha=.3, facecolor=palette[i])
         i += 1
     plt.xlabel('# epochs')
     ax.set_ylabel('loss')

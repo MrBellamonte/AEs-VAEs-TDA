@@ -12,7 +12,7 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 from src.models.loss_collection import Loss
 from src.utils.config_utils import (
     get_keychain_value, fraction_to_string, get_kwargs,
-    dictionary_to_string)
+    dictionary_to_string, add_default_to_dict)
 
 admissible_model_classes_TopoAE = [Autoencoder_MLP_topoae.__name__]
 
@@ -36,7 +36,8 @@ class ConfigTopoAE_ext:
                  'dataset',
                  'sampling_kwargs',
                  'eval',
-                 'uid']
+                 'uid',
+                 'seed']
     learning_rate: float
     batch_size: int
     n_epochs: int
@@ -55,15 +56,26 @@ class ConfigTopoAE_ext:
     sampling_kwargs: dict
     eval: ConfigEval
     uid: str
+    seed: int
 
 
     def __post_init__(self):
-        self.check()
+        if isinstance(self.method_args, dict):
+            pass
+        else:
+            self.method_args = dict()
+        self.method_args.update(dict(name = 'topoae_wc',r_max = self.r_max,k = self.k, match_edges = self.match_edges))
+
+        add_default_to_dict(self.method_args, 'n_jobs', 1)
+        add_default_to_dict(self.method_args, 'verification', False)
+        add_default_to_dict(self.method_args, 'online_wc', False)
+        add_default_to_dict(self.method_args, 'normalize', True)
+        add_default_to_dict(self.method_args, 'mu_push', 1.05)
+
+        self.toposig_kwargs = dict(k=self.k, match_edges=self.match_edges, normalize = self.method_args['normalize'],mu_push = self.method_args['mu_push'])
+
         self.uid = self.creat_uuid()
-        self.toposig_kwargs = dict(k = self.k, match_edges = self.match_edges)
-        self.method_args = dict(name = 'topoae_wc',r_max = self.r_max,k = self.k, match_edges = self.match_edges)
-        if 'n_jobs' not in self.method_args:
-            self.method_args['n_jobs'] = 1
+        self.check()
 
     def creat_uuid(self):
 
@@ -71,7 +83,7 @@ class ConfigTopoAE_ext:
 
             unique_id = str(uuid.uuid4())[:8]
 
-            uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}-me{match_edges}-k{k}-rmax{r_max}'.format(
+            uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}-me{match_edges}{mu_push}-k{k}-rmax{r_max}-seed{seed}'.format(
                 model=self.model_class.__name__,
                 hidden_layers='-'.join(str(x) for x in self.model_kwargs['size_hidden_layers']),
                 learning_rate=fraction_to_string(self.learning_rate),
@@ -80,9 +92,11 @@ class ConfigTopoAE_ext:
                 rec_loss_weight=fraction_to_string(self.rec_loss_weight),
                 top_loss_weight=fraction_to_string(self.top_loss_weight),
                 match_edges = self.match_edges,
+                mu_push = fraction_to_string(self.toposig_kwargs['mu_push']),
                 k = str(self.k),
-                r_max = str(int(self.r_max))
-            )
+                r_max = str(int(self.r_max)),
+                seed = str(self.seed))
+
 
             uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
                 dataset=self.dataset.__class__.__name__,
@@ -192,7 +206,7 @@ class ConfigGrid_TopoAE_ext:
 
         grid = dict()
 
-        for slot in (set(self.__slots__)-set(['experiment_dir', 'seed', 'device', 'num_threads', 'verbose'])):
+        for slot in (set(self.__slots__)-set(['experiment_dir','seed', 'device', 'num_threads', 'verbose'])):
             grid.update({slot: getattr(self, slot)})
         tmp = list(get_keychain_value(grid))
         values = [x[1] for x in tmp]
@@ -201,8 +215,7 @@ class ConfigGrid_TopoAE_ext:
         ret = []
 
         for v in itertools.product(*values):
-
-            ret_i = {}
+            ret_i = {'seed': self.seed}
 
             for kc, kc_v in zip(key_chains, v):
                 tmp = ret_i

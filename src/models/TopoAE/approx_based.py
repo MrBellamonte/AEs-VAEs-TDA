@@ -76,8 +76,8 @@ class TopologicallyRegularizedAutoencoder(AutoencoderModel):
         topo_error = topo_error / float(batch_size) 
         loss = self.lam_r * ae_loss + self.lam_t * topo_error
         loss_components = {
-            'loss.autoencoder': self.lam_r * ae_loss,
-            'loss.topo_error': self.lam_t * topo_error
+            'loss.autoencoder': ae_loss,
+            'loss.topo_error': topo_error
         }
         loss_components.update(topo_error_components)
         loss_components.update(ae_loss_comp)
@@ -161,7 +161,7 @@ class TopologicalSignatureDistance(nn.Module):
     def _count_matching_pairs(pairs1, pairs2):
         def to_set(array):
             return set(tuple(elements) for elements in array)
-        return float(len(to_set(pairs1).intersection(to_set(pairs2))))
+        return float(float(len(to_set(pairs1).intersection(to_set(pairs2))))/float(len(to_set(pairs1))))
 
     @staticmethod
     def _get_pairdiff(pairs_base, pairs_sub):
@@ -230,6 +230,7 @@ class TopologicalSignatureDistance(nn.Module):
             distance = distance1_2 + distance2_1
 
         elif self.match_edges == 'asymmetric':
+            # Only preserve distances from X->Z
             sig1 = self._select_distances_from_pairs(distances1, pairs1)
             # Selected pairs of 1 on distances of 2 and vice versa
             sig1_2 = self._select_distances_from_pairs(distances2, pairs1)
@@ -238,7 +239,7 @@ class TopologicalSignatureDistance(nn.Module):
             distance1_2 = self.sig_error(sig1, sig1_2)
 
             distance_components['metrics.distance1-2'] = distance1_2
-            distance_components['metrics.distance2-1'] = distance1_2 *0
+            distance_components['metrics.distance2-1'] = 0
 
             distance = distance1_2
 

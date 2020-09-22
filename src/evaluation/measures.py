@@ -168,3 +168,5 @@ def MRRE(X, Z, k):
     # Normalisation constant
     C = n * sum([abs(2*j - n - 1) / j for j in range(1, k+1)])
     return mrre_ZX / C, mrre_XZ / C
+
+

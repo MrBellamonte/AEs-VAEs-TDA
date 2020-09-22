@@ -1,14 +1,15 @@
 import math
-import time
 
 import dill
 import numpy as np
 import multiprocessing as mp
 
-from memory_profiler import profile
-from pathos.multiprocessing import ProcessingPool as Pool
 import matplotlib.pyplot as plt
-import gudhi
+#dirty fix since gudhi cannot be installed on euler...
+try:
+    import gudhi
+except:
+    print('Failed to import gudhi')
 from sklearn.metrics import pairwise_distances
 
 #hard-coded
@@ -62,13 +63,15 @@ class WitnessComplex():
         'landmarks_dist',
         'simplex_tree',
         'simplex_true_computed',
-        'new'
+        'new',
+        'metric_computed'
     ]
 
     def __init__(self, landmarks, witnesses,new=False):
         self.landmarks = landmarks
         self.witnesses = witnesses
         self.new = new
+        self.metric_computed = False
 
         self.distances = pairwise_distances(witnesses,landmarks)
 
@@ -77,27 +80,17 @@ class WitnessComplex():
         simplex_add = []
         for e in simplicial_complex_temp:
             element = e[0]
-            if len(element) < max_dim+1:
+
+            if (element[0] is not i_add and len(element) is 1) or (1 < len(element) < max_dim+1):
                 element_copy = element.copy()
                 element_copy.append(i_add)
                 simplex_add.append([element_copy, i_dist])
+            else:
+                pass
 
 
         return simplex_add
 
-
-    #
-    # def _update_register_simplex(self, register, i_add, i_dist, max_dim=math.inf):
-    #     register_add = []
-    #     simplex_add = []
-    #     for element in register:
-    #         if len(element) < max_dim+1:
-    #             element_copy = element.copy()
-    #             element_copy.append(i_add)
-    #             register_add.append(element_copy)
-    #             simplex_add.append([element_copy, i_dist])
-    #
-    #     return register_add, simplex_add
 
     def _update_landmark_dist(self, landmarks_dist, simplex_add):
 
@@ -111,7 +104,10 @@ class WitnessComplex():
     def compute_simplicial_complex(self, d_max, create_metric = False, r_max = None, create_simplex_tree = False):
         if create_simplex_tree:
             simplicial_complex = []
-            simplex_tree = gudhi.SimplexTree()
+            try:
+                simplex_tree = gudhi.SimplexTree()
+            except:
+                print('Cannot create simplex tree')
 
         if create_metric:
             landmarks_dist = np.ones((len(self.landmarks),len(self.landmarks)))*MAX_DIST_INIT
@@ -130,26 +126,31 @@ class WitnessComplex():
 
             simplices_temp = []
             for i in range(len(sorted_row)):
+                simplices_temp.append([[sorted_row[i][0]], sorted_row[i][1]])
                 simplex_add = self._update_register_simplex(simplices_temp.copy(), sorted_row[i][0],
                                                                         sorted_row[i][1], d_max)
                 if create_metric:
                     landmarks_dist = self._update_landmark_dist(landmarks_dist,simplex_add)
                 simplices_temp += simplex_add
-                simplices_temp.append([[sorted_row[i][0]],sorted_row[i][1]])
 
-        if create_simplex_tree:
-            simplicial_complex += simplices_temp
-            self.simplicial_complex = simplicial_complex
+            # for element in sorted_row:
+            #     simplices_temp.append([[element[0]],element[1]])
+
+            if create_simplex_tree:
+                simplicial_complex += simplices_temp
+
         if create_metric:
             np.fill_diagonal(landmarks_dist, 0)
             self.landmarks_dist = landmarks_dist
+            self.metric_computed = True
 
 
         if create_simplex_tree:
+            self.simplicial_complex = simplicial_complex
             sorted_simplicial_compex = sorted(simplicial_complex, key=lambda x: x[1])
 
-            for i in range(len(self.landmarks)):
-                simplex_tree.insert([i], filtration=0)
+            # for i in range(len(self.landmarks)):
+            #     simplex_tree.insert([i], filtration=0)
 
             for simplex in sorted_simplicial_compex:
                 simplex_tree.insert(simplex[0], filtration = simplex[1])
@@ -235,7 +236,10 @@ class WitnessComplex():
             return simplicial_complex, landmarks_dist
 
         if create_simplex_tree:
-            simplex_tree = gudhi.SimplexTree()
+            try:
+                simplex_tree = gudhi.SimplexTree()
+            except:
+                print('Cannot create simplex tree')
 
         if n_jobs == -1:
             n_jobs = mp.cpu_count()
@@ -253,8 +257,8 @@ class WitnessComplex():
         if create_simplex_tree:
             sorted_simplicial_compex = sorted(simplicial_complex, key=lambda x: x[1])
 
-            for i in range(len(self.landmarks)):
-                simplex_tree.insert([i], filtration=0)
+            # for i in range(len(self.landmarks)):
+            #     simplex_tree.insert([i], filtration=0)
 
             for simplex in sorted_simplicial_compex:
                 simplex_tree.insert(simplex[0], filtration = simplex[1])
@@ -266,6 +270,7 @@ class WitnessComplex():
         self.simplicial_complex = simplicial_complex
         np.fill_diagonal(landmarks_dist, 0)
         self.landmarks_dist = landmarks_dist
+        self.metric_computed = True
 
 
 
@@ -275,7 +280,7 @@ class WitnessComplex():
 
 
         diag = self.simplex_tree.persistence()
-        gudhi.plot_persistence_diagram(diag, axes = ax)
+        gudhi.plot_persistence_diagram(diag, axes = ax,legend=True)
 
         if show:
             plt.show()
@@ -285,4 +290,7 @@ class WitnessComplex():
         plt.close()
 
 
+    def check_distance_matrix(self):
+        assert self.metric_computed
 
+        return not np.any(self.landmarks_dist == MAX_DIST_INIT)

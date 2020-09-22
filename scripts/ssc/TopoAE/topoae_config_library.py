@@ -146,7 +146,7 @@ test_grid_euler = ConfigGrid_TopoAE(
         evaluate_on = 'test',
         save_eval_latent = True,
         save_train_latent = True,
-        online_visualization = True,
+        online_visualization = False,
         k_min = 5,
         k_max = 10,
         k_step = 5,
@@ -191,7 +191,8 @@ placeholder_config_topoae = ConfigTopoAE(
         k_step = 1,
     )],
     uid = 'uid',
-    method_args= None
+    method_args= None,
+    seed = 666666
 )
 
 
