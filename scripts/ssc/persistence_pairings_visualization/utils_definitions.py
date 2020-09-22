@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 PATH_ROOT_SWISSROLL = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/SwissRoll_pairings/'
 #PATH_ROOT_SWISSROLL = '/Users/simons/polybox/Studium/20FS/MT/plots_/test'
 
-def make_plot(data, pairings, color,name = 'noname', path_root = PATH_ROOT_SWISSROLL, knn = False):
+def make_plot(data, pairings, color,name = 'noname', path_root = PATH_ROOT_SWISSROLL, knn = False, dpi = 200, show = False):
     ax = plt.gca(projection="3d")
     ax.scatter(data[:, 0], data[:, 1], data[:, 2], c=color, s=100, cmap=plt.cm.Spectral)
 
@@ -34,9 +34,10 @@ def make_plot(data, pairings, color,name = 'noname', path_root = PATH_ROOT_SWISS
         line.set_visible(False)
     for line in ax.zaxis.get_ticklines():
         line.set_visible(False)
-    plt.show()
+    if show:
+        plt.show()
     if path_root is not None:
         fig = ax.get_figure()
-        fig.savefig(path_root + 'plotsc_{}'.format(name) + '.pdf', dpi=200,bbox_inches = 'tight',
+        fig.savefig(path_root + 'plotsc_{}'.format(name) + '.pdf', dpi=dpi,bbox_inches = 'tight',
         pad_inches = 0)
     plt.close()

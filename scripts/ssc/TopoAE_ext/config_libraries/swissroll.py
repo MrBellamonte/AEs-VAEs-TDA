@@ -671,7 +671,7 @@ euler_k1_seed1 = ConfigGrid_TopoAE_ext(
 
 ####
 nonorm = ConfigGrid_TopoAE_ext(
-    learning_rate=[1/100],
+    learning_rate=[1/100,1/10],
     batch_size=random.sample([16,256], 2),
     n_epochs=[500],
     weight_decay=[1e-2],
@@ -754,15 +754,15 @@ nonorm_diffme = [ConfigGrid_TopoAE_ext(
 ) for match in ['symmetric','push','push_active']]
 
 nonorm_mupush = [ConfigGrid_TopoAE_ext(
-    learning_rate=[1/100,1/50],
-    batch_size=[128,256],
+    learning_rate=[1/25,1/10],
+    batch_size=[256],
     n_epochs=[1000],
     weight_decay=[1e-7],
     early_stopping=[50],
     rec_loss_weight=[1],
-    top_loss_weight=[4096,8192],
+    top_loss_weight=[8192],
     match_edges = ['push_active'],
-    k = [2,4,6],
+    k = [k],
     r_max = [10],
     model_class=[Autoencoder_MLP_topoae],
     model_kwargs={
@@ -786,13 +786,54 @@ nonorm_mupush = [ConfigGrid_TopoAE_ext(
     )],
     uid = [''],
     toposig_kwargs=[dict()],
-    method_args=[dict(n_jobs = 1, normalize = False, mu_push = mu_push)],
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm2',
+    method_args=[dict(n_jobs = 1, normalize = True, mu_push = 1.25)],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm3',
     seed = 1,
     device = 'cpu',
     num_threads=2,
     verbose = True,
-) for mu_push in [1.05,1.125,1.25,1.4]]
+) for k in [6,8,10,12,14,16] ]
+
+nonorm_mupush2 = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/25,1/10],
+    batch_size=[128],
+    n_epochs=[1000],
+    weight_decay=[1e-7],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[8192],
+    match_edges = ['push_active'],
+    k = [k],
+    r_max = [10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min = 5,
+        k_max = 15,
+        k_step = 5,
+    )],
+    uid = [''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs = 1, normalize = True, mu_push = 1.25),dict(n_jobs = 1, normalize = True, mu_push = 1.5)],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm3',
+    seed = 1,
+    device = 'cpu',
+    num_threads=2,
+    verbose = True,
+) for k in [1,2,3,4,5,6,7,8] ]
 
 ### TEST
 swissroll_testing = ConfigGrid_TopoAE_ext(

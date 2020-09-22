@@ -22,8 +22,17 @@ if __name__ == "__main__":
     path_topoaewc_vernorm = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm2'
     path_to_save_vernorm = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE_ext/ver_nonorm2/0ver_nonorm2_latents'
 
-    path = path_topoaewc_vernorm
-    path_to_save = path_to_save_vernorm
+
+    #NEW
+    path_apush1 = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCTopoAE_swissroll_apush'
+    path_to_save_apush1 = '/Users/simons/MT_data/plots/WCTopoAE/swissroll_apush1_latents'
+
+    path_symmetric1 = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCTopoAE_swissroll_symmetric'
+    path_to_save_symmetric1 = '/Users/simons/MT_data/plots/WCTopoAE/swissroll_symmetric1_latents'
+
+
+    path = path_apush1
+    path_to_save = path_to_save_apush1
     print('START!')
     i = 0
     for dirpath, dirnames, filenames in os.walk(path):
