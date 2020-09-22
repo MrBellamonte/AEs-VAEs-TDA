@@ -232,8 +232,8 @@ asymapush_grid2 = [ConfigGrid_TopoAE_ext(
     early_stopping=[32],
     rec_loss_weight=[1],
     top_loss_weight=[int(i) for i in np.logspace(9, 13, num=5, base=2.0)],
-    match_edges=['push'],
-    k=[1, 2, 4, 8, 16],
+    match_edges=['push_active'],
+    k=[1, 2, 4, 8],
     r_max=[10],
     model_class=[Autoencoder_MLP_topoae],
     model_kwargs={
