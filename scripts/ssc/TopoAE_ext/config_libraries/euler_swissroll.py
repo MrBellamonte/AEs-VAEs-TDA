@@ -266,7 +266,6 @@ asymapush_grid2 = [ConfigGrid_TopoAE_ext(
 ) for mu_push, seed in zip(list(np.repeat([1.05, 1.1, 1.15], 5)), [3859, 2525, 2068, 3302, 2517]*3)]
 
 # CHECK STABILITY OF METHOD
-
 asymapush_stability = [ConfigGrid_TopoAE_ext(
     learning_rate=[1/25],
     batch_size=[128],
@@ -306,4 +305,127 @@ asymapush_stability = [ConfigGrid_TopoAE_ext(
     device='cpu',
     num_threads=1,
     verbose=False,
-) for seed in [91, 561, 4, 647, 8, 36, 790, 933, 270, 867, 588, 146]]
+) for seed in [91, 561, 4]]
+
+asymapush_stability2 = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/25],
+    batch_size=[128],
+    n_epochs=[1000],
+    weight_decay=[1e-7],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[8192],
+    match_edges=['push_active'],
+    k=[2],
+    r_max=[10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560],
+    },
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=20,
+        k_step=5,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs=1, normalize=True, mu_push=1.25)],
+    experiment_dir='/cluster/scratch/schsimo/output/WCTopoAE_swissroll_apush_stability',
+    seed=seed,
+    device='cpu',
+    num_threads=1,
+    verbose=False,
+) for seed in [647, 8, 36]]
+
+asymapush_stability3 = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/25],
+    batch_size=[128],
+    n_epochs=[1000],
+    weight_decay=[1e-7],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[8192],
+    match_edges=['push_active'],
+    k=[2],
+    r_max=[10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560],
+    },
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=20,
+        k_step=5,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs=1, normalize=True, mu_push=1.25)],
+    experiment_dir='/cluster/scratch/schsimo/output/WCTopoAE_swissroll_apush_stability',
+    seed=seed,
+    device='cpu',
+    num_threads=1,
+    verbose=False,
+) for seed in [790, 933, 270]]
+
+asymapush_stability4 = [ConfigGrid_TopoAE_ext(
+    learning_rate=[1/25],
+    batch_size=[128],
+    n_epochs=[1000],
+    weight_decay=[1e-7],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[8192],
+    match_edges=['push_active'],
+    k=[2],
+    r_max=[10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560],
+    },
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=20,
+        k_step=5,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=[dict(n_jobs=1, normalize=True, mu_push=1.25)],
+    experiment_dir='/cluster/scratch/schsimo/output/WCTopoAE_swissroll_apush_stability',
+    seed=seed,
+    device='cpu',
+    num_threads=1,
+    verbose=False,
+) for seed in [867, 588, 146]]
