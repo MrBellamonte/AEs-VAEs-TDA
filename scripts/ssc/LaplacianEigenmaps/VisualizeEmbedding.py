@@ -3,7 +3,7 @@ import time
 from sklearn.manifold import SpectralEmbedding
 
 from src.datasets.datasets import SwissRoll, Spheres
-from src.utils.plots import plot_classes_qual
+from src.utils.plots import plot_2Dscatter
 
 if __name__ == "__main__":
 
@@ -19,4 +19,4 @@ if __name__ == "__main__":
     end = time.time()
     print('It took: {}'.format(end - start))
 
-    plot_classes_qual(data = X_transformed, labels=color, path_to_save= None, title = None, show = True)
+    plot_2Dscatter(data = X_transformed, labels=color, path_to_save= None, title = None, show = True)

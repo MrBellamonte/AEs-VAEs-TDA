@@ -22,7 +22,7 @@ from src.models.TopoAE.config import ConfigTopoAE, ConfigGrid_TopoAE
 from src.train_pipeline.sacred_observer import SetID
 
 from src.train_pipeline.train_model import train
-from src.utils.plots import plot_classes_qual
+from src.utils.plots import plot_2Dscatter
 
 ex = Experiment()
 COLS_DF_RESULT = list(placeholder_config_topoae.create_id_dict().keys())+['metric', 'value']
@@ -91,14 +91,14 @@ def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experi
         print('Compute LLE')
         embedding = SpectralEmbedding(n_components=2, n_jobs=num_threads, n_neighbors=90)
         X_transformed = embedding.fit_transform(X_train)
-        plot_classes_qual(X_transformed, y_train, path_to_save=None, title=None, show=True)
+        plot_2Dscatter(X_transformed, y_train, path_to_save=None, title=None, show=True)
         dataset_visualisation = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
         visualisation_loader = DataLoader(dataset_visualisation, batch_size=config.batch_size,
                                           shuffle=True,
                                           pin_memory=True, drop_last=True)
         X_train, Y_train, Z_train = get_latentspace_representation(model, visualisation_loader,
                                                                    device=device)
-        plot_classes_qual(Z_train, Y_train, path_to_save=None, title=None, show=True)
+        plot_2Dscatter(Z_train, Y_train, path_to_save=None, title=None, show=True)
         dataset_pretrain = TensorDataset(torch.Tensor(X_train),torch.Tensor(X_transformed), torch.Tensor(y_train))
         print('Done!')
         train_loader = DataLoader(dataset_pretrain, batch_size=config.batch_size, shuffle=False,
@@ -130,7 +130,7 @@ def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experi
                                   pin_memory=True, drop_last=False)
         X_train, Y_train, Z_train = get_latentspace_representation(model, visualisation_loader,
                                                                    device=device)
-        plot_classes_qual(Z_train, Y_train, path_to_save=None, title=None, show=True)
+        plot_2Dscatter(Z_train, Y_train, path_to_save=None, title=None, show=True)
         print('Done')
 
 

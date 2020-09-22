@@ -17,7 +17,7 @@ from src.train_pipeline.callbacks.callbacks import Callback, \
 from src.train_pipeline.training import TrainingLoop
 from src.train_pipeline.callbacks.callback_train import LogDatasetLoss, LogTrainingLoss
 from src.utils.dict_utils import avg_array_in_dict, default
-from src.utils.plots import plot_losses, plot_classes_qual
+from src.utils.plots import plot_losses, plot_2Dscatter
 
 
 class NewlineCallback(Callback):
@@ -156,9 +156,9 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
                 os.path.join(rundir, 'latents.npz'),
                 latents=Y_eval, labels=Z_eval
             )
-            plot_classes_qual(Z_eval, Y_eval, path_to_save=os.path.join(
+            plot_2Dscatter(Z_eval, Y_eval, path_to_save=os.path.join(
                     rundir, 'test_latent_visualization.pdf'), title=None, show=False)
-            # plot_classes_qual(Z_eval, Y_eval, path_to_save=os.path.join(
+            # plot_2Dscatter(Z_eval, Y_eval, path_to_save=os.path.join(
             #         rundir, 'test_latent_visualization.png'), title=None, show=False)
 
         if rundir and config.eval.save_train_latent:
@@ -176,9 +176,9 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
                 latents=Z_train, labels=Y_train
             )
             # Visualize latent space
-            plot_classes_qual(Z_train, Y_train, path_to_save=os.path.join(
+            plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
                     rundir, 'train_latent_visualization.pdf'), title=None, show=False)
-            # plot_classes_qual(Z_train, Y_train, path_to_save=os.path.join(
+            # plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
             #         rundir, 'train_latent_visualization.png'), title=None, show=False)
 
 

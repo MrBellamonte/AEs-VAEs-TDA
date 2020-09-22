@@ -1,7 +1,7 @@
 '''
 Code copied from TopoAE paper and modified
 '''
-from src.utils.plots import plot_classes_qual
+from src.utils.plots import plot_2Dscatter
 
 """Callbacks for training loop."""
 import os
@@ -99,15 +99,15 @@ class SaveImages(Callback):
         if get_latent:
             path_plot_svg = self.path+'svg/'+'latent_epoch_{}'.format(epoch)+'.svg'
             path_plot_png = self.path+'png/'+'latent_epoch_{}'.format(epoch)+'.png'
-            plot_classes_qual(latent, labels,path_to_save =  path_plot_png, title = None, show=False)
-            plot_classes_qual(latent, labels,path_to_save =  path_plot_svg, title = None, show=False)
+            plot_2Dscatter(latent, labels, path_to_save =  path_plot_png, title = None, show=False)
+            plot_2Dscatter(latent, labels, path_to_save =  path_plot_svg, title = None, show=False)
 
         if get_reconst:
             reconst = model.decode(latent)
             path_plot_svg = self.path+'svg/'+'reconst_epoch_{}'.format(epoch)+'.svg'
             path_plot_png = self.path+'png/'+'reconst_epoch_{}'.format(epoch)+'.png'
-            plot_classes_qual(reconst, labels,path_to_save =  path_plot_png, title = None, show=False)
-            plot_classes_qual(reconst, labels,path_to_save =  path_plot_svg, title = None, show=False)
+            plot_2Dscatter(reconst, labels, path_to_save =  path_plot_png, title = None, show=False)
+            plot_2Dscatter(reconst, labels, path_to_save =  path_plot_svg, title = None, show=False)
 
 
 

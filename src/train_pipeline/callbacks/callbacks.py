@@ -11,7 +11,7 @@ from dep.topo_ae_code.src_topoae.visualization import visualize_latents
 # the overwritten method of the parent class. Further kwargs will mostly be an
 # unused parameter due to the way arguments are passed.
 # pylint: disable=W0221,W0613
-from src.utils.plots import plot_classes_qual
+from src.utils.plots import plot_2Dscatter
 from src.models.COREL.eval_engine import get_latentspace_representation
 
 
@@ -118,5 +118,5 @@ class SaveLatentRepresentation(Callback):
         """Save reconstruction images."""
         model.eval()
         _, labels, latents = get_latentspace_representation(model, self.data_loader, device=self.device)
-        plot_classes_qual(latents, labels, path_to_save=os.path.join(
+        plot_2Dscatter(latents, labels, path_to_save=os.path.join(
             self.path, f'latent_epoch_{epoch}.pdf'), title=None, show=False)

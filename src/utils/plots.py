@@ -9,7 +9,7 @@ from matplotlib.collections import PatchCollection
 from matplotlib.ticker import MaxNLocator
 
 
-def plot_classes_qual(data, labels, path_to_save= None, title = None, show = False):
+def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False):
 
 
     if len(np.unique(labels)) > 8:
