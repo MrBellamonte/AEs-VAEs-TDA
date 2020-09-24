@@ -80,7 +80,7 @@ class TrainingLoop():
             train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
                                       pin_memory=True, drop_last=True)
         else:
-            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
+            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
                                       pin_memory=True, drop_last=False)
         n_batches = len(train_loader)
 
