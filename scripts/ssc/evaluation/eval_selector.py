@@ -26,10 +26,12 @@ def get_latent_rename(exp_root,eval_root, uid, latent_name):
 
 if __name__ == "__main__":
 
-    N = 50
+    N = 5
 
     WCTopoAE_symmetric = False
-    WCTopoAE_apush = True
+    WCTopoAE_apush = False
+    UMAP = True
+    tSNE = False
 
 
     if WCTopoAE_symmetric:
@@ -38,6 +40,9 @@ if __name__ == "__main__":
     elif WCTopoAE_apush:
         exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCTopoAE_swissroll_apush'
         root_save = '/Users/simons/MT_data/eval_all_analysis/WCTopoAE/SwissRoll/apush'
+    elif UMAP:
+        exp_dir = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/competitors/swissroll_umap_new2'
+        root_save = '/Users/simons/MT_data/eval_all_analysis/Competitors/UMAP/swissroll2'
     else:
         ValueError
 
@@ -65,10 +70,33 @@ if __name__ == "__main__":
         'test_mean_mrre' : 'mean_mrre'
     }
 
+    metrics_min_comp = ['train_mean_mrre', 'train_rmse',
+                   'train_llrmse_X_norm15', 'train_llrmse_X_norm5', 'train_density_kl_global_001',
+                   'train_density_kl_global_01']
+    metrics_max_comp = ['train_mean_continuity', 'train_mean_trustworthiness']
+    dir_name_mapping_comp = {
+        'train_rmse' : 'rmse',
+        'train_llrmse_X_norm15' : 'llrmse_norm15',
+        'train_llrmse_X_norm5' : 'llrmse_norm5',
+        'train_density_kl_global_001' : 'kl_global_001',
+        'train_density_kl_global_01':'kl_global_01',
+        'train_mean_continuity':'mean_continuity',
+        'train_mean_trustworthiness':'mean_trustworthiness',
+        'train_mean_mrre' : 'mean_mrre'
+    }
+
+
+    if UMAP or tSNE:
+        bss = ['const']
+        metrics_min = metrics_min_comp
+        metrics_max = metrics_max_comp
+        dir_name_mapping = dir_name_mapping_comp
 
     for bs in bss:
-
-        df_temp = df[df.batch_size == bs]
+        if UMAP or tSNE:
+            df_temp = df
+        else:
+            df_temp = df[df.batch_size == bs]
 
         for metric in (metrics_min + metrics_max):
 

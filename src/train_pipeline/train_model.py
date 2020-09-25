@@ -105,22 +105,11 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
 
 
     if rundir:
-        # plot_losses(
-        #     loss_averages,
-        #     loss_stds,
-        #     save_file=os.path.join(rundir, 'loss.png')
-        # )
         plot_losses(
             loss_averages,
             loss_stds,
             save_file=os.path.join(rundir, 'loss.pdf'),
         )
-        # plot_losses(
-        #     metric_averages,
-        #     metric_stds,
-        #     save_file=os.path.join(rundir, 'metrics.png'),
-        #     pairs_axes=True
-        # )
         plot_losses(
             metric_averages,
             metric_stds,
@@ -134,7 +123,6 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
 
     if config.eval.active:
         evaluate_on = config.eval.evaluate_on
-        #_log.info(f'Running evaluation on {evaluate_on} dataset')
         if evaluate_on == 'validation':
             selected_dataset = validation_dataset
         else:
@@ -158,8 +146,6 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
             )
             plot_2Dscatter(Z_eval, Y_eval, path_to_save=os.path.join(
                     rundir, 'test_latent_visualization.pdf'), title=None, show=False)
-            # plot_2Dscatter(Z_eval, Y_eval, path_to_save=os.path.join(
-            #         rundir, 'test_latent_visualization.png'), title=None, show=False)
 
         if rundir and config.eval.save_train_latent:
             dataloader_train = torch.utils.data.DataLoader(
@@ -178,8 +164,6 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
             # Visualize latent space
             plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
                     rundir, 'train_latent_visualization.pdf'), title=None, show=False)
-            # plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
-            #         rundir, 'train_latent_visualization.png'), title=None, show=False)
 
 
         ks = list(range(config.eval.k_min, config.eval.k_max + config.eval.k_step, config.eval.k_step))
