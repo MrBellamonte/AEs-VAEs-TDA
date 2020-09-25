@@ -28,7 +28,7 @@ class ConfigEval:
         return list(range(self.k_min, self.k_max + self.k_step, self.k_step))
 
     def check(self):
-        assert self.evaluate_on in ['validation', 'test']
+        assert self.evaluate_on in ['validation', 'test', None]
 
         assert self.k_min > 0
         assert self.k_max > 0

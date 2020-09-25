@@ -7,12 +7,12 @@ from src.datasets.datasets import SwissRoll
 if __name__ == "__main__":
     dataset_sampler = SwissRoll()
 
-    n_samples = 256
+    n_samples = 64
     path_to_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/visualisation_nnsys/knn{}/'.format(n_samples)
 
     N_sim = 100
 
-    ks = [6,7,8]
+    ks = [1,2,4]
 
     ntot = int(len(ks) * N_sim)
     counter = 1
