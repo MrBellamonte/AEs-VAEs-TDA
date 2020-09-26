@@ -27,7 +27,7 @@ swissroll_test = ConfigGrid_Competitors(
 )
 
 
-swissroll_grid1 = [ConfigGrid_Competitors(
+swissroll_euler = [ConfigGrid_Competitors(
     model_class = [tSNE],
     model_kwargs=[dict(n_jobs = 1, perplexity = p) for p in [5,10,20,30,40,50,60,70,80,90,100,110,125,150,175,200]],
     dataset=[SwissRoll()],
