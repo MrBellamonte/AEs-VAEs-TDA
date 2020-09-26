@@ -26,11 +26,11 @@ def get_latent_rename(exp_root,eval_root, uid, latent_name):
 
 if __name__ == "__main__":
 
-    N = 5
+    N = 15
 
     WCTopoAE_symmetric = False
-    WCTopoAE_apush = False
-    UMAP = True
+    WCTopoAE_apush = True
+    UMAP = False
     tSNE = False
 
 
