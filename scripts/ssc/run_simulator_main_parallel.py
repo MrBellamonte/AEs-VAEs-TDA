@@ -4,7 +4,7 @@ import importlib
 
 from joblib import Parallel, delayed
 
-import scripts
+from src.competitors.train_engine import simulator_competitor
 
 from src.models.TopoAE.train_engine import simulator_TopoAE
 from src.models.TopoAE_WitnessComplex.train_engine import simulator_TopoAE_ext
@@ -42,6 +42,12 @@ if __name__ == "__main__":
 
         Parallel(n_jobs=args.n_jobs)(delayed(simulator_TopoAE_ext)(config) for config in configs)
 
+    elif args.model == 'competitor':
+        conifg_srt = 'scripts.ssc.Competitors.config_libraries.'+args.configs
+        mod_name, config_name = conifg_srt.rsplit('.', 1)
+        mod = importlib.import_module(mod_name)
+        configs = getattr(mod, config_name)
 
+        Parallel(n_jobs=args.n_jobs)(delayed(simulator_competitor)(config) for config in configs)
     else:
         raise ValueError("Model {} not defined.".format(args.model))
