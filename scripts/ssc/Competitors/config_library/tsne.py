@@ -27,7 +27,6 @@ swissroll_test = ConfigGrid_Competitors(
 )
 
 
-
 swissroll_grid1 = [ConfigGrid_Competitors(
     model_class = [tSNE],
     model_kwargs=[dict(n_jobs = 1, perplexity = p) for p in [5,10,20,30,40,50,60,70,80,90,100,110,125,150,175,200]],
@@ -46,7 +45,7 @@ swissroll_grid1 = [ConfigGrid_Competitors(
         k_step=5,
     )],
     uid = [''],
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/competitors/swissroll',
+    experiment_dir='/cluster/scratch/schsimo/output/tsne_swissroll',
     seed = seed,
     verbose = True
-) for seed in [1452, 1189, 1573, 959]]
+) for seed in [480, 367, 887, 718, 672, 172,  12, 326, 910, 688]]
