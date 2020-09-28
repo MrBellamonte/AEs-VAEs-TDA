@@ -9,7 +9,6 @@ from sklearn import datasets
 from .shapes import dsphere, torus
 
 
-
 class DataSet(metaclass=ABCMeta):
     def __init__(self):
         pass
