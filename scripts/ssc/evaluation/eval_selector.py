@@ -29,9 +29,11 @@ if __name__ == "__main__":
     N = 15
 
     WCTopoAE_symmetric = False
-    WCTopoAE_apush = True
+    WCTopoAE_apush = False
     UMAP = False
+    UMAP2 = False
     tSNE = False
+    TopoAE = True
 
 
     if WCTopoAE_symmetric:
@@ -43,6 +45,15 @@ if __name__ == "__main__":
     elif UMAP:
         exp_dir = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/competitors/swissroll_umap_new2'
         root_save = '/Users/simons/MT_data/eval_all_analysis/Competitors/UMAP/swissroll2'
+    elif UMAP2:
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/umap_swissroll'
+        root_save = '/Users/simons/MT_data/eval_all_analysis/Competitors/UMAP/final_swissroll'
+    elif tSNE:
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/tsne_swissroll'
+        root_save = '/Users/simons/MT_data/eval_all_analysis/Competitors/tSNE/final_swissroll'
+    elif TopoAE:
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/TopoAE_swissroll_symmetric'
+        root_save = '/Users/simons/MT_data/eval_all_analysis/TopoAE/SwissRoll/symmetric_nonshuffle'
     else:
         ValueError
 
@@ -55,7 +66,7 @@ if __name__ == "__main__":
     bss = [64,128,256,512]
 
     metrics_min = ['test_mean_mrre','training.metrics.notmatched_pairs_0D','test_rmse','test_llrmse_X_norm15', 'test_llrmse_X_norm5','test_density_kl_global_001','test_density_kl_global_01']
-    metrics_max = ['test_mean_continuity','test_mean_trustworthiness']
+    metrics_max = ['test_mean_continuity','test_mean_trustworthiness', 'training.metrics.matched_pairs_0D']
 
 
     dir_name_mapping = {
@@ -67,7 +78,8 @@ if __name__ == "__main__":
         'test_density_kl_global_01':'kl_global_01',
         'test_mean_continuity':'mean_continuity',
         'test_mean_trustworthiness':'mean_trustworthiness',
-        'test_mean_mrre' : 'mean_mrre'
+        'test_mean_mrre' : 'mean_mrre',
+        'training.metrics.matched_pairs_0D' : 'matchedpairs'
     }
 
     metrics_min_comp = ['train_mean_mrre', 'train_rmse',
@@ -86,14 +98,14 @@ if __name__ == "__main__":
     }
 
 
-    if UMAP or tSNE:
+    if UMAP or tSNE or UMAP2:
         bss = ['const']
         metrics_min = metrics_min_comp
         metrics_max = metrics_max_comp
         dir_name_mapping = dir_name_mapping_comp
 
     for bs in bss:
-        if UMAP or tSNE:
+        if UMAP or tSNE or UMAP2:
             df_temp = df
         else:
             df_temp = df[df.batch_size == bs]
