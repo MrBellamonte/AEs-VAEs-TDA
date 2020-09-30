@@ -73,13 +73,14 @@ class WitnessComplex():
         'metric_computed'
     ]
 
-    def __init__(self, landmarks, witnesses, new=False):
+    def __init__(self, landmarks, witnesses, new=False, n_jobs = 1):
+        #todo: implement other metrices
         self.landmarks = landmarks
         self.witnesses = witnesses
         self.new = new
         self.metric_computed = False
 
-        self.distances = pairwise_distances(witnesses, landmarks)
+        self.distances = pairwise_distances(witnesses, landmarks, n_jobs = n_jobs)
 
     def _compute_metric_for_one_witness(self, row):
         sorted_row = sorted([*enumerate(row)], key=lambda x: x[1])
@@ -331,11 +332,11 @@ class WitnessComplex():
         diag = self.simplex_tree.persistence()
         gudhi.plot_persistence_diagram(diag, axes=ax, legend=True)
 
-        if show:
-            plt.show()
 
         if path_to_save is not None:
             plt.savefig(path_to_save, dpi=200)
+        if show:
+            plt.show()
         plt.close()
 
     def check_distance_matrix(self):

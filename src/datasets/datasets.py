@@ -2,12 +2,9 @@ from abc import ABCMeta, abstractmethod
 from typing import Tuple
 
 import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
 from sklearn import datasets
 
 from .shapes import dsphere, torus
-
 
 class DataSet(metaclass=ABCMeta):
     def __init__(self):

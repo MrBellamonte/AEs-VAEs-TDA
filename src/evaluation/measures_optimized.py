@@ -49,8 +49,7 @@ class MeasureCalculator():
 
         self.K_kX15, self.K_kZ15, self.K_kX_norm15, self.K_kZ_norm15, self.llrmse_X15, self.llrmse_Z15, self.llrmse_X_norm15, self.llrmse_Z_norm15 = self.Lipschitz(k=15)
 
-        self.K_kX15, self.K_kZ15, self.K_kX_norm15, self.K_kZ_norm15, self.llrmse_X15, self.llrmse_Z15, self.llrmse_X_norm15, self.llrmse_Z_norm15 = self.Lipschitz(
-                k=5)
+
 
     @staticmethod
     def _neighbours_and_ranks(distances, k):
@@ -210,9 +209,6 @@ class MeasureCalculator():
         rs_z = np.array(gathered_ranks_z)
         coeff, _ = spearmanr(rs_x, rs_z)
 
-        ##use only off-diagonal (non-trivial) ranks:
-        # inds = ~np.eye(X_ranks.shape[0],dtype=bool)
-        # coeff, pval = spearmanr(X_ranks[inds], Z_ranks[inds])
         return coeff
 
     @measures.register(True)
