@@ -5,12 +5,11 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from torch.autograd import gradcheck
 
 from src.models.autoencoder.base import AutoencoderModel
 
 
-class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
+class WitnessComplexAutoencoder(AutoencoderModel):
     """Topologically regularized autoencoder."""
 
     def __init__(self,autoencoder,lam_t=1.,lam_r=1., toposig_kwargs=dict(k=1,normalize = True,match_edges='symmetric',mu_push=1), norm_X=1):
@@ -106,7 +105,6 @@ class TopologicalSignatureDistanceWC(nn.Module):
         self.mu_push = mu_push
 
 
-
     def _get_pairings_dist_Z(self, latent,latent_norm):
         latent_distances = torch.norm(latent[:, None]-latent, dim=2, p=2)
         latent_distances = latent_distances/latent_norm
@@ -114,18 +112,6 @@ class TopologicalSignatureDistanceWC(nn.Module):
 
         kNN_mask = torch.zeros((latent.size(0), latent.size(0),)).scatter(1, indices[:, 1:(self.k+1)], 1)
         return latent_distances, kNN_mask
-
-
-    @staticmethod
-    def sig_error(signature1, signature2):
-        """Compute distance between two topological signatures."""
-        return torch.square((signature1-signature2)).sum()
-
-
-    @staticmethod
-    def sig_error2(signature1, signature2):
-        """Compute distance between two topological signatures. Only consider distance if sig1 > sig2"""
-        return (torch.clamp((signature1 - signature2),min = 0)**2).sum(dim=-1)
 
     def _count_matching_pairs(self, mask_X, mask_Z):
         """
@@ -187,15 +173,6 @@ class TopologicalSignatureDistanceWC(nn.Module):
             sig2_1 = dist_X.mul(pair_mask_Z)
 
             distance2_1 = torch.square((sig2_1-sig2)).sum()
-
-
-            # # CHECK GRAD CALCULATION
-            # res12 = torch.autograd.gradcheck(torch.square, (sig2-sig2_1),
-            #                                raise_exception=True,eps=1e-4, atol=1e-4)
-            # res21 = torch.autograd.gradcheck(torch.square, (sig2_1-sig2),
-            #                                raise_exception=True,eps=1e-4, atol=1e-4)
-            # print('Gradient 1-2:{}'.format(res12))
-            # print('Gradient 2-1:{}'.format(res21))
 
             distance_components['metrics.distance1-2'] = distance1_2
             distance_components['metrics.distance2-1'] = distance2_1

@@ -13,7 +13,7 @@ from src.datasets.splitting import split_validation
 from src.evaluation.eval import Multi_Evaluation
 from src.models.COREL.eval_engine import get_latentspace_representation
 from src.train_pipeline.callbacks.callbacks import Callback, \
-    SaveLatentRepresentation, Progressbar
+    SaveLatentRepresentation
 from src.train_pipeline.training import TrainingLoop
 from src.train_pipeline.callbacks.callback_train import LogDatasetLoss, LogTrainingLoss
 from src.utils.dict_utils import avg_array_in_dict, default
@@ -51,12 +51,9 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
     ]
 
     if quiet:
-        # Add newlines between epochs
-        #callbacks.append(NewlineCallback())
         pass
     else:
         callbacks.append(NewlineCallback())
-        #callbacks.append(Progressbar(print_loss_components=True))
 
     # If we are logging this run save reconstruction images
     if rundir is not None:
@@ -69,11 +66,10 @@ def train(model, data_train, data_test, config, device, quiet,val_size, _seed, _
                     test_dataset, rundir, batch_size=64, device=device)
             )
 
-    marg = config.method_args
     training_loop = TrainingLoop(
         model, train_dataset, config.n_epochs, config.batch_size, config.learning_rate,
-        config.method_args,config.weight_decay,device, callbacks, verbose=operator.not_(quiet)
-)
+        config.method_args,config.weight_decay,device, callbacks, verbose=operator.not_(quiet))
+
     # Run training
     epoch, run_times_epoch = training_loop()
 

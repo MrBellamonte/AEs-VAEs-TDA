@@ -18,7 +18,7 @@ admissible_model_classes_TopoAE = [Autoencoder_MLP_topoae.__name__]
 
 
 @dataclass
-class ConfigTopoAE_ext:
+class ConfigWCAE:
     __slots__ = ['learning_rate',
                  'batch_size',
                  'n_epochs',
@@ -78,7 +78,6 @@ class ConfigTopoAE_ext:
         self.check()
 
     def creat_uuid(self):
-
         if self.uid == '':
 
             unique_id = str(uuid.uuid4())[:8]
@@ -151,7 +150,7 @@ class ConfigTopoAE_ext:
 
 
 @dataclass
-class ConfigGrid_TopoAE_ext:
+class ConfigGrid_WCAE:
     __slots__ = ['learning_rate',
                  'batch_size',
                  'n_epochs',
@@ -227,7 +226,7 @@ class ConfigGrid_TopoAE_ext:
 
                 tmp[kc[-1]] = kc_v
 
-            ret.append(ConfigTopoAE_ext(**ret_i))
+            ret.append(ConfigWCAE(**ret_i))
 
         return ret
 

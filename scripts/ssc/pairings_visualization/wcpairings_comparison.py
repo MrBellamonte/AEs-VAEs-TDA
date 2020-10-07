@@ -4,7 +4,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
-from scripts.ssc.persistence_pairings_visualization.utils_definitions import make_plot
+from scripts.ssc.pairings_visualization.utils_definitions import make_plot
 from src.datasets.datasets import SwissRoll
 from src.topology.witness_complex import WitnessComplex
 

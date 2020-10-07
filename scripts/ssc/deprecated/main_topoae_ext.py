@@ -6,8 +6,8 @@ import importlib
 
 import scripts
 from scripts.ssc.TopoAE_ext.config_libraries.swissroll import swissroll_testing
-from src.models.TopoAE_WitnessComplex.config import ConfigGrid_TopoAE_ext
-from src.models.TopoAE_WitnessComplex.train_engine import simulator_TopoAE_ext
+from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
+from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
 
 
 def parse_input():

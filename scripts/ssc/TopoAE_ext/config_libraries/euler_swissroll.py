@@ -4,13 +4,13 @@ import numpy as np
 
 from src.datasets.datasets import SwissRoll
 from src.evaluation.config import ConfigEval
-from src.models.TopoAE_WitnessComplex.config import ConfigGrid_TopoAE_ext
+from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
 # SYMMETRIC EDGE MATCHING
 
 # grid 1 -> seeds = [1452, 1189, 1573,  959, 1946] (100 configs per grid), 15 processes
-symmetric_grid1 = [ConfigGrid_TopoAE_ext(
+symmetric_grid1 = [ConfigGrid_WCAE(
     learning_rate=[lr],
     batch_size=random.sample([int(i) for i in np.logspace(6, 9, num=4, base=2.0)], 4),
     n_epochs=[1000],
@@ -52,7 +52,7 @@ symmetric_grid1 = [ConfigGrid_TopoAE_ext(
 ) for lr, seed in zip(list(np.repeat([1/10, 1/100, 1/1000], 5)), [1452, 1189, 1573, 959, 1946]*3)]
 
 # grid 2 -> seeds = [3859, 2525, 2068, 3302, 2517] (100 configs per grid), 15 processes
-symmetric_grid2 = [ConfigGrid_TopoAE_ext(
+symmetric_grid2 = [ConfigGrid_WCAE(
     learning_rate=[lr],
     batch_size=random.sample([int(i) for i in np.logspace(6, 9, num=4, base=2.0)], 4),
     n_epochs=[1000],
@@ -96,7 +96,7 @@ symmetric_grid2 = [ConfigGrid_TopoAE_ext(
 # ASYMMETRIC EDGE MATCHING (PUSH)
 
 # grid 1 -> seeds = [1452, 1189, 1573,  959, 1946] (100 configs per grid), 15 processes
-asym_grid1 = [ConfigGrid_TopoAE_ext(
+asym_grid1 = [ConfigGrid_WCAE(
     learning_rate=[lr],
     batch_size=random.sample([int(i) for i in np.logspace(6, 9, num=4, base=2.0)], 4),
     n_epochs=[1000],
@@ -138,7 +138,7 @@ asym_grid1 = [ConfigGrid_TopoAE_ext(
 ) for lr, seed in zip(list(np.repeat([1/10, 1/100, 1/1000], 5)), [1452, 1189, 1573, 959, 1946]*3)]
 
 # grid 2 -> seeds = [3859, 2525, 2068, 3302, 2517] (100 configs per grid), 15 processes
-asym_grid2 = [ConfigGrid_TopoAE_ext(
+asym_grid2 = [ConfigGrid_WCAE(
     learning_rate=[lr],
     batch_size=random.sample([int(i) for i in np.logspace(6, 9, num=4, base=2.0)], 4),
     n_epochs=[1000],
@@ -182,7 +182,7 @@ asym_grid2 = [ConfigGrid_TopoAE_ext(
 # ASYMMETRIC EDGE MATCHING (ACTIVE PUSH)
 
 # grid 1 -> seeds = [1452, 1189, 1573,  959, 1946] (300 configs per grid), 15 processes
-asymapush_grid1 = [ConfigGrid_TopoAE_ext(
+asymapush_grid1 = [ConfigGrid_WCAE(
     learning_rate=[1/10, 1/100, 1/1000],
     batch_size=random.sample([int(i) for i in np.logspace(6, 9, num=4, base=2.0)], 4),
     n_epochs=[1000],
@@ -224,7 +224,7 @@ asymapush_grid1 = [ConfigGrid_TopoAE_ext(
 ) for mu_push, seed in zip(list(np.repeat([1.05, 1.1, 1.15], 5)), [1452, 1189, 1573, 959, 1946]*3)]
 
 # grid 2 -> seeds = [3859, 2525, 2068, 3302, 2517] (300 configs per grid!), 15 processes
-asymapush_grid2 = [ConfigGrid_TopoAE_ext(
+asymapush_grid2 = [ConfigGrid_WCAE(
     learning_rate=[1/10, 1/100, 1/1000],
     batch_size=random.sample([int(i) for i in np.logspace(6, 9, num=4, base=2.0)], 4),
     n_epochs=[1000],
@@ -266,7 +266,7 @@ asymapush_grid2 = [ConfigGrid_TopoAE_ext(
 ) for mu_push, seed in zip(list(np.repeat([1.05, 1.1, 1.15], 5)), [3859, 2525, 2068, 3302, 2517]*3)]
 
 # CHECK STABILITY OF METHOD
-asymapush_stability = [ConfigGrid_TopoAE_ext(
+asymapush_stability = [ConfigGrid_WCAE(
     learning_rate=[1/25],
     batch_size=[128],
     n_epochs=[1000],
@@ -307,7 +307,7 @@ asymapush_stability = [ConfigGrid_TopoAE_ext(
     verbose=False,
 ) for seed in [91, 561, 4]]
 
-asymapush_stability2 = [ConfigGrid_TopoAE_ext(
+asymapush_stability2 = [ConfigGrid_WCAE(
     learning_rate=[1/25],
     batch_size=[128],
     n_epochs=[1000],
@@ -348,7 +348,7 @@ asymapush_stability2 = [ConfigGrid_TopoAE_ext(
     verbose=False,
 ) for seed in [647, 8, 36]]
 
-asymapush_stability3 = [ConfigGrid_TopoAE_ext(
+asymapush_stability3 = [ConfigGrid_WCAE(
     learning_rate=[1/25],
     batch_size=[128],
     n_epochs=[1000],
@@ -389,7 +389,7 @@ asymapush_stability3 = [ConfigGrid_TopoAE_ext(
     verbose=False,
 ) for seed in [790, 933, 270]]
 
-asymapush_stability4 = [ConfigGrid_TopoAE_ext(
+asymapush_stability4 = [ConfigGrid_WCAE(
     learning_rate=[1/25],
     batch_size=[128],
     n_epochs=[1000],
@@ -433,7 +433,7 @@ asymapush_stability4 = [ConfigGrid_TopoAE_ext(
 
 
 # asym_push bs64
-asymapush_grid_bs64 = [ConfigGrid_TopoAE_ext(
+asymapush_grid_bs64 = [ConfigGrid_WCAE(
     learning_rate=[lr],
     batch_size=[64],
     n_epochs=[1000],
@@ -476,7 +476,7 @@ asymapush_grid_bs64 = [ConfigGrid_TopoAE_ext(
 
 
 # RERUN "FINALISTS" FOR EVAL
-wctopoae_finalists = [ConfigGrid_TopoAE_ext(
+wctopoae_finalists = [ConfigGrid_WCAE(
     learning_rate=[1/1000],
     batch_size=[256],
     n_epochs=[1000],
@@ -516,7 +516,7 @@ wctopoae_finalists = [ConfigGrid_TopoAE_ext(
     num_threads=1,
     verbose=False,
 ),
-ConfigGrid_TopoAE_ext(
+ConfigGrid_WCAE(
     learning_rate=[1/25],
     batch_size=[128],
     n_epochs=[1000],
@@ -556,7 +556,7 @@ ConfigGrid_TopoAE_ext(
     num_threads=1,
     verbose=False,
 ),
-ConfigGrid_TopoAE_ext(
+ConfigGrid_WCAE(
     learning_rate=[1/100],
     batch_size=[64],
     n_epochs=[1000],

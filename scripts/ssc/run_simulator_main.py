@@ -7,7 +7,7 @@ import scripts
 # from src.models.TopoAE_WitnessComplex.config import ConfigGrid_TopoAE_ext
 from src.competitors.train_engine import simulator_competitor
 from src.models.TopoAE.train_engine import simulator_TopoAE
-from src.models.TopoAE_WitnessComplex.train_engine import simulator_TopoAE_ext
+from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
 
 
 def parse_input():

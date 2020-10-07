@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from dep.topo_ae_code.src_topoae.callbacks import Callback
-from src.models.TopoAE_WitnessComplex.train_util import compute_wc_offline
+from src.models.WitnessComplexAE.train_util import compute_wc_offline
 from src.topology.witness_complex import WitnessComplex
 
 

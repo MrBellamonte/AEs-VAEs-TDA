@@ -87,51 +87,51 @@ def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experi
                                                 lam_t=config.top_loss_weight,
                                                 toposig_kwargs=config.toposig_kwargs)
     model.to(device)
-    if config.method_args['LLE_pretrain']:
-        print('Compute LLE')
-        embedding = SpectralEmbedding(n_components=2, n_jobs=num_threads, n_neighbors=90)
-        X_transformed = embedding.fit_transform(X_train)
-        plot_2Dscatter(X_transformed, y_train, path_to_save=None, title=None, show=True)
-        dataset_visualisation = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
-        visualisation_loader = DataLoader(dataset_visualisation, batch_size=config.batch_size,
-                                          shuffle=True,
-                                          pin_memory=True, drop_last=True)
-        X_train, Y_train, Z_train = get_latentspace_representation(model, visualisation_loader,
-                                                                   device=device)
-        plot_2Dscatter(Z_train, Y_train, path_to_save=None, title=None, show=True)
-        dataset_pretrain = TensorDataset(torch.Tensor(X_train),torch.Tensor(X_transformed), torch.Tensor(y_train))
-        print('Done!')
-        train_loader = DataLoader(dataset_pretrain, batch_size=config.batch_size, shuffle=False,
-                                  pin_memory=True, drop_last=False)
-        run_times_epoch = []
-        print('Start Pretraining')
-        model.train()
-        optimizer = torch.optim.Adam(
-            model.parameters(), lr=config.learning_rate)
-        for epoch in range(1, 40):
-            for batch, (data, latent_LLE, label) in enumerate(train_loader):
-
-                x = data.to('cpu')
-                latent = model.encode(x)
-                x_rec = model.decode(latent)
-
-                latent_loss = torch.nn.MSELoss()
-                rec_loss = torch.nn.MSELoss()
-
-                loss = latent_loss(latent, latent_LLE) + rec_loss(x, x_rec)
-                print(loss)
-
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-
-        dataset_visualisation = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
-        visualisation_loader = DataLoader(dataset_visualisation, batch_size=config.batch_size, shuffle=True,
-                                  pin_memory=True, drop_last=False)
-        X_train, Y_train, Z_train = get_latentspace_representation(model, visualisation_loader,
-                                                                   device=device)
-        plot_2Dscatter(Z_train, Y_train, path_to_save=None, title=None, show=True)
-        print('Done')
+    # if config.method_args['LLE_pretrain']:
+    #     print('Compute LLE')
+    #     embedding = SpectralEmbedding(n_components=2, n_jobs=num_threads, n_neighbors=90)
+    #     X_transformed = embedding.fit_transform(X_train)
+    #     plot_2Dscatter(X_transformed, y_train, path_to_save=None, title=None, show=True)
+    #     dataset_visualisation = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
+    #     visualisation_loader = DataLoader(dataset_visualisation, batch_size=config.batch_size,
+    #                                       shuffle=True,
+    #                                       pin_memory=True, drop_last=True)
+    #     X_train, Y_train, Z_train = get_latentspace_representation(model, visualisation_loader,
+    #                                                                device=device)
+    #     plot_2Dscatter(Z_train, Y_train, path_to_save=None, title=None, show=True)
+    #     dataset_pretrain = TensorDataset(torch.Tensor(X_train),torch.Tensor(X_transformed), torch.Tensor(y_train))
+    #     print('Done!')
+    #     train_loader = DataLoader(dataset_pretrain, batch_size=config.batch_size, shuffle=False,
+    #                               pin_memory=True, drop_last=False)
+    #     run_times_epoch = []
+    #     print('Start Pretraining')
+    #     model.train()
+    #     optimizer = torch.optim.Adam(
+    #         model.parameters(), lr=config.learning_rate)
+    #     for epoch in range(1, 40):
+    #         for batch, (data, latent_LLE, label) in enumerate(train_loader):
+    #
+    #             x = data.to('cpu')
+    #             latent = model.encode(x)
+    #             x_rec = model.decode(latent)
+    #
+    #             latent_loss = torch.nn.MSELoss()
+    #             rec_loss = torch.nn.MSELoss()
+    #
+    #             loss = latent_loss(latent, latent_LLE) + rec_loss(x, x_rec)
+    #             print(loss)
+    #
+    #             optimizer.zero_grad()
+    #             loss.backward()
+    #             optimizer.step()
+    #
+    #     dataset_visualisation = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
+    #     visualisation_loader = DataLoader(dataset_visualisation, batch_size=config.batch_size, shuffle=True,
+    #                               pin_memory=True, drop_last=False)
+    #     X_train, Y_train, Z_train = get_latentspace_representation(model, visualisation_loader,
+    #                                                                device=device)
+    #     plot_2Dscatter(Z_train, Y_train, path_to_save=None, title=None, show=True)
+    #     print('Done')
 
 
 

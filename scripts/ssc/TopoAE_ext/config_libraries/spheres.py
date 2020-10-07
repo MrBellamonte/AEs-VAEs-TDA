@@ -2,10 +2,10 @@ import numpy as np
 
 from src.datasets.datasets import Spheres
 from src.evaluation.config import ConfigEval
-from src.models.TopoAE_WitnessComplex.config import ConfigGrid_TopoAE_ext
+from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
-euler_run1 = [ConfigGrid_TopoAE_ext(
+euler_run1 = [ConfigGrid_WCAE(
     learning_rate=[1/1000],
     batch_size=[int(i) for i in np.logspace(3,11,num=10,base = 2.0)],
     n_epochs=[1000],
