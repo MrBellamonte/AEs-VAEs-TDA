@@ -48,3 +48,117 @@ swissroll_multiseed_final = [ConfigGrid_TopoAE(
 ) for seed in [1452, 1189, 1573, 959, 1946,3859, 2525, 2068, 3302, 2517]]
 
 
+
+TopoAE_finalists = [ConfigGrid_TopoAE(
+    learning_rate=[1/100],
+    batch_size=random.sample([256], 1),
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[32],
+    rec_loss_weight=[1],
+    top_loss_weight=[8192],
+    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min=5,
+        k_max=20,
+        k_step=5,
+    )],
+    uid = [''],
+    method_args = [None],
+    experiment_dir='/cluster/scratch/schsimo/output/finalists',
+    seed = 2525,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False
+),ConfigGrid_TopoAE(
+    learning_rate=[1/1000],
+    batch_size=random.sample([128], 1),
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[32],
+    rec_loss_weight=[1],
+    top_loss_weight=[512],
+    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active = True,
+        evaluate_on = 'test',
+        save_eval_latent = True,
+        save_train_latent = True,
+        online_visualization = False,
+        k_min=5,
+        k_max=20,
+        k_step=5,
+    )],
+    uid = [''],
+    method_args = [None],
+    experiment_dir='/cluster/scratch/schsimo/output/finalists',
+    seed = 2068,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False
+),
+    ConfigGrid_TopoAE(
+        learning_rate=[1/1000],
+        batch_size=random.sample([64], 1),
+        n_epochs=[1000],
+        weight_decay=[1e-6],
+        early_stopping=[32],
+        rec_loss_weight=[1],
+        top_loss_weight=[2048],
+        toposig_kwargs=[dict(match_edges='symmetric')],
+        model_class=[Autoencoder_MLP_topoae],
+        model_kwargs={
+            'input_dim'         : [3],
+            'latent_dim'        : [2],
+            'size_hidden_layers': [[32, 32]]
+        },
+        dataset=[SwissRoll()],
+        sampling_kwargs={
+            'n_samples': [2560]
+        },
+        eval=[ConfigEval(
+            active=True,
+            evaluate_on='test',
+            save_eval_latent=True,
+            save_train_latent=True,
+            online_visualization=False,
+            k_min=5,
+            k_max=20,
+            k_step=5,
+        )],
+        uid=[''],
+        method_args=[None],
+        experiment_dir='/cluster/scratch/schsimo/output/finalists',
+        seed=959,
+        device='cpu',
+        num_threads=1,
+        verbose=False
+    )
+]
+
+

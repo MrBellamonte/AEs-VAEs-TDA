@@ -1,9 +1,9 @@
 import numpy as np
-import pandas as pd
 import torch
 
+from scripts.ssc.pairings_visualization.utils_definitions import make_plot
 from src.topology.witness_complex import WitnessComplex
-from scripts.ssc.persistence_pairings_visualization.utils_definitions import make_plot
+
 
 
 def compute_wc_offline(dataset, data_loader, batch_size, method_args, name='', verfication = False):

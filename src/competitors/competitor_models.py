@@ -32,8 +32,6 @@ DEFAULT = {
 
 class tSNE(TSNE, Competitor):
     """t-SNE"""
-    fancy_name = "Linear Svm"
-
     def __init__(self, *args, **kwargs):
         DEFAULT["tsne"].update(kwargs)
         super().__init__(*args, **DEFAULT["tsne"])
@@ -51,8 +49,6 @@ class tSNE(TSNE, Competitor):
 
 class UMAP(UMAP_, Competitor):
     '''UMAP'''
-
-
     def __init__(self, *args, **kwargs):
         DEFAULT["umap"].update(kwargs)
         super().__init__(*args, **DEFAULT["umap"])

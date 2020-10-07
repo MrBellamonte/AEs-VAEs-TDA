@@ -1,26 +1,29 @@
 import math
+import os
 
 import dill
 import numpy as np
 import multiprocessing as mp
 
 import matplotlib.pyplot as plt
-#dirty fix since gudhi cannot be installed on euler...
+# dirty fix since gudhi cannot be installed on euler...
+import torch
+
 try:
     import gudhi
 except:
     print('Failed to import gudhi')
 from sklearn.metrics import pairwise_distances
 
-#hard-coded
+# hard-coded
 MAX_DIST_INIT = 1000000
 
 
-def update_register_simplex(register, i_add, i_dist, max_dim = math.inf):
+def update_register_simplex(register, i_add, i_dist, max_dim=math.inf):
     register_add = []
     simplex_add = []
     for element in register:
-        if len(element)< max_dim:
+        if len(element) < max_dim:
             element_copy = element.copy()
             element_copy.append(i_add)
             register_add.append(element_copy)
@@ -31,14 +34,14 @@ def update_register_simplex(register, i_add, i_dist, max_dim = math.inf):
 def get_pairs_0(distances):
     simplices = []
     for row_i in range(distances.shape[0]):
-        col = distances[row_i,:]
+        col = distances[row_i, :]
         sort_col = sorted([*enumerate(col)], key=lambda x: x[1])
-
 
         simplices_temp = []
         register = []
         for i in range(len(sort_col)):
-            register_add, simplex_add = update_register_simplex(register.copy(), sort_col[i][0],sort_col[i][1],2)
+            register_add, simplex_add = update_register_simplex(register.copy(), sort_col[i][0],
+                                                                sort_col[i][1], 2)
 
             register += register_add
             register.append([sort_col[i][0]])
@@ -46,16 +49,19 @@ def get_pairs_0(distances):
 
         simplices += simplices_temp
 
+
 def run_dill_encoded(payload):
     fun, args = dill.loads(payload)
     return fun(*args)
+
+
 def apply_async(pool, fun, args):
     payload = dill.dumps((fun, args))
     return pool.apply_async(run_dill_encoded, (payload,))
 
 
 class WitnessComplex():
-    __slots__=[
+    __slots__ = [
         'landmarks',
         'witnesses',
         'distances',
@@ -67,13 +73,64 @@ class WitnessComplex():
         'metric_computed'
     ]
 
-    def __init__(self, landmarks, witnesses,new=False):
+    def __init__(self, landmarks, witnesses, new=False, n_jobs = 1):
+        #todo: implement other metrices
         self.landmarks = landmarks
         self.witnesses = witnesses
         self.new = new
         self.metric_computed = False
 
-        self.distances = pairwise_distances(witnesses,landmarks)
+        self.distances = pairwise_distances(witnesses, landmarks, n_jobs = n_jobs)
+
+    def _compute_metric_for_one_witness(self, row):
+        sorted_row = sorted([*enumerate(row)], key=lambda x: x[1])
+        landmark_dist_w = torch.ones(len(self.landmarks), len(self.landmarks))*math.inf
+        for element in sorted_row:
+            landmark_dist_w[element[0], :] = torch.ones(len(self.landmarks))*element[1]
+            landmark_dist_w[:, element[0]] = torch.ones(len(self.landmarks))*element[1]
+        return landmark_dist_w
+
+    def compute_metric_optimized(self, n_jobs=1):
+
+        assert isinstance(n_jobs, int)
+
+        global _compute_metric_multiprocessing
+
+        def _compute_metric_multiprocessing(distances):
+            landmark_dist_process = torch.ones(len(self.landmarks), len(self.landmarks))*math.inf
+            for row_i in range(distances.shape[0]):
+                row = distances[row_i, :]
+                sorted_row = sorted([*enumerate(row)], key=lambda x: x[1])
+
+                landmark_dist_w = torch.ones(len(self.landmarks), len(self.landmarks))*math.inf
+                for element in sorted_row:
+                    landmark_dist_w[element[0], :] = torch.ones(len(self.landmarks))*element[1]
+                    landmark_dist_w[:, element[0]] = torch.ones(len(self.landmarks))*element[1]
+                landmark_dist_process = \
+                    torch.min(torch.stack((landmark_dist_w, landmark_dist_process)),
+                              dim=0)[0]
+            return landmark_dist_process
+
+        if n_jobs == 1:
+            landmark_dist = torch.ones(len(self.landmarks), len(self.landmarks))*math.inf
+            for row_i in range(self.distances.shape[0]):
+                row = self.distances[row_i, :]
+                landmark_dist_w = self._compute_metric_for_one_witness(row)
+                landmark_dist = \
+                    torch.min(torch.stack((landmark_dist, landmark_dist_w)),
+                              dim=0)[0]
+            self.landmarks_dist = landmark_dist
+            self.metric_computed = True
+        else:
+            if n_jobs == -1:
+                n_jobs = os.cpu_count()
+            pool = mp.Pool(processes=n_jobs)
+            distances_chunk = np.array_split(self.distances, n_jobs)
+
+            results = pool.map(_compute_metric_multiprocessing, distances_chunk)
+
+            self.landmarks_dist = torch.min(torch.stack((results)), dim=0)[0]
+            self.metric_computed = True
 
     def _update_register_simplex(self, simplicial_complex_temp, i_add, i_dist, max_dim=math.inf):
 
@@ -88,9 +145,7 @@ class WitnessComplex():
             else:
                 pass
 
-
         return simplex_add
-
 
     def _update_landmark_dist(self, landmarks_dist, simplex_add):
 
@@ -101,7 +156,8 @@ class WitnessComplex():
                     landmarks_dist[simplex[0][1]][simplex[0][0]] = simplex[1]
         return landmarks_dist
 
-    def compute_simplicial_complex(self, d_max, create_metric = False, r_max = None, create_simplex_tree = False):
+    def compute_simplicial_complex(self, d_max, create_metric=False, r_max=None,
+                                   create_simplex_tree=False):
         if create_simplex_tree:
             simplicial_complex = []
             try:
@@ -110,7 +166,7 @@ class WitnessComplex():
                 print('Cannot create simplex tree')
 
         if create_metric:
-            landmarks_dist = np.ones((len(self.landmarks),len(self.landmarks)))*MAX_DIST_INIT
+            landmarks_dist = np.ones((len(self.landmarks), len(self.landmarks)))*MAX_DIST_INIT
 
         for row_i in range(self.distances.shape[0]):
             row = self.distances[row_i, :]
@@ -128,9 +184,9 @@ class WitnessComplex():
             for i in range(len(sorted_row)):
                 simplices_temp.append([[sorted_row[i][0]], sorted_row[i][1]])
                 simplex_add = self._update_register_simplex(simplices_temp.copy(), sorted_row[i][0],
-                                                                        sorted_row[i][1], d_max)
+                                                            sorted_row[i][1], d_max)
                 if create_metric:
-                    landmarks_dist = self._update_landmark_dist(landmarks_dist,simplex_add)
+                    landmarks_dist = self._update_landmark_dist(landmarks_dist, simplex_add)
                 simplices_temp += simplex_add
 
             # for element in sorted_row:
@@ -144,7 +200,6 @@ class WitnessComplex():
             self.landmarks_dist = landmarks_dist
             self.metric_computed = True
 
-
         if create_simplex_tree:
             self.simplicial_complex = simplicial_complex
             sorted_simplicial_compex = sorted(simplicial_complex, key=lambda x: x[1])
@@ -153,17 +208,17 @@ class WitnessComplex():
             #     simplex_tree.insert([i], filtration=0)
 
             for simplex in sorted_simplicial_compex:
-                simplex_tree.insert(simplex[0], filtration = simplex[1])
+                simplex_tree.insert(simplex[0], filtration=simplex[1])
                 self.simplex_tree = simplex_tree
             self.simplex_true_computed = True
 
-
-
-    def compute_simplicial_complex_parallel(self, d_max = math.inf, r_max=math.inf,
-                                            create_simplex_tree=False,create_metric = False, n_jobs=-1):
+    def compute_simplicial_complex_parallel(self, d_max=math.inf, r_max=math.inf,
+                                            create_simplex_tree=False, create_metric=False,
+                                            n_jobs=-1):
         global process_wc
 
-        def process_wc(distances, r_max=r_max, d_max=d_max, create_metric = create_metric, create_simplex_tree = create_simplex_tree):
+        def process_wc(distances, r_max=r_max, d_max=d_max, create_metric=create_metric,
+                       create_simplex_tree=create_simplex_tree):
 
             landmarks_dist = np.ones((distances.shape[1], distances.shape[1]))*MAX_DIST_INIT
             simplicial_complex = []
@@ -202,12 +257,12 @@ class WitnessComplex():
                 simplices_temp = []
                 for i in range(len(sorted_row)):
                     simplex_add = update_register_simplex(simplices_temp.copy(),
-                                                                        sorted_row[i][0],
-                                                                        sorted_row[i][1], d_max)
+                                                          sorted_row[i][0],
+                                                          sorted_row[i][1], d_max)
                     if create_metric:
                         landmarks_dist = update_landmark_dist(landmarks_dist, simplex_add)
                     simplices_temp += simplex_add
-                    simplices_temp.append([[sorted_row[i][0]],sorted_row[i][1]])
+                    simplices_temp.append([[sorted_row[i][0]], sorted_row[i][1]])
 
                 if create_simplex_tree:
                     simplicial_complex += simplices_temp
@@ -247,12 +302,12 @@ class WitnessComplex():
         pool = mp.Pool(processes=n_jobs)
         distances_chunk = np.array_split(self.distances, n_jobs)
 
-
         results = pool.map(process_wc, distances_chunk)
 
         pool.close()
 
-        simplicial_complex, landmarks_dist = combine_results(results, create_metric, create_simplex_tree)
+        simplicial_complex, landmarks_dist = combine_results(results, create_metric,
+                                                             create_simplex_tree)
 
         if create_simplex_tree:
             sorted_simplicial_compex = sorted(simplicial_complex, key=lambda x: x[1])
@@ -261,34 +316,28 @@ class WitnessComplex():
             #     simplex_tree.insert([i], filtration=0)
 
             for simplex in sorted_simplicial_compex:
-                simplex_tree.insert(simplex[0], filtration = simplex[1])
+                simplex_tree.insert(simplex[0], filtration=simplex[1])
                 self.simplex_tree = simplex_tree
             self.simplex_true_computed = True
-
-
 
         self.simplicial_complex = simplicial_complex
         np.fill_diagonal(landmarks_dist, 0)
         self.landmarks_dist = landmarks_dist
         self.metric_computed = True
 
-
-
-    def get_diagram(self, show = False, path_to_save = None):
+    def get_diagram(self, show=False, path_to_save=None):
         assert self.simplex_true_computed
         fig, ax = plt.subplots()
 
-
         diag = self.simplex_tree.persistence()
-        gudhi.plot_persistence_diagram(diag, axes = ax,legend=True)
+        gudhi.plot_persistence_diagram(diag, axes=ax, legend=True)
 
-        if show:
-            plt.show()
 
         if path_to_save is not None:
             plt.savefig(path_to_save, dpi=200)
+        if show:
+            plt.show()
         plt.close()
-
 
     def check_distance_matrix(self):
         assert self.metric_computed

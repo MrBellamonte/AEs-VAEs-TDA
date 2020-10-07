@@ -45,12 +45,6 @@ class MeasureCalculator():
         self.neighbours_Z, self.ranks_Z = \
             self._neighbours_and_ranks(self.pairwise_Z, k_max)
 
-        self.K_kX5, self.K_kZ5, self.K_kX_norm5, self.K_kZ_norm5, self.llrmse_X5, self.llrmse_Z5, self.llrmse_X_norm5, self.llrmse_Z_norm5 = self.Lipschitz(k = 5)
-
-        self.K_kX15, self.K_kZ15, self.K_kX_norm15, self.K_kZ_norm15, self.llrmse_X15, self.llrmse_Z15, self.llrmse_X_norm15, self.llrmse_Z_norm15 = self.Lipschitz(k=15)
-
-        self.K_kX15, self.K_kZ15, self.K_kX_norm15, self.K_kZ_norm15, self.llrmse_X15, self.llrmse_Z15, self.llrmse_X_norm15, self.llrmse_Z_norm15 = self.Lipschitz(
-                k=5)
 
     @staticmethod
     def _neighbours_and_ranks(distances, k):
@@ -210,9 +204,6 @@ class MeasureCalculator():
         rs_z = np.array(gathered_ranks_z)
         coeff, _ = spearmanr(rs_x, rs_z)
 
-        ##use only off-diagonal (non-trivial) ranks:
-        # inds = ~np.eye(X_ranks.shape[0],dtype=bool)
-        # coeff, pval = spearmanr(X_ranks[inds], Z_ranks[inds])
         return coeff
 
     @measures.register(True)
@@ -257,148 +248,82 @@ class MeasureCalculator():
         return mrre_ZX/C, mrre_XZ/C
 
     # Get Metric K-min and K-max
-    def Lipschitz(self, k=5):
+    # def Lipschitz_old(self, k=5):
+    #     X_neighbourhood, _ = self.get_X_neighbours_and_ranks(k)
+    #     Z_neighbourhood, _ = self.get_Z_neighbours_and_ranks(k)
+    #
+    #     disX_kX = self.pairwise_X[:, X_neighbourhood][range(self.pairwise_X.shape[0]),
+    #            range(self.pairwise_X.shape[0]), :]
+    #     disZ_kX = self.pairwise_Z[:, X_neighbourhood][range(self.pairwise_Z.shape[0]),
+    #            range(self.pairwise_X.shape[0]), :]
+    #
+    #     disX_kZ = self.pairwise_X[:, Z_neighbourhood][range(self.pairwise_X.shape[0]),
+    #            range(self.pairwise_X.shape[0]), :]
+    #     disZ_kZ = self.pairwise_Z[:, Z_neighbourhood][range(self.pairwise_Z.shape[0]),
+    #            range(self.pairwise_X.shape[0]), :]
+    #
+    #     disX_kX_norm = self.pairwise_X_norm[:, X_neighbourhood][range(self.pairwise_X.shape[0]),
+    #               range(self.pairwise_X.shape[0]), :]
+    #     disZ_kX_norm = self.pairwise_Z_norm[:, X_neighbourhood][range(self.pairwise_Z.shape[0]),
+    #               range(self.pairwise_X.shape[0]), :]
+    #
+    #     disX_kZ_norm = self.pairwise_X_norm[:, Z_neighbourhood][range(self.pairwise_X.shape[0]),
+    #               range(self.pairwise_X.shape[0]), :]
+    #     disZ_kZ_norm = self.pairwise_Z_norm[:, Z_neighbourhood][range(self.pairwise_Z.shape[0]),
+    #               range(self.pairwise_X.shape[0]), :]
+    #
+    #
+    #     K_kX = np.maximum((disX_kX/disZ_kX), (disZ_kX/disX_kX))
+    #     K_kZ = np.maximum((disX_kZ/disZ_kZ), (disZ_kZ/disX_kZ))
+    #     K_kX_norm = np.maximum((disX_kX_norm/disZ_kX_norm), (disZ_kX_norm/disX_kX_norm))
+    #     K_kZ_norm = np.maximum((disX_kZ_norm/disZ_kZ_norm), (disZ_kZ_norm/disX_kZ_norm))
+    #
+    #
+    #     # calculation of local-rmse
+    #     nk = disX_kX.shape[0]*disX_kX.shape[1]
+    #     llrmse_X = np.sqrt(np.square(disX_kX-disZ_kX).sum()/nk)
+    #     llrmse_Z = np.sqrt(np.square(disX_kZ-disZ_kZ).sum()/nk)
+    #     llrmse_X_norm = np.sqrt(np.square(disX_kX_norm-disZ_kX_norm).sum()/nk)
+    #     llrmse_Z_norm = np.sqrt(np.square(disX_kZ_norm-disZ_kZ_norm).sum()/nk)
+    #
+    #
+    #
+    #     return K_kX, K_kZ, K_kX_norm , K_kZ_norm, llrmse_X, llrmse_Z, llrmse_X_norm, llrmse_Z_norm
+
+    def Lipschitz_prep(self, k):
         X_neighbourhood, _ = self.get_X_neighbours_and_ranks(k)
         Z_neighbourhood, _ = self.get_Z_neighbours_and_ranks(k)
-
-        disX_kX = self.pairwise_X[:, X_neighbourhood][range(self.pairwise_X.shape[0]),
-               range(self.pairwise_X.shape[0]), :]
-        disZ_kX = self.pairwise_Z[:, X_neighbourhood][range(self.pairwise_Z.shape[0]),
-               range(self.pairwise_X.shape[0]), :]
-
-        disX_kZ = self.pairwise_X[:, Z_neighbourhood][range(self.pairwise_X.shape[0]),
-               range(self.pairwise_X.shape[0]), :]
-        disZ_kZ = self.pairwise_Z[:, Z_neighbourhood][range(self.pairwise_Z.shape[0]),
-               range(self.pairwise_X.shape[0]), :]
 
         disX_kX_norm = self.pairwise_X_norm[:, X_neighbourhood][range(self.pairwise_X.shape[0]),
                   range(self.pairwise_X.shape[0]), :]
         disZ_kX_norm = self.pairwise_Z_norm[:, X_neighbourhood][range(self.pairwise_Z.shape[0]),
                   range(self.pairwise_X.shape[0]), :]
 
-        disX_kZ_norm = self.pairwise_X_norm[:, Z_neighbourhood][range(self.pairwise_X.shape[0]),
-                  range(self.pairwise_X.shape[0]), :]
-        disZ_kZ_norm = self.pairwise_Z_norm[:, Z_neighbourhood][range(self.pairwise_Z.shape[0]),
-                  range(self.pairwise_X.shape[0]), :]
+        return disX_kX_norm, disZ_kX_norm
 
 
-        K_kX = np.maximum((disX_kX/disZ_kX), (disZ_kX/disX_kX))
-        K_kZ = np.maximum((disX_kZ/disZ_kZ), (disZ_kZ/disX_kZ))
-        K_kX_norm = np.maximum((disX_kX_norm/disZ_kX_norm), (disZ_kX_norm/disX_kX_norm))
-        K_kZ_norm = np.maximum((disX_kZ_norm/disZ_kZ_norm), (disZ_kZ_norm/disX_kZ_norm))
+    def calc_K(self,k):
+        disX_kX_norm, disZ_kX_norm = self.Lipschitz_prep(k)
+        return np.maximum((disX_kX_norm/disZ_kX_norm), (disZ_kX_norm/disX_kX_norm))
 
+    def llrmse(self,k):
+        disX_kX_norm, disZ_kX_norm = self.Lipschitz_prep(k)
+        nk = disX_kX_norm.shape[0]*disX_kX_norm.shape[1]
+        return np.sqrt(np.square(disX_kX_norm-disZ_kX_norm).sum()/nk)
 
-        # calculation of local-rmse
-        nk = disX_kX.shape[0]*disX_kX.shape[1]
-        llrmse_X = np.sqrt(np.square(disX_kX-disZ_kX).sum()/nk)
-        llrmse_Z = np.sqrt(np.square(disX_kZ-disZ_kZ).sum()/nk)
-        llrmse_X_norm = np.sqrt(np.square(disX_kX_norm-disZ_kX_norm).sum()/nk)
-        llrmse_Z_norm = np.sqrt(np.square(disX_kZ_norm-disZ_kZ_norm).sum()/nk)
-
-
-
-        return K_kX, K_kZ, K_kX_norm , K_kZ_norm, llrmse_X, llrmse_Z, llrmse_X_norm, llrmse_Z_norm
-
-
-    @measures.register(False)
-    def K_5X_min(self):
-        return self.K_kX5.min()
-    @measures.register(False)
-    def K_5X_max(self):
-        return self.K_kX5.max()
-    @measures.register(False)
-    def K_5X_avg(self):
-        return self.K_kX5.mean()
-    @measures.register(False)
-    def K_norm_5X_min(self):
-        return self.K_kX_norm5.min()
-    @measures.register(False)
-    def K_norm_5X_max(self):
-        return self.K_kX_norm5.max()
-    @measures.register(False)
-    def K_norm_5X_avg(self):
-        return self.K_kX_norm5.mean()
-    @measures.register(False)
-    def K_15X_min(self):
-        return self.K_kX15.min()
-    @measures.register(False)
-    def K_15X_max(self):
-        return self.K_kX15.max()
-    @measures.register(False)
-    def K_15X_avg(self):
-        return self.K_kX15.mean()
-    @measures.register(False)
-    def K_norm_15X_min(self):
-        return self.K_kX_norm15.min()
-    @measures.register(False)
-    def K_norm_15X_max(self):
-        return self.K_kX_norm15.max()
-    @measures.register(False)
-    def K_norm_15X_avg(self):
-        return self.K_kX_norm15.mean()
-
-    @measures.register(False)
-    def K_5Z_min(self):
-        return self.K_kZ5.min()
-    @measures.register(False)
-    def K_5Z_max(self):
-        return self.K_kZ5.max()
-    @measures.register(False)
-    def K_5Z_avg(self):
-        return self.K_kX5.mean()
-    @measures.register(False)
-    def K_norm_5Z_min(self):
-        return self.K_kZ_norm5.min()
-    @measures.register(False)
-    def K_norm_5Z_max(self):
-        return self.K_kZ_norm5.max()
-    @measures.register(False)
-    def K_norm_5Z_avg(self):
-        return self.K_kZ_norm5.mean()
-    @measures.register(False)
-    def K_15Z_min(self):
-        return self.K_kZ15.min()
-    @measures.register(False)
-    def K_15Z_max(self):
-        return self.K_kZ15.max()
-    @measures.register(False)
-    def K_15Z_avg(self):
-        return self.K_kZ15.mean()
-    @measures.register(False)
-    def K_norm_15Z_min(self):
-        return self.K_kZ_norm15.min()
-    @measures.register(False)
-    def K_norm_15Z_max(self):
-        return self.K_kZ_norm15.max()
-    @measures.register(False)
-    def K_norm_15Z_avg(self):
-        return self.K_kZ_norm15.mean()
-
-    @measures.register(False)
-    def llrmse_X5(self):
-        return self.llrmse_X5
-    @measures.register(False)
-    def llrmse_Z5(self):
-        return self.llrmse_Z5
-    @measures.register(False)
-    def llrmse_X_norm5(self):
-        return self.llrmse_X_norm5
-    @measures.register(False)
-    def llrmse_Z_norm5(self):
-        return self.llrmse_Z_norm5
-
-    @measures.register(False)
-    def llrmse_X15(self):
-        return self.llrmse_X15
-    @measures.register(False)
-    def llrmse_Z15(self):
-        return self.llrmse_Z15
-    @measures.register(False)
-    def llrmse_X_norm15(self):
-        return self.llrmse_X_norm15
-    @measures.register(False)
-    def llrmse_Z_norm15(self):
-        return self.llrmse_Z_norm15
+    #todo make more efficient! currently calculate the same thing 4 times per k....
+    @measures.register(True)
+    def K_min(self, k):
+        return self.calc_K(k).min()
+    @measures.register(True)
+    def K_max(self, k):
+        return self.calc_K(k).max()
+    @measures.register(True)
+    def K_avg(self, k):
+        return self.calc_K(k).mean()
+    @measures.register(True)
+    def llrme(self, k):
+        return self.llrmse(k)
 
 
     @measures.register(False)

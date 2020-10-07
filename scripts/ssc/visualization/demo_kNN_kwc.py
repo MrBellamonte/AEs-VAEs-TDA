@@ -27,7 +27,7 @@ def annulus(n, rmin, rmax,label = 0, seed = 0, c_x = 0, c_y = 0):
 def make_df(X,y):
     return pd.DataFrame({'x': X[:, 0], 'y': X[:, 1], 'label': y})
 
-def make_scatter(df, title = None, show = True, name = None):
+def make_scatter(df, title = None, show = True, name = None,base_path = BASE_PATH):
     sns.set_style("white")
     palette = [sns.color_palette("RdBu_r", 4)[0],sns.color_palette("RdBu_r", 4)[3]]
     custom_palette = sns.set_palette(palette)
@@ -49,11 +49,11 @@ def make_scatter(df, title = None, show = True, name = None):
 
     if name != None:
         fig = sns_plot.get_figure()
-        fig.savefig(BASE_PATH + name + '.pdf', dpi = 200)
+        fig.savefig(base_path + name + '.pdf', dpi = 200)
 
     plt.close()
 
-def plot_graph_kNN(df, k, df_witnesses = None, witnesses_dist = None, title = None, show = True, name = None, nc = 2):
+def plot_graph_kNN(df, k, df_witnesses = None, witnesses_dist = None, title = None, show = True, name = None, nc = 2,base_path = BASE_PATH):
     if witnesses_dist is not None:
         X_dist = witnesses_dist
         dist = True
@@ -100,7 +100,7 @@ def plot_graph_kNN(df, k, df_witnesses = None, witnesses_dist = None, title = No
     if show:
         plt.show()
     if name != None:
-        fig.savefig(BASE_PATH + name+ '.pdf', dpi = 200)
+        fig.savefig(base_path + name+ '.pdf', dpi = 200)
 
     plt.close()
 
