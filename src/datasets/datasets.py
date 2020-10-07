@@ -128,45 +128,6 @@ class SwissRoll(DataSet):
         pass
 
     def sample(self, n_samples, noise = DEFAULT['swissroll']['noise'], seed = DEFAULT['swissroll']['seed'], train = True):
-        #todo change to fixed increment for test?
-        np.random.seed(seed=seed)
-        seeds = np.random.randint(0, high=1000, size=2)
-        if train:
-            seed = seeds[0]
-        else:
-            seed = seeds[1]
-
-        return datasets.make_swiss_roll(n_samples=n_samples, noise=noise, random_state=seed)
-
-
-
-class SwissRoll_manifold(DataSet):
-    fancy_name = "Swiss Roll Manifold"
-    def __init__(self):
-        self.sampled = False
-        pass
-
-    def sample(self, n_samples, noise=DEFAULT['swissroll']['noise'],
-               seed=DEFAULT['swissroll']['seed'], train=True):
-        np.random.seed(seed=seed)
-        seeds = np.random.randint(0, high=1000, size=2)
-        if train:
-            seed = seeds[0]
-        else:
-            seed = seeds[1]
-
-        generator = sklearn.utils.check_random_state(seed)
-        x = generator.rand(1, n_samples)
-        t = 1.5*np.pi*(1+2*x)
-        y = 21*generator.rand(1, n_samples)
-
-        self.t = t
-        self.y = y
-        self.sampled = True
-
-        return np.concatenate((x, y)).T, x
-
-    def sample_all(self,n_samples,seed,train=True):
         np.random.seed(seed=seed)
         seeds = np.random.randint(0, high=1000, size=2)
         if train:
@@ -181,6 +142,29 @@ class SwissRoll_manifold(DataSet):
         z = t*np.sin(t)
 
         X_transformed = np.concatenate((x, y, z))
+        X_transformed += noise*generator.randn(3, n_samples)
+        X_transformed = X_transformed.T
+
+        t = np.squeeze(t)
+
+        return X_transformed, t
+
+    def sample_manifold(self, n_samples, noise = DEFAULT['swissroll']['noise'], seed = DEFAULT['swissroll']['seed'], train = True):
+        np.random.seed(seed=seed)
+        seeds = np.random.randint(0, high=1000, size=2)
+        if train:
+            seed = seeds[0]
+        else:
+            seed = seeds[1]
+
+        generator = sklearn.utils.check_random_state(seed)
+        t = 1.5*np.pi*(1+2*generator.rand(1, n_samples))
+        x = t*np.cos(t)
+        y = 21*generator.rand(1, n_samples)
+        z = t*np.sin(t)
+
+        X_transformed = np.concatenate((x, y, z))
+        X_transformed += noise*generator.randn(3, n_samples)
         X_transformed = X_transformed.T
 
         X_manifold = np.concatenate((t, y))
@@ -189,14 +173,13 @@ class SwissRoll_manifold(DataSet):
 
         return X_manifold,X_transformed, t
 
-    def transform_(self):
-        assert self.sampled
-        x = self.t*np.cos(self.t)
-        z = self.t*np.sin(self.t)
+    def sample_old(self, n_samples, noise = DEFAULT['swissroll']['noise'], seed = DEFAULT['swissroll']['seed'], train = True):
+        #todo change to fixed increment for test?
+        np.random.seed(seed=seed)
+        seeds = np.random.randint(0, high=1000, size=2)
+        if train:
+            seed = seeds[0]
+        else:
+            seed = seeds[1]
 
-        X = np.concatenate((x, self.y, z))
-        X = X.T
-        t = np.squeeze(self.t)
-
-        return X, t
-
+        return datasets.make_swiss_roll(n_samples=n_samples, noise=noise, random_state=seed)

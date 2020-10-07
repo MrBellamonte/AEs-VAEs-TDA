@@ -7,7 +7,8 @@ import torch
 from torch.utils.data import DataLoader
 
 from dep.topo_ae_code.src_topoae.callbacks import Callback
-from src.models.TopoAE_WitnessComplex.train_util import compute_wc_offline
+from src.data_preprocessing.witness_complex_offline.wc_offline_utils import fetch_data, get_kNNmask
+from src.models.WitnessComplexAE.train_util import compute_wc_offline
 from src.topology.witness_complex import WitnessComplex
 
 
@@ -64,17 +65,17 @@ class LogTrainingLoss(Callback):
         self.run.log_scalar('training.loss.batch', loss, self.iterations)
         for key, value in loss_components.items():
             value = convert_to_base_type(value)
-            storage_key = 'training.' + key
+            storage_key = 'training.'+key
             self.epoch_losses[storage_key].append(value)
-            self.run.log_scalar(storage_key + '.batch', value, self.iterations)
+            self.run.log_scalar(storage_key+'.batch', value, self.iterations)
 
     def on_epoch_end(self, epoch, **kwargs):
         for key, values in self.epoch_losses.items():
             mean = np.mean(values)
             std = np.std(values)
-            self.run.log_scalar(key + '.mean', mean, self.iterations)
+            self.run.log_scalar(key+'.mean', mean, self.iterations)
             self.logged_averages[key].append(mean)
-            self.run.log_scalar(key + '.std', std, self.iterations)
+            self.run.log_scalar(key+'.std', std, self.iterations)
             self.logged_stds[key].append(std)
         self.epoch_losses = defaultdict(list)
         if self.print_progress:
@@ -85,7 +86,7 @@ class LogDatasetLoss(Callback):
     """Logging of loss during training into sacred run."""
 
     def __init__(self, dataset_name, dataset, run,
-                 method_args,print_progress=True,
+                 method_args, print_progress=True,
                  batch_size=128, early_stopping=None, save_path=None,
                  device='cpu'):
         """Create logger callback.
@@ -106,10 +107,7 @@ class LogDatasetLoss(Callback):
         self.prefix = dataset_name
         self.dataset = dataset
         # TODO: Ideally drop last should be set to false, yet this is currently
-        # incompatible with the surrogate approach as it assumes a constant
-        # batch size.
-        self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
-                                      drop_last=True, pin_memory=True, shuffle=False)
+
         self.run = run
         self.print_progress = print_progress
         self.early_stopping = early_stopping
@@ -121,25 +119,27 @@ class LogDatasetLoss(Callback):
         self.method_args = method_args
 
         if self.method_args['name'] == 'topoae_wc':
-            self.dist_X_all, self.pair_mask_X_all = compute_wc_offline(self.dataset, self.data_loader, batch_size,
-                                                             self.method_args,
-                                                             name='{name} Dataset'.format(name = dataset_name))
-
-            # self.dist_X_all = torch.ones((len(self.data_loader), batch_size, batch_size))
-            # self.pair_mask_X_all = torch.ones((len(self.data_loader), batch_size, batch_size))
-            #
-            # for batch, (img, label) in enumerate(self.data_loader):
-            #     witness_complex = WitnessComplex(img, dataset[:][:][0])
-            #     witness_complex.compute_simplicial_complex_parallel(d_max = 1, r_max=self.method_args['r_max'],
-            #                                 create_simplex_tree=False,create_metric = True, n_jobs=self.method_args['n_jobs'])
-            #     landmarks_dist = torch.tensor(witness_complex.landmarks_dist)
-            #     sorted, indices = torch.sort(landmarks_dist)
-            #     kNN_mask = torch.zeros(
-            #         (batch_size, batch_size), device='cpu'
-            #     ).scatter(1, indices[:, 1:(self.method_args['k']+1)], 1)
-            #     self.dist_X_all[batch, :, :] = landmarks_dist
-            #     self.pair_mask_X_all[batch, :, :] = kNN_mask
-
+            if method_args['wc_offline'] is None:
+                self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
+                                              drop_last=True, pin_memory=True, shuffle=False)
+                self.dist_X_all, self.pair_mask_X_all = compute_wc_offline(self.dataset,
+                                                                           self.data_loader,
+                                                                           batch_size,
+                                                                           self.method_args,
+                                                                           name='{name} Dataset'.format(
+                                                                               name=dataset_name))
+            else:
+                self.data_loader, self.dist_X_all = fetch_data(uid=method_args['wc_offline']['uid'],
+                                                               path_global_register=
+                                                               method_args['wc_offline'][
+                                                                   'path_global_register'],
+                                                               type=dataset_name)
+                self.pair_mask_X_all = get_kNNmask(landmark_distances=self.dist_X_all,
+                                                   num_batches=len(self.data_loader),
+                                                   batch_size=batch_size, k=self.method_args['k'])
+        else:
+            self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
+                                          drop_last=True, pin_memory=True, shuffle=False)
 
     def _compute_average_losses(self, model):
         losses = defaultdict(list)
@@ -169,7 +169,7 @@ class LogDatasetLoss(Callback):
                 losses[loss_component].append(
                     value*n_instances)
         return {
-            name: sum(values) / len(self.dataset)
+            name: sum(values)/len(self.dataset)
             for name, values in losses.items()
         }
 
@@ -178,7 +178,7 @@ class LogDatasetLoss(Callback):
             f'{self.prefix}.{key}: {value:.3f}'
             for key, value in losses.items()
         ])
-        return f'Epoch {epoch}: ' + progress_str
+        return f'Epoch {epoch}: '+progress_str
 
     def on_batch_end(self, **kwargs):
         self.iterations += 1
@@ -188,7 +188,7 @@ class LogDatasetLoss(Callback):
         if epoch == 1:  # This should be prior to the first training step
             losses = self._compute_average_losses(model)
             if self.print_progress:
-                print(self._progress_string(epoch - 1, losses))
+                print(self._progress_string(epoch-1, losses))
 
             for key, value in losses.items():
                 self.run.log_scalar(
@@ -231,4 +231,3 @@ class LogDatasetLoss(Callback):
                     f'{self.prefix} loss over {self.early_stopping} epochs'
                 )
                 return True
-

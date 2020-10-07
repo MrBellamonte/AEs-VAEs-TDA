@@ -15,8 +15,8 @@ from torch.utils.data import TensorDataset
 
 from scripts.ssc.TopoAE_ext.config_libraries.swissroll import swissroll_testing
 
-from src.models.TopoAE_WitnessComplex.config import ConfigGrid_TopoAE_ext, ConfigTopoAE_ext
-from src.models.TopoAE_WitnessComplex.topoae_wc import TopologicallyRegularizedAutoencoderWC
+from src.models.WitnessComplexAE.config import ConfigGrid_WCAE, ConfigWCAE
+from src.models.WitnessComplexAE.wc_ae import WitnessComplexAutoencoder
 from src.train_pipeline.sacred_observer import SetID
 
 from src.train_pipeline.train_model import train
@@ -41,7 +41,7 @@ def cfg():
 
 
 @ex.automain
-def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigTopoAE_ext, experiment_dir, experiment_root, device, num_threads, verbose):
+def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, experiment_root, device, num_threads, verbose):
 
     try:
         os.makedirs(experiment_dir)
@@ -82,8 +82,8 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigTopoAE_ext, experiment_dir
     norm_X = torch.norm(dataset_train[:][:][0][:, None]-dataset_train[:][:][0], dim=2, p=2).max()
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
-    model = TopologicallyRegularizedAutoencoderWC(autoencoder, lam_r=config.rec_loss_weight, lam_t=config.top_loss_weight,
-                                                toposig_kwargs=config.toposig_kwargs, norm_X = norm_X)
+    model = WitnessComplexAutoencoder(autoencoder, lam_r=config.rec_loss_weight, lam_t=config.top_loss_weight,
+                                      toposig_kwargs=config.toposig_kwargs, norm_X = norm_X)
     model.to(device)
 
     # Train and evaluate model
@@ -106,7 +106,7 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigTopoAE_ext, experiment_dir
 
 
 
-def simulator_TopoAE_ext(config_grid: ConfigGrid_TopoAE_ext):
+def simulator_TopoAE_ext(config_grid: ConfigGrid_WCAE):
 
     ex.observers.append(FileStorageObserver(config_grid.experiment_dir))
     ex.observers.append(SetID('myid'))

@@ -7,6 +7,9 @@ run_simulator_main_parallel:
 test_topoae:
 	python -m scripts.ssc.run_simulator_main -c 'swissroll.swissroll_testing' -m 'topoae'
 
+test_topoae_ext:
+	python -m scripts.ssc.run_simulator_main -c 'swissroll.swissroll_testing' -m 'topoae_ext'
+
 test_euler_topoae:
 	python -m scripts.ssc.run_simulator_main -c 'swissroll.euler_swissroll_testing' -m 'topoae'
 

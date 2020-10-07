@@ -4,8 +4,8 @@ import time
 import torch
 from torch.utils.data import DataLoader
 
-from src.models.TopoAE_WitnessComplex.train_util import compute_wc_offline
-from src.topology.witness_complex import WitnessComplex
+from src.data_preprocessing.witness_complex_offline.wc_offline_utils import fetch_data, get_kNNmask
+from src.models.WitnessComplexAE.train_util import compute_wc_offline
 
 
 class TrainingLoop():
@@ -76,9 +76,23 @@ class TrainingLoop():
         # the dataset. This is necassary because the surrogate approach does
         # not yet support changes in the batch dimension.
         if self.method_args['name'] == 'topoae_wc':
-            print('WARNING: drop last batch if not complete!')
-            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
-                                      pin_memory=True, drop_last=True)
+            if self.method_args['wc_offline'] is None:
+                print('WARNING: drop last batch if not complete!')
+                train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
+                                          pin_memory=True, drop_last=True)
+                dist_X_all, pair_mask_X_all = compute_wc_offline(dataset, train_loader, batch_size,
+                                                                 self.method_args,
+                                                                 name='Training Dataset',
+                                                                 verfication=True)
+            else:
+                train_loader, dist_X_all = fetch_data(uid=self.method_args['wc_offline']['uid'],
+                                                               path_global_register=
+                                                               self.method_args['wc_offline'][
+                                                                   'path_global_register'],
+                                                               type='train')
+                pair_mask_X_all = get_kNNmask(landmark_distances=dist_X_all,
+                                                   num_batches=len(train_loader),
+                                                   batch_size=batch_size, k=self.method_args['k'])
         else:
             train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
                                       pin_memory=True, drop_last=False)
@@ -88,23 +102,12 @@ class TrainingLoop():
             model.parameters(), lr=learning_rate,
             weight_decay=self.weight_decay)
 
-
-
-
-
-        if self.method_args['name'] == 'topoae_wc':
-            dist_X_all, pair_mask_X_all = compute_wc_offline(dataset, train_loader, batch_size, self.method_args, name='Training Dataset', verfication = True)
-
-
-        #mu = 0.5
         run_times_epoch = []
         for epoch in range(1, n_epochs+1):
-            #mu = 0.1*max(0,(int(n_epochs/2)-epoch)/int(n_epochs/2))
             if self.on_epoch_begin(remove_self(locals())):
                 break
             t_start = time.time()
             for batch, (img, label) in enumerate(train_loader):
-
 
                 self.on_batch_begin(remove_self(locals()))
 
