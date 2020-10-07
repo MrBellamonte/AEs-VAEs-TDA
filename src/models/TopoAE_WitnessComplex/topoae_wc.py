@@ -13,7 +13,7 @@ from src.models.autoencoder.base import AutoencoderModel
 class TopologicallyRegularizedAutoencoderWC(AutoencoderModel):
     """Topologically regularized autoencoder."""
 
-    def __init__(self,autoencoder,lam_t=1.,lam_r=1., toposig_kwargs=None, norm_X=1):
+    def __init__(self,autoencoder,lam_t=1.,lam_r=1., toposig_kwargs=dict(k=1,normalize = True,match_edges='symmetric',mu_push=1), norm_X=1):
         """Topologically Regularized Autoencoder.
 
         Args:
