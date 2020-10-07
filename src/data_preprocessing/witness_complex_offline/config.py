@@ -19,7 +19,8 @@ class ConfigWC:
         'seed',
         'root_path',
         'global_register',
-        'uid'
+        'uid',
+        'verbose'
     ]
     dataset: Type[DataSet]
     sampling_kwargs: dict
@@ -30,6 +31,7 @@ class ConfigWC:
     seed: str
     global_register: str
     root_path: str
+    verbose: bool
 
     def __post_init__(self):
         self.uid = '{dataset}-bs{batch_size}-seed{seed}-{uid}'.format(
@@ -70,7 +72,8 @@ class ConfigWC_Grid:
         'n_jobs',
         'seed',
         'root_path',
-        'global_register'
+        'global_register',
+        'verbose'
     ]
     dataset: List[Type[DataSet]]
     sampling_kwargs: List[dict]
@@ -81,6 +84,7 @@ class ConfigWC_Grid:
     seed: List[str]
     global_register: List[str]
     root_path: List[str]
+    verbose: List[bool]
 
     def configs_from_grid(self):
 
@@ -121,6 +125,8 @@ placeholder_config_wc = ConfigWC(
     n_jobs = 1,
     seed = 1,
     global_register = '',
-    root_path = '')
+    root_path = '',
+    verbose = False
+)
 
 

@@ -16,6 +16,7 @@ from torch.optim import optimizer
 from torch.utils.data import TensorDataset, DataLoader
 
 from scripts.ssc.TopoAE.topoae_config_library import placeholder_config_topoae
+from src.data_preprocessing.witness_complex_offline.wc_offline_utils import fetch_data
 from src.models.COREL.eval_engine import get_latentspace_representation
 from src.models.TopoAE.approx_based import TopologicallyRegularizedAutoencoder
 from src.models.TopoAE.config import ConfigTopoAE, ConfigGrid_TopoAE
@@ -40,8 +41,8 @@ def cfg():
 
 
 @ex.automain
-def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experiment_root, device, num_threads, verbose):
-
+def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experiment_root, device,
+                 num_threads, verbose):
     try:
         os.makedirs(experiment_dir)
     except:
@@ -58,13 +59,11 @@ def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experi
         df = pd.DataFrame(columns=COLS_DF_RESULT)
         df.to_csv(os.path.join(experiment_root, 'eval_metrics_all.csv'))
 
-
     # Set data sampling seed
     if 'seed' in config.sampling_kwargs:
         seed_sampling = config.sampling_kwargs['seed']
     else:
         seed_sampling = _seed
-
 
     # Sample data
     dataset = config.dataset
@@ -78,7 +77,6 @@ def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experi
     if device == 'cpu' and num_threads is not None:
         torch.set_num_threads(num_threads)
 
-
     # Initialize model
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
@@ -87,59 +85,11 @@ def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experi
                                                 lam_t=config.top_loss_weight,
                                                 toposig_kwargs=config.toposig_kwargs)
     model.to(device)
-    # if config.method_args['LLE_pretrain']:
-    #     print('Compute LLE')
-    #     embedding = SpectralEmbedding(n_components=2, n_jobs=num_threads, n_neighbors=90)
-    #     X_transformed = embedding.fit_transform(X_train)
-    #     plot_2Dscatter(X_transformed, y_train, path_to_save=None, title=None, show=True)
-    #     dataset_visualisation = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
-    #     visualisation_loader = DataLoader(dataset_visualisation, batch_size=config.batch_size,
-    #                                       shuffle=True,
-    #                                       pin_memory=True, drop_last=True)
-    #     X_train, Y_train, Z_train = get_latentspace_representation(model, visualisation_loader,
-    #                                                                device=device)
-    #     plot_2Dscatter(Z_train, Y_train, path_to_save=None, title=None, show=True)
-    #     dataset_pretrain = TensorDataset(torch.Tensor(X_train),torch.Tensor(X_transformed), torch.Tensor(y_train))
-    #     print('Done!')
-    #     train_loader = DataLoader(dataset_pretrain, batch_size=config.batch_size, shuffle=False,
-    #                               pin_memory=True, drop_last=False)
-    #     run_times_epoch = []
-    #     print('Start Pretraining')
-    #     model.train()
-    #     optimizer = torch.optim.Adam(
-    #         model.parameters(), lr=config.learning_rate)
-    #     for epoch in range(1, 40):
-    #         for batch, (data, latent_LLE, label) in enumerate(train_loader):
-    #
-    #             x = data.to('cpu')
-    #             latent = model.encode(x)
-    #             x_rec = model.decode(latent)
-    #
-    #             latent_loss = torch.nn.MSELoss()
-    #             rec_loss = torch.nn.MSELoss()
-    #
-    #             loss = latent_loss(latent, latent_LLE) + rec_loss(x, x_rec)
-    #             print(loss)
-    #
-    #             optimizer.zero_grad()
-    #             loss.backward()
-    #             optimizer.step()
-    #
-    #     dataset_visualisation = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
-    #     visualisation_loader = DataLoader(dataset_visualisation, batch_size=config.batch_size, shuffle=True,
-    #                               pin_memory=True, drop_last=False)
-    #     X_train, Y_train, Z_train = get_latentspace_representation(model, visualisation_loader,
-    #                                                                device=device)
-    #     plot_2Dscatter(Z_train, Y_train, path_to_save=None, title=None, show=True)
-    #     print('Done')
-
-
-
 
     # Train and evaluate model
-    result = train(model = model, data_train = dataset_train, data_test = dataset_test, config = config, device = device, quiet = operator.not_(verbose), val_size = 0.2, _seed = _seed,
-          _rnd = _rnd, _run = _run, rundir = experiment_dir)
-
+    result = train(model=model, data_train=dataset_train, data_test=dataset_test, config=config,
+                   device=device, quiet=operator.not_(verbose), val_size=0.2, _seed=_seed,
+                   _rnd=_rnd, _run=_run, rundir=experiment_dir)
 
     # Format experiment data
     df = pd.DataFrame.from_dict(result, orient='index').reset_index()
@@ -155,9 +105,7 @@ def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experi
     df.to_csv(os.path.join(experiment_root, 'eval_metrics_all.csv'), mode='a', header=False)
 
 
-
 def simulator_TopoAE(config_grid: ConfigGrid_TopoAE):
-
     ex.observers.append(FileStorageObserver(config_grid.experiment_dir))
     ex.observers.append(SetID('myid'))
 
@@ -165,8 +113,9 @@ def simulator_TopoAE(config_grid: ConfigGrid_TopoAE):
         id = config.creat_uuid()
         ex_dir_new = os.path.join(config_grid.experiment_dir, id)
         ex.observers[1] = SetID(id)
-        ex.run(config_updates={'config': config, 'experiment_dir' : ex_dir_new, 'experiment_root' : config_grid.experiment_dir,
-                               'seed' : config_grid.seed, 'device' : config_grid.device, 'num_threads' : config_grid.num_threads,
-                               'verbose' : config_grid.verbose
+        ex.run(config_updates={'config'         : config, 'experiment_dir': ex_dir_new,
+                               'experiment_root': config_grid.experiment_dir,
+                               'seed'           : config_grid.seed, 'device': config_grid.device,
+                               'num_threads'    : config_grid.num_threads,
+                               'verbose'        : config_grid.verbose
                                })
-
