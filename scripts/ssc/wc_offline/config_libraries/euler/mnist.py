@@ -4,7 +4,7 @@ from src.datasets.datasets import SwissRoll, MNIST
 
 mnist_1 = ConfigWC_Grid(
     dataset = [MNIST()],
-    sampling_kwargs = [dict()],
+    sampling_kwargs = [dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     batch_size=[64,128,256,512,1024,2048,4096],
     wc_kwargs=[dict()],
     eval_size=[0.14], # not a lot of data "wasted for bs = 4096 & could go to bs=8192
