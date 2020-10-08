@@ -29,14 +29,14 @@ def cfg():
 def run(_run, _seed, _rnd, config: ConfigWC):
     compute_wc_offline(config)
 
-def compute_wc(config: ConfigWC):
-    ex.observers.append(SetID(config.uid))
-    ex.observers.append(FileStorageObserver(config.root_path))
-    ex.run(config_updates={'config': config,'seed' : config.seed})
-
-def compute_wc_multiple(config_grid: ConfigWC_Grid):
+def compute_wc_multiple(config_grid):
+    ex.observers.append(FileStorageObserver(config_grid.root_path))
+    ex.observers.append(SetID('myid'))
     for config in config_grid.configs_from_grid():
-        compute_wc(config)
+        ex.observers[1] = SetID(config.uid)
+        ex.run(config_updates={'config': config, 'seed': config.seed})
+
+
 
 
 

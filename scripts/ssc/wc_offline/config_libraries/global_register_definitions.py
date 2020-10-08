@@ -1,0 +1,1 @@
+path_gr_swissroll_euler = '/cluster/home/schsimo/MT/output/WitnessComplexes/SwissRoll/wc_global_register_swissroll.csv'

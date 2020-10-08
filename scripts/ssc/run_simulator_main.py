@@ -2,10 +2,8 @@ import argparse
 
 import importlib
 
-import scripts
-# from scripts.ssc.TopoAE_ext.config_libraries.swissroll import swissroll_testing
-# from src.models.TopoAE_WitnessComplex.config import ConfigGrid_TopoAE_ext
 from src.competitors.train_engine import simulator_competitor
+from src.data_preprocessing.witness_complex_offline.compute_wc import compute_wc_multiple
 from src.models.TopoAE.train_engine import simulator_TopoAE
 from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
 
@@ -45,5 +43,12 @@ if __name__ == "__main__":
         configs = getattr(mod, config_name)
 
         simulator_competitor(configs)
+    elif args.model == 'wc_offline':
+        conifg_srt = 'scripts.ssc.wc_offline.config_libraries.'+args.configs
+        mod_name, config_name = conifg_srt.rsplit('.', 1)
+        mod = importlib.import_module(mod_name)
+        configs = getattr(mod, config_name)
+
+        compute_wc_multiple(configs)
     else:
         raise ValueError("Model {} not defined.".format(args.model))

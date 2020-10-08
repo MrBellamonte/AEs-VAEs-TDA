@@ -82,15 +82,15 @@ class ConfigWC_Grid:
     wc_kwargs: List[dict]
     n_jobs: List[int]
     seed: List[str]
-    global_register: List[str]
-    root_path: List[str]
-    verbose: List[bool]
+    global_register: str
+    root_path: str
+    verbose: bool
 
     def configs_from_grid(self):
 
         grid = dict()
 
-        for slot in (set(self.__slots__)):
+        for slot in (set(self.__slots__)-set(['root_path','global_register', 'verbose'])):
             grid.update({slot: getattr(self, slot)})
         tmp = list(get_keychain_value(grid))
         values = [x[1] for x in tmp]
@@ -100,7 +100,7 @@ class ConfigWC_Grid:
 
         for v in itertools.product(*values):
 
-            ret_i = dict()
+            ret_i = dict(root_path = self.root_path, global_register = self.global_register, verbose = self.verbose)
             for kc, kc_v in zip(key_chains, v):
                 tmp = ret_i
                 for k in kc[:-1]:

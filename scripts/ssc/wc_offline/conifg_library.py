@@ -9,7 +9,20 @@ test_wcconfig = ConfigWC_Grid(
     eval_size=[0.2],
     n_jobs = [4],
     seed = [1],
-    global_register = ['/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/wc_global_register.csv'],
-    root_path = ['/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/tests'],
-    verbose = [True]
+    global_register = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/wc_global_register.csv',
+    root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/tests',
+    verbose = True
+)
+
+test_wcconfig2 = ConfigWC_Grid(
+    dataset = [SwissRoll()],
+    sampling_kwargs = [dict(n_samples = 640)],
+    batch_size=[32,64],
+    wc_kwargs=[dict()],
+    eval_size=[0.2],
+    n_jobs = [1],
+    seed = [1],
+    global_register = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/wc_global_register.csv',
+    root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/tests2',
+    verbose = True
 )
