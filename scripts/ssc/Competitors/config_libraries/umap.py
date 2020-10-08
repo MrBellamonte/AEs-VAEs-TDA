@@ -53,7 +53,7 @@ swissroll_umap_grid = [ConfigGrid_Competitors(
 
 swissroll_euler = [ConfigGrid_Competitors(
     model_class = [UMAP],
-    model_kwargs=dict(n_neighbors = [15,20,25,30,35,40,45,50,55,65,70], min_dist = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]),
+    model_kwargs=dict(n_neighbors = [15,20,25,30,35,40,45,50,55,65,70], min_dist = [0.05,0.1,0.15,0.2,0.25]),
     dataset=[SwissRoll()],
     sampling_kwargs={
         'n_samples': [2560]
