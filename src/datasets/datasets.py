@@ -15,6 +15,10 @@ class DataSet(metaclass=ABCMeta):
     def sample(self, n_samples: int, seed: int, noise: float, train: bool) -> Tuple[np.ndarray, np.ndarray]:
         pass
 
+    @abstractmethod
+    def sample_manifold(self, n_samples: int, seed: int, noise: float, train: bool) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        pass
+
     @property
     @abstractmethod
     def fancy_name(self) -> str:
@@ -88,6 +92,9 @@ class Spheres(DataSet):
 
         return dataset, labels
 
+    def sample_manifold(self):
+        raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
+
 
 class DoubleTorus(DataSet):
     '''
@@ -115,6 +122,9 @@ class DoubleTorus(DataSet):
         data2, labels2 = torus(n=n_samples, c=6, a=1, label=1, noise=noise)
 
         return np.concatenate((data1, data2), axis=0), np.concatenate((labels1, labels2), axis=0)
+
+    def sample_manifold(self):
+        raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
 
 
 class SwissRoll(DataSet):
@@ -171,7 +181,7 @@ class SwissRoll(DataSet):
         X_manifold = X_manifold.T
         t = np.squeeze(t)
 
-        return X_manifold,X_transformed, t
+        return X_manifold, X_transformed, t
 
     def sample_old(self, n_samples, noise = DEFAULT['swissroll']['noise'], seed = DEFAULT['swissroll']['seed'], train = True):
         #todo change to fixed increment for test?

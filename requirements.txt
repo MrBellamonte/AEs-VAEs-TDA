@@ -17,4 +17,5 @@ multicoretsne
 tqdm
 
 dataclasses
+dataclassy
 tadasets

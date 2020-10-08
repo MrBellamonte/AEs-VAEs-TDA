@@ -5,11 +5,12 @@ import os
 
 import numpy as np
 import pandas as pd
+from scipy.spatial.distance import squareform, pdist
 from sklearn.model_selection import train_test_split
 
 from src.evaluation.measures_optimized import MeasureCalculator
 from src.utils.dict_utils import avg_array_in_dict, default
-from src.utils.plots import plot_2Dscatter
+from src.utils.plots import plot_2Dscatter, plot_distcomp_Z_manifold
 
 
 def eval(result,X,Z,Y,rundir,config,train = True):
@@ -31,6 +32,28 @@ def eval(result,X,Z,Y,rundir,config,train = True):
         )
         plot_2Dscatter(Z, Y, path_to_save=os.path.join(
             rundir, '{}_latent_visualization.pdf'.format(name_prefix)), title=None, show=False)
+
+    if config.eval.eval_manifold:
+        try:
+            dataset = config.dataset
+            Z_manifold, X_transformed, labels = dataset.sample_manifold(
+                **config.sampling_kwargs, train=train)
+
+            # compute RMSE
+            pairwise_distances_manifold = squareform(pdist(Z_manifold))
+            pairwise_distances_Z = squareform(pdist(Z))
+            rmse_manifold = np.sqrt(
+                (np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None))
+            result.update(dict(rmse_manifold_Z=rmse_manifold))
+            # save comparison fig
+            plot_distcomp_Z_manifold(Z_manifold=Z_manifold, Z_latent=Z,
+                                     pwd_manifold=pairwise_distances_manifold,
+                                     pwd_Z=pairwise_distances_Z, labels=labels,
+                                     path_to_save=rundir, name='manifold_Z_distcomp',
+                                     fontsize=24, show=False)
+        except AttributeError as err:
+            print(err)
+            print('Manifold not evaluated!')
 
     ks = list(range(config.eval.k_min, config.eval.k_max+config.eval.k_step, config.eval.k_step))
 
@@ -69,7 +92,7 @@ def train_comp(model, data_train, data_test, config, quiet,val_size, _seed, _rnd
         pass
 
     # include split for fair comparison....
-    X_train, X_val, y_train, y_val, = train_test_split(data_train[0], data_train[1], test_size = val_size, random_state = _seed)
+    X_train, y_train = data_train[0], data_train[1]
     test_dataset = data_test
 
     if not quiet:

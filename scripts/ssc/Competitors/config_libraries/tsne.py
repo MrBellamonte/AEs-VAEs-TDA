@@ -29,7 +29,7 @@ swissroll_test = ConfigGrid_Competitors(
 
 swissroll_euler = [ConfigGrid_Competitors(
     model_class = [tSNE],
-    model_kwargs=[dict(n_jobs = 1, perplexity = p) for p in [5,10,20,30,40,50,60,70,80,90,100,110,125,150,175,200]],
+    model_kwargs=[dict(n_jobs = 1, perplexity = p) for p in [10,20,30,40,50,60,70,80,90,100]],
     dataset=[SwissRoll()],
     sampling_kwargs={
         'n_samples': [2560]
@@ -45,7 +45,7 @@ swissroll_euler = [ConfigGrid_Competitors(
         k_step=5,
     )],
     uid = [''],
-    experiment_dir='/cluster/scratch/schsimo/output/tsne_swissroll',
+    experiment_dir='/cluster/scratch/schsimo/output/tsne_final',
     seed = seed,
     verbose = True
 ) for seed in [480, 367, 887, 718, 672, 172,  12, 326, 910, 688]]

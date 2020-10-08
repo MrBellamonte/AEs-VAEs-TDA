@@ -1,16 +1,17 @@
-from dataclasses import dataclass
+#from dataclasses import dataclass
+from dataclassy import dataclass
 
-
-@dataclass
+@dataclass(slots=True)
 class ConfigEval:
-    __slots__ = ['active',
-                 'evaluate_on',
-                 'save_eval_latent',
-                 'save_train_latent',
-                 'online_visualization',
-                 'k_min',
-                 'k_max',
-                 'k_step']
+    # __slots__ = ['active',
+    #              'evaluate_on',
+    #              'eval_manifold',
+    #              'save_eval_latent',
+    #              'save_train_latent',
+    #              'online_visualization',
+    #              'k_min',
+    #              'k_max',
+    #              'k_step']
 
     active: bool
     evaluate_on: str
@@ -20,8 +21,9 @@ class ConfigEval:
     k_min: int
     k_max: int
     k_step: int
+    eval_manifold: bool = False
 
-    def __post_init__(self):
+    def __init__(self):
         self.check()
 
     def ks(self):

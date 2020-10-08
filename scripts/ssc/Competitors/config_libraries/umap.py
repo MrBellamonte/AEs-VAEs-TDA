@@ -13,6 +13,7 @@ swissroll_test = ConfigGrid_Competitors(
     eval=[ConfigEval(
         active = True,
         evaluate_on = None,
+        eval_manifold=True,
         save_eval_latent = True,
         save_train_latent = True,
         online_visualization = False,
@@ -52,7 +53,7 @@ swissroll_umap_grid = [ConfigGrid_Competitors(
 
 swissroll_euler = [ConfigGrid_Competitors(
     model_class = [UMAP],
-    model_kwargs=dict(n_neighbors = [2,4,8,10,12,16,20,24,28,32], min_dist = [0.05,0.1,0.15,0.05,0.1,0.15,0.2, 0.25, 0.3,0.35,0.4,0.5]),
+    model_kwargs=dict(n_neighbors = [15,20,25,30,35,40,45,50,55,65,70], min_dist = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]),
     dataset=[SwissRoll()],
     sampling_kwargs={
         'n_samples': [2560]
@@ -60,15 +61,16 @@ swissroll_euler = [ConfigGrid_Competitors(
     eval=[ConfigEval(
         active = True,
         evaluate_on = None,
+        eval_manifold=True,
         save_eval_latent = True,
         save_train_latent = True,
         online_visualization = False,
-        k_min=5,
-        k_max=20,
-        k_step=5,
+        k_min=15,
+        k_max=45,
+        k_step=15,
     )],
     uid = [''],
-    experiment_dir='/cluster/scratch/schsimo/output/umap_swissroll',
+    experiment_dir='/cluster/scratch/schsimo/output/umap_final',
     seed = seed,
     verbose = True
 ) for seed in [480, 367, 887, 718, 672, 172,  12, 326, 910, 688]]

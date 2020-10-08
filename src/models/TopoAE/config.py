@@ -60,6 +60,9 @@ class ConfigTopoAE:
             pass
         else:
             self.method_args = dict()
+
+
+        add_default_to_dict(self.sampling_kwargs, 'seed', self.seed)
         add_default_to_dict(self.method_args, 'name', 'topoae')
         add_default_to_dict(self.method_args, 'LLE_pretrain', False)
 

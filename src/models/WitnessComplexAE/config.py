@@ -66,6 +66,7 @@ class ConfigWCAE:
             self.method_args = dict()
         self.method_args.update(dict(name = 'topoae_wc',r_max = self.r_max,k = self.k, match_edges = self.match_edges))
 
+        add_default_to_dict(self.sampling_kwargs, 'seed', self.seed)
         add_default_to_dict(self.method_args, 'n_jobs', 1)
         add_default_to_dict(self.method_args, 'verification', False)
         add_default_to_dict(self.method_args, 'online_wc', False)
@@ -173,8 +174,7 @@ class ConfigGrid_WCAE:
                  'num_threads',
                  'verbose',
                  'toposig_kwargs',
-                 'method_args'
-                 ]
+                 'method_args']
 
     learning_rate: List[float]
     batch_size: List[int]
