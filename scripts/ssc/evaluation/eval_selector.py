@@ -33,7 +33,9 @@ if __name__ == "__main__":
     UMAP = False
     UMAP2 = False
     tSNE = False
-    TopoAE = True
+    TopoAE = False
+
+    UMAP_final = True
 
 
     if WCTopoAE_symmetric:
@@ -52,6 +54,9 @@ if __name__ == "__main__":
         exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/tsne_swissroll'
         root_save = '/Users/simons/MT_data/eval_all_analysis/Competitors/tSNE/final_swissroll'
     elif TopoAE:
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/TopoAE_swissroll_symmetric'
+        root_save = '/Users/simons/MT_data/eval_all_analysis/TopoAE/SwissRoll/symmetric_nonshuffle'
+    elif UMAP_final:
         exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/TopoAE_swissroll_symmetric'
         root_save = '/Users/simons/MT_data/eval_all_analysis/TopoAE/SwissRoll/symmetric_nonshuffle'
     else:

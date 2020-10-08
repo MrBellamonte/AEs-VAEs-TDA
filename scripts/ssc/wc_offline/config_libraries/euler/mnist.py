@@ -1,9 +1,9 @@
 from scripts.ssc.wc_offline.config_libraries.global_register_definitions import PATH_GR_MNIST_EULER
 from src.data_preprocessing.witness_complex_offline.config import ConfigWC_Grid
-from src.datasets.datasets import SwissRoll, MNIST
+from src.datasets.datasets import SwissRoll, MNIST, MNIST_offline
 
 mnist_1 = ConfigWC_Grid(
-    dataset = [MNIST()],
+    dataset = [MNIST_offline()],
     sampling_kwargs = [dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     batch_size=[64,128,256,512,1024,2048,4096],
     wc_kwargs=[dict()],

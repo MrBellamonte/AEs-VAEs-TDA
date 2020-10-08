@@ -3,10 +3,12 @@ import time
 
 import mnist
 import numpy as np
+import torch
 
 from sklearn.metrics import pairwise_distances
+from torch.utils.data import TensorDataset
 
-from src.datasets.datasets import MNIST
+from src.datasets.datasets import MNIST, MNIST_offline
 from src.topology.witness_complex import WitnessComplex
 
 if __name__ == "__main__":
@@ -19,16 +21,23 @@ if __name__ == "__main__":
 
     #x_train = mnist.train_images()
 
-    dataset = MNIST()
+    dataset = MNIST_offline()
 
 
 
 
-    data, labels = dataset.sample(train = True, root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA')
+    data, labels = dataset.sample(train = False)
 
-    # np.save('/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/mnist_data/train_data.npy', data)
-    # np.save('/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/mnist_data/train_labels.npy',labels)
 
+
+
+    # np.save('/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/mnist_data/test_data.npy', data)
+    #np.save('/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/mnist_data/test_labels.npy',labels)
+
+
+
+    print(data.shape)
+    print(labels.shape)
     # ind = random.sample(range(60000),4096)
     #
     #
