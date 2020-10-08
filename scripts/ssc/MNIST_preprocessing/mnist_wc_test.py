@@ -21,13 +21,20 @@ if __name__ == "__main__":
 
     dataset = MNIST()
 
-    data, labels = dataset.sample(seed = 10, train = True)
-    ind = random.sample(range(60000),4096)
 
 
-    start = time.time()
-    wc = WitnessComplex(landmarks=data[ind,:], witnesses=data)
-    wc.compute_metric_optimized(n_jobs=4)
-    end = time.time()
+
+    data, labels = dataset.sample(train = True, root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA')
+
+    # np.save('/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/mnist_data/train_data.npy', data)
+    # np.save('/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/mnist_data/train_labels.npy',labels)
+
+    # ind = random.sample(range(60000),4096)
     #
-    print('Time needed: {}'.format(end-start))
+    #
+    # start = time.time()
+    # wc = WitnessComplex(landmarks=data[ind,:], witnesses=data)
+    # wc.compute_metric_optimized(n_jobs=4)
+    # end = time.time()
+    # #
+    # print('Time needed: {}'.format(end-start))

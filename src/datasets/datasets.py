@@ -1,3 +1,4 @@
+import os
 import random
 from abc import ABCMeta, abstractmethod
 from typing import Tuple
@@ -31,7 +32,7 @@ DEFAULT = {
     "spheres"   : dict(d = 100, n_spheres = 11, r = 5, seed = 42, noise = 0, ratio_largesphere = 10),
     "doubletorus" : dict(c1 = 6, a1 = 4, c2 = 6, a2 = 1, seed = 1, noise = 0),
     "swissroll" : dict(seed = 1, noise = 0),
-    "mnist": dict(n_samples = 1000000, seed = None)
+    "mnist": dict(n_samples = 1000000, seed = None, root_path = None)
 }
 
 
@@ -205,7 +206,7 @@ class MNIST(DataSet):
     def __init__(self):
         pass
 
-    def sample(self, n_samples = DEFAULT['mnist']['n_samples'], seed = DEFAULT['mnist']['seed'], train = True):
+    def sample(self, n_samples = DEFAULT['mnist']['n_samples'], seed = DEFAULT['mnist']['seed'], train = True, root_path = DEFAULT['mnist']['root_path']):
 
         if seed is None:
             seeds =[0,1]
@@ -216,15 +217,24 @@ class MNIST(DataSet):
         if (n_samples is DEFAULT['mnist']['n_samples']) and (seed is not None):
             print('USER WARNING: Seed is ignored.')
 
-        if train:
-            seed = seeds[0]
-            data = np.vstack([img.reshape(-1, ) for img in mnist.train_images()])
-            labels = mnist.train_labels()
+        if root_path is None:
+            if train:
+                seed = seeds[0]
+                data = np.vstack([img.reshape(-1, ) for img in mnist.train_images()])
+                labels = mnist.train_labels()
+            else:
+                seed = seeds[1]
+                data = np.vstack([img.reshape(-1, ) for img in mnist.test_images()])
+                labels = mnist.train_labels()
         else:
-            seed = seeds[1]
-            data = np.vstack([img.reshape(-1, ) for img in mnist.test_images()])
-            labels = mnist.train_labels()
-
+            if train:
+                seed = seeds[0]
+                data = np.load(os.path.join(root_path,'src/datasets/mnist_data/train_data.npy'))
+                labels = np.load(os.path.join(root_path,'src/datasets/mnist_data/train_labels.npy'))
+            else:
+                seed = seeds[1]
+                data = np.load(os.path.join(root_path,'src/datasets/mnist_data/test_data.npy'))
+                labels = np.load(os.path.join(root_path,'src/datasets/mnist_data/test_labels.npy'))
         random.seed(seed)
         if (n_samples is None) or (n_samples >= data.shape[0]):
             return data, labels
