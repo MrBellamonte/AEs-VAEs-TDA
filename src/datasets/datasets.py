@@ -1,6 +1,8 @@
+import random
 from abc import ABCMeta, abstractmethod
 from typing import Tuple
 
+import mnist
 import numpy as np
 import sklearn
 from sklearn import datasets
@@ -28,7 +30,8 @@ class DataSet(metaclass=ABCMeta):
 DEFAULT = {
     "spheres"   : dict(d = 100, n_spheres = 11, r = 5, seed = 42, noise = 0, ratio_largesphere = 10),
     "doubletorus" : dict(c1 = 6, a1 = 4, c2 = 6, a2 = 1, seed = 1, noise = 0),
-    "swissroll" : dict(seed = 1, noise = 0)
+    "swissroll" : dict(seed = 1, noise = 0),
+    "mnist": dict(n_samples = 1000000, seed = None)
 }
 
 
@@ -193,3 +196,42 @@ class SwissRoll(DataSet):
             seed = seeds[1]
 
         return datasets.make_swiss_roll(n_samples=n_samples, noise=noise, random_state=seed)
+
+
+class MNIST(DataSet):
+    __slots__ = []
+    fancy_name = "MNIST Dataset"
+
+    def __init__(self):
+        pass
+
+    def sample(self, n_samples = DEFAULT['mnist']['n_samples'], seed = DEFAULT['mnist']['seed'], train = True):
+
+        if seed is None:
+            seeds =[0,1]
+        else:
+            np.random.seed(seed=seed)
+            seeds = np.random.randint(0, high=1000, size=2)
+
+        if (n_samples is DEFAULT['mnist']['n_samples']) and (seed is not None):
+            print('USER WARNING: Seed is ignored.')
+
+        if train:
+            seed = seeds[0]
+            data = np.vstack([img.reshape(-1, ) for img in mnist.train_images()])
+            labels = mnist.train_labels()
+        else:
+            seed = seeds[1]
+            data = np.vstack([img.reshape(-1, ) for img in mnist.test_images()])
+            labels = mnist.train_labels()
+
+        random.seed(seed)
+        if (n_samples is None) or (n_samples >= data.shape[0]):
+            return data, labels
+        else:
+            ind = random.sample(range(data.shape[0]), n_samples)
+            return data[ind,:], labels[ind,:]
+
+    def sample_manifold(self):
+        raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
+
