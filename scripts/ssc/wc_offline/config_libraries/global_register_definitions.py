@@ -9,5 +9,5 @@ PATH_GR_MNIST_EULER= '/cluster/home/schsimo/MT/output/WitnessComplexes/mnist/wc_
 # LOCAL
 PATH_GR_SWISSROLL_LOCAL='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/SwissRoll/wc_global_register_swissroll_local.csv'
 
-
+PATH_GR_MNIST_LOCAL = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/mnist/wc_global_register_mnist_loc.csv'
 

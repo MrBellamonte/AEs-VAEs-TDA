@@ -35,7 +35,8 @@ if __name__ == "__main__":
     tSNE = False
     TopoAE = False
 
-    UMAP_final = True
+    UMAP_final = False
+    tSNE_final = True
 
 
     if WCTopoAE_symmetric:
@@ -57,8 +58,11 @@ if __name__ == "__main__":
         exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/TopoAE_swissroll_symmetric'
         root_save = '/Users/simons/MT_data/eval_all_analysis/TopoAE/SwissRoll/symmetric_nonshuffle'
     elif UMAP_final:
-        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/TopoAE_swissroll_symmetric'
-        root_save = '/Users/simons/MT_data/eval_all_analysis/TopoAE/SwissRoll/symmetric_nonshuffle'
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/umap_final'
+        root_save = '/Users/simons/MT_data/eval_all_analysis/Competitors/UMAP/FINAL'
+    elif tSNE_final:
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/tsne_final'
+        root_save = '/Users/simons/MT_data/eval_all_analysis/Competitors/tSNE/FINAL'
     else:
         ValueError
 
@@ -103,14 +107,14 @@ if __name__ == "__main__":
     }
 
 
-    if UMAP or tSNE or UMAP2:
+    if UMAP or tSNE or UMAP2 or UMAP_final or tSNE_final:
         bss = ['const']
         metrics_min = metrics_min_comp
         metrics_max = metrics_max_comp
         dir_name_mapping = dir_name_mapping_comp
 
     for bs in bss:
-        if UMAP or tSNE or UMAP2:
+        if UMAP or tSNE or UMAP2 or UMAP_final or tSNE_final:
             df_temp = df
         else:
             df_temp = df[df.batch_size == bs]

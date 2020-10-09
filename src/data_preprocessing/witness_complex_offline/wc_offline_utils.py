@@ -75,14 +75,14 @@ def compute_wc_offline(config: ConfigWC):
 
     # load batches
     dataloader_train = DataLoader(
-        train_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=False, shuffle=False
+        train_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=True, shuffle=False
     )
     dataloader_eval = DataLoader(
-        validation_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=False,
+        validation_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=True,
         shuffle=False
     )
     dataloader_test= DataLoader(
-        test_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=False,
+        test_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=True,
         shuffle=False
     )
 
