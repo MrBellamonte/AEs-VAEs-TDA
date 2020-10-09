@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Type, List
 
 from src.datasets.datasets import DataSet, SwissRoll
-from src.utils.config_utils import get_keychain_value
+from src.utils.config_utils import get_keychain_value, fraction_to_string
 
 
 @dataclass
@@ -34,10 +34,17 @@ class ConfigWC:
     verbose: bool
 
     def __post_init__(self):
-        self.uid = '{dataset}-bs{batch_size}-seed{seed}-{uid}'.format(
+
+        if'noise' in self.sampling_kwargs:
+            noise_ = fraction_to_string(self.sampling_kwargs['noise'])
+        else:
+            noise_ = None
+
+        self.uid = '{dataset}-bs{batch_size}-seed{seed}-noise{noise}-{uid}'.format(
             dataset=self.dataset.__class__.__name__,
             batch_size = self.batch_size,
             seed=self.seed,
+            noise=noise_,
             uid=str(uuid.uuid4())[:8]
         )
         self.check()
