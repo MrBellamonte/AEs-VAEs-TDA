@@ -49,7 +49,7 @@ SWISSROLL_NONOISE1577 = [
     dict(uid='SwissRoll-bs256-seed1577-22fb713b', path_global_register=PATH_GR_SWISSROLL_EULER),
     dict(uid='SwissRoll-bs512-seed1577-2f71df00', path_global_register=PATH_GR_SWISSROLL_EULER)]
 SWISSROLL_NONOISE3288 = [
-    dict(uid='SwissRoll-bs64-seed3288-b430a7a3', path_global_register=PATH_GR_SWISSROLL_EULER),
+    dict(uid='SwissRoll-bs64-seed3288-b430a7a3',  path_global_register=PATH_GR_SWISSROLL_EULER),
     dict(uid='SwissRoll-bs128-seed3288-8bf65659', path_global_register=PATH_GR_SWISSROLL_EULER),
     dict(uid='SwissRoll-bs256-seed3288-b350a4a4', path_global_register=PATH_GR_SWISSROLL_EULER),
     dict(uid='SwissRoll-bs512-seed3288-5a828a69', path_global_register=PATH_GR_SWISSROLL_EULER)]
@@ -59,6 +59,19 @@ SWISSROLL_NONOISE_all = itertools.chain(SWISSROLL_NONOISE36,
                          SWISSROLL_NONOISE2570,
                          SWISSROLL_NONOISE4304,
                          SWISSROLL_NONOISE1935,
+                         SWISSROLL_NONOISE7954,
+                         SWISSROLL_NONOISE5095,
+                         SWISSROLL_NONOISE5310,
+                         SWISSROLL_NONOISE1577,
+                         SWISSROLL_NONOISE3288)
+
+SWISSROLL_NONOISE_h1 = itertools.chain(SWISSROLL_NONOISE36,
+                         SWISSROLL_NONOISE3851,
+                         SWISSROLL_NONOISE2570,
+                         SWISSROLL_NONOISE4304,
+                         SWISSROLL_NONOISE1935)
+
+SWISSROLL_NONOISE_h2 = itertools.chain(
                          SWISSROLL_NONOISE7954,
                          SWISSROLL_NONOISE5095,
                          SWISSROLL_NONOISE5310,
