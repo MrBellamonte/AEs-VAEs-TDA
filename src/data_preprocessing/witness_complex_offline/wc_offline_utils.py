@@ -150,7 +150,6 @@ def fetch_data(uid: str = None, path_global_register: str = None, path_to_data: 
         path_to_data = df_register[df_register['uid'] == uid].root_path.values[0]
     else:
         pass
-
     # fetch and return data.
     if (type == 'train') or  (type == 'training'):
         dl_name = NAME_DATALOADER_TRAIN

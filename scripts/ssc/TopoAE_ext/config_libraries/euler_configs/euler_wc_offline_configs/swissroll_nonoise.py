@@ -4,7 +4,7 @@ from scripts.ssc.wc_offline.config_libraries.global_register_definitions import 
     PATH_GR_SWISSROLL_EULER
 
 SWISSROLL_NONOISE36 = [
-    dict(uid='SwissRoll-bs256-seed36-b3aa917f', path_global_register=PATH_GR_SWISSROLL_EULER),
+    dict(uid='SwissRoll-bs64-seed36-219e7a83', path_global_register=PATH_GR_SWISSROLL_EULER),
     dict(uid='SwissRoll-bs128-seed36-e11a0aee', path_global_register=PATH_GR_SWISSROLL_EULER),
     dict(uid='SwissRoll-bs256-seed36-8b60871f', path_global_register=PATH_GR_SWISSROLL_EULER),
     dict(uid='SwissRoll-bs512-seed36-d3233ff9', path_global_register=PATH_GR_SWISSROLL_EULER)]
