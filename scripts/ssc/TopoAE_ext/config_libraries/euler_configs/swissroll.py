@@ -65,7 +65,7 @@ swissroll_h1 = [ConfigGrid_WCAE(
 
 swissroll_h2 = [ConfigGrid_WCAE(
     learning_rate=[1/10, 1/100, 1/1000],
-    batch_size=[bs],
+    batch_size=[int(bs)],
     n_epochs=[1000],
     weight_decay=[1e-6],
     early_stopping=[50],
@@ -99,7 +99,7 @@ swissroll_h2 = [ConfigGrid_WCAE(
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.05,1.1,1.15,1.2,1.25], online_wc=[True], wc_offline = [dict_wc]),
     experiment_dir='/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise',
-    seed=seed,
+    seed=int(seed),
     device='cpu',
     num_threads=1,
     verbose=False,
