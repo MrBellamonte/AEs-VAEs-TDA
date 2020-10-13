@@ -144,6 +144,9 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
                 # compute RMSE
                 pairwise_distances_manifold = squareform(pdist(Z_manifold))
                 pairwise_distances_Z = squareform(pdist(Z_eval))
+                # normalize distances
+                pairwise_distances_manifold = (pairwise_distances_manifold-pairwise_distances_manifold.min())/(pairwise_distances_manifold.max()-pairwise_distances_manifold.min())
+                pairwise_distances_Z = (pairwise_distances_Z-pairwise_distances_Z.min())/(pairwise_distances_Z.max()-pairwise_distances_Z.min())
                 rmse_manifold = np.sqrt(
                     (np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None))
                 result.update(dict(rmse_manifold_Z=rmse_manifold))
