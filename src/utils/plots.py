@@ -123,7 +123,7 @@ def plot_simplicial_complex_2D(simp_complex: list, points: np.ndarray, scale: fl
 
 
 
-def plot_distcomp_Z_manifold(Z_manifold, Z_latent, pwd_manifold, pwd_Z, labels,  normalize = False, path_to_save = None,name = None,fontsize=24, show = False):
+def plot_distcomp_Z_manifold(Z_manifold, Z_latent, pwd_manifold, pwd_Z, labels, path_to_save = None,name = None,fontsize=24, show = False):
     Z_manifold[:, 0] = (Z_manifold[:,0]-Z_manifold[:,0].min())/(Z_manifold[:,0].max()-Z_manifold[:,0].min())
     Z_manifold[:, 1] = (Z_manifold[:,1]-Z_manifold[:,1].min())/(Z_manifold[:,1].max()-Z_manifold[:,1].min())
     Z_latent[:, 0] = (Z_latent[:,0]-Z_latent[:,0].min())/(Z_latent[:,0].max()-Z_latent[:,0].min())
@@ -134,10 +134,8 @@ def plot_distcomp_Z_manifold(Z_manifold, Z_latent, pwd_manifold, pwd_Z, labels, 
     pwd_Z = pwd_Z
     pwd_Ztrue = pwd_manifold
 
-    #normalize distances
-    if normalize:
-        pwd_Ztrue = (pwd_Ztrue-pwd_Ztrue.min())/(pwd_Ztrue.max()-pwd_Ztrue.min())
-        pwd_Z = (pwd_Z-pwd_Z.min())/(pwd_Z.max()-pwd_Z.min())
+    pwd_Ztrue = (pwd_Ztrue-pwd_Ztrue.min())/(pwd_Ztrue.max()-pwd_Ztrue.min())
+    pwd_Z = (pwd_Z-pwd_Z.min())/(pwd_Z.max()-pwd_Z.min())
 
     #flatten
     pwd_Ztrue = pwd_Ztrue.flatten()
