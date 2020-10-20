@@ -78,7 +78,7 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
     # Initialize model
     if X_train.shape[0]>10000:
         #todo fix somehow
-        inds = random.sample(range(X_train.shape[0]), 10000)
+        inds = random.sample(range(X_train.shape[0]), 4096)
         norm_X = torch.norm(dataset_train[inds][:][0][:, None]-dataset_train[inds][:][0], dim=2,
                             p=2).max()
     else:
