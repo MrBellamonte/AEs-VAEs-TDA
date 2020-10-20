@@ -42,7 +42,7 @@ mnist_s838_256 = ConfigGrid_WCAE(
     experiment_dir='/cluster/scratch/schsimo/output/mnist256',
     seed=838,
     device='cpu',
-    num_threads=8,
+    num_threads=10,
     verbose=True,
 )
 
@@ -79,7 +79,7 @@ mnist_s838_512 = ConfigGrid_WCAE(
     experiment_dir='/cluster/scratch/schsimo/output/mnist512',
     seed=838,
     device='cpu',
-    num_threads=8,
+    num_threads=10,
     verbose=True,
 )
 
@@ -116,6 +116,6 @@ mnist_s838_1024 = ConfigGrid_WCAE(
     experiment_dir='/cluster/scratch/schsimo/output/mnist1024',
     seed=838,
     device='cpu',
-    num_threads=8,
+    num_threads=10,
     verbose=True,
 )
