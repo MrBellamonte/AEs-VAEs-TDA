@@ -6,10 +6,11 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from dep.topo_ae_code.src_topoae.callbacks import Callback
+#from dep.topo_ae_code.src_topoae.callbacks import Callback
 from src.data_preprocessing.witness_complex_offline.wc_offline_utils import fetch_data, get_kNNmask
 from src.models.WitnessComplexAE.train_util import compute_wc_offline
 from src.topology.witness_complex import WitnessComplex
+from src.train_pipeline.callbacks.base import Callback
 
 
 def convert_to_base_type(value):
@@ -129,11 +130,17 @@ class LogDatasetLoss(Callback):
                                                                            name='{name} Dataset'.format(
                                                                                name=dataset_name))
             else:
-                self.data_loader, self.dist_X_all = fetch_data(uid=method_args['wc_offline']['uid'],
-                                                               path_global_register=
-                                                               method_args['wc_offline'][
-                                                                   'path_global_register'],
-                                                               type=dataset_name)
+                if 'path_global_register' in method_args['wc_offline'] and 'uid' in method_args['wc_offline']:
+
+                    self.data_loader, self.dist_X_all = fetch_data(uid=method_args['wc_offline']['uid'],
+                                                                   path_global_register=
+                                                                   method_args['wc_offline'][
+                                                                       'path_global_register'],
+                                                                   type=dataset_name)
+                else:
+                    self.data_loader, self.dist_X_all = fetch_data(path_to_data=method_args['wc_offline'][
+                                                                       'path_to_data'],
+                                                                   type=dataset_name)
                 self.pair_mask_X_all = get_kNNmask(landmark_distances=self.dist_X_all,
                                                    num_batches=len(self.data_loader),
                                                    batch_size=batch_size, k=self.method_args['k'])

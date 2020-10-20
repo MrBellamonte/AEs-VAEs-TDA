@@ -4,9 +4,7 @@ import sys
 import torch
 from torch.utils.data import DataLoader
 
-from src.models.autoencoder.autoencoders import (
-    Autoencoder_MLP, Autoencoder_MLP_topoae_eval, Autoencoder_MLP_topoaeeval2)
-
+from src.models.autoencoder.autoencoders import Autoencoder_MLP
 
 def get_config(path_to_folder):
     path = path_to_folder+'config.pickle'

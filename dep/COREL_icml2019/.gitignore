@@ -1,6 +1,0 @@
-.vscode
-.ipynb_checkpoints
-__pycache__
-*.pyc
-results_*
-models/*

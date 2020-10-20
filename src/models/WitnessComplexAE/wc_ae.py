@@ -53,8 +53,6 @@ class WitnessComplexAutoencoder(AutoencoderModel):
 
         """
 
-        dist_X = torch.norm(x[:, None]-x, dim=2, p=2)
-
         if self.normalize:
             dist_X = dist_X / self.norm_X
         else:

@@ -5,6 +5,7 @@ modified version, tailored to our needs
 """
 import operator
 import os
+import random
 
 import pandas as pd
 import torch
@@ -75,7 +76,14 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
 
 
     # Initialize model
-    norm_X = torch.norm(dataset_train[:][:][0][:, None]-dataset_train[:][:][0], dim=2, p=2).max()
+    if X_train.shape[0]>10000:
+        inds = random.sample(range(X_train.shape[0]), config.batch_size)
+        norm_X = torch.norm(dataset_train[inds][:][0][:, None]-dataset_train[inds][:][0], dim=2,
+                            p=2).max()
+    else:
+        norm_X = torch.norm(dataset_train[:][:][0][:, None]-dataset_train[:][:][0], dim=2,
+                            p=2).max()
+
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
     model = WitnessComplexAutoencoder(autoencoder, lam_r=config.rec_loss_weight, lam_t=config.top_loss_weight,

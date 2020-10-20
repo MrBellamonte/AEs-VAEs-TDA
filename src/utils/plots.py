@@ -173,3 +173,10 @@ def plot_distcomp_Z_manifold(Z_manifold, Z_latent, pwd_manifold, pwd_Z, labels, 
     plt.close()
 
 
+def visualize_latents(latents, labels, save_file=None):
+    plt.scatter(latents[:, 0], latents[:, 1], c=labels,
+                cmap=plt.cm.Spectral, s=2., alpha=0.5)
+    if save_file:
+        plt.savefig(save_file, dpi=200)
+        plt.close()
+

@@ -11,7 +11,7 @@ from torch.utils.data import TensorDataset
 import matplotlib.pyplot as plt
 
 from scripts.ssc.evaluation.mldl_copied import CompPerformMetrics
-from src.datasets.datasets import SwissRoll, SwissRoll_manifold
+from src.datasets.datasets import SwissRoll
 from src.evaluation.eval import Multi_Evaluation
 from src.models.COREL.eval_engine import get_latentspace_representation
 from src.models.WitnessComplexAE.wc_ae import WitnessComplexAutoencoder
@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
     # create df and set path to save
     df_tot = pd.DataFrame()
-    path_to_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/eval/SwissRoll_manifold_comparison'
+    path_to_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/eval/SwissRoll_manifold_comparisonwcae'
 
     # set which models to evaluate
     wctopoae_64 = '/Users/simons/MT_data/eval_all_analysis/Selection_WP/WCTopoAE/bs64'
@@ -158,18 +158,26 @@ if __name__ == "__main__":
     topoae_128 = '/Users/simons/MT_data/eval_all_analysis/Selection_WP/TopoAE/bs128'
     topoae_256 = '/Users/simons/MT_data/eval_all_analysis/Selection_WP/TopoAE/bs256'
 
+
+
+    wcae = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise/SwissRoll-n_samples2560-seed1935-Autoencoder_MLP_topoae-32-32-lr1_100-bs256-nep1000-rlw1-tlw8192-mepush_active21_20-k3-rmax10-seed1935-1edc2a73/'
+
     eval_models_dict = {
         'TopoAE64'  : topoae_64, 'TopoAE128': topoae_128, 'TopoAE256': topoae_256,
         'WCTopoAE64': wctopoae_64, 'WCTopoAE128': wctopoae_128, 'WCTopoAE256': wctopoae_256,
 
     }
 
+    eval_models_dict = {
+        'wcae' : wcae
+    }
 
 
     # sample data
     n_samples = 2560
-    manifold = SwissRoll_manifold()
-    data_manifold,data, labels = manifold.sample_all(n_samples=n_samples, seed=1)
+    manifold = SwissRoll()
+
+    data_manifold,data, labels = manifold.sample_manifold(n_samples=n_samples, seed=1)
 
 
 

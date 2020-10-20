@@ -1,16 +1,17 @@
 '''
 Code copied from TopoAE paper and modified
 '''
-from src.utils.plots import plot_2Dscatter
+from src.evaluation.utils import get_space
+from src.utils.plots import plot_2Dscatter, visualize_latents
 
 """Callbacks for training loop."""
 import os
 from tqdm import tqdm
 from torch.utils.data import DataLoader
-from torchvision.utils import save_image
+#from torchvision.utils import save_image
 
-from dep.topo_ae_code.src_topoae.evaluation.utils import get_space
-from dep.topo_ae_code.src_topoae.visualization import visualize_latents
+#from dep.topo_ae_code.src_topoae.evaluation.utils import get_space
+#from dep.topo_ae_code.src_topoae.visualization import visualize_latents
 
 # Hush the linter, child callbacks will always have different parameters than
 # the overwritten method of the parent class. Further kwargs will mostly be an

@@ -153,8 +153,7 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
                                          fontsize=24, show=False)
                 pairwise_distances_manifold = (pairwise_distances_manifold-pairwise_distances_manifold.min())/(pairwise_distances_manifold.max()-pairwise_distances_manifold.min())
                 pairwise_distances_Z = (pairwise_distances_Z-pairwise_distances_Z.min())/(pairwise_distances_Z.max()-pairwise_distances_Z.min())
-                rmse_manifold = np.sqrt(
-                    (np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None))
+                rmse_manifold = np.sqrt((np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None))
                 result.update(dict(rmse_manifold_Z=rmse_manifold))
             except AttributeError as err:
                 print(err)
