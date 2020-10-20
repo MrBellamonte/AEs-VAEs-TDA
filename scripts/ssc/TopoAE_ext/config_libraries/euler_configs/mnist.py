@@ -24,7 +24,7 @@ mnist_s838_256 = ConfigGrid_WCAE(
     model_class=[ConvAE_MNIST],
     model_kwargs=[dict()],
     dataset=[MNIST_offline()],
-    sampling_kwargs=[dict()],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     eval=[ConfigEval(
         active=True,
         evaluate_on='test',
@@ -61,7 +61,7 @@ mnist_s838_512 = ConfigGrid_WCAE(
     model_class=[ConvAE_MNIST],
     model_kwargs=[dict()],
     dataset=[MNIST_offline()],
-    sampling_kwargs=[dict()],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     eval=[ConfigEval(
         active=True,
         evaluate_on='test',
@@ -98,7 +98,7 @@ mnist_s838_1024 = ConfigGrid_WCAE(
     model_class=[ConvAE_MNIST],
     model_kwargs=[dict()],
     dataset=[MNIST_offline()],
-    sampling_kwargs=[dict()],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     eval=[ConfigEval(
         active=True,
         evaluate_on='test',
