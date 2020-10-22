@@ -8,6 +8,8 @@ import torch
 import numpy as np
 import pandas as pd
 from scipy.spatial.distance import squareform, pdist
+from sklearn.metrics import pairwise_distances
+from torch.utils.data import TensorDataset
 
 from src.datasets.splitting import split_validation
 from src.evaluation.eval import Multi_Evaluation
@@ -141,9 +143,29 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
                 Z_manifold, X_transformed, labels = dataset.sample_manifold(
                     **config.sampling_kwargs, train=manifold_eval_train)
 
-                # compute RMSE
-                pairwise_distances_manifold = squareform(pdist(Z_manifold))
-                pairwise_distances_Z = squareform(pdist(Z_eval))
+                dataset_test = TensorDataset(torch.Tensor(X_transformed), torch.Tensor(labels))
+                dataloader_eval = torch.utils.data.DataLoader(dataset_test, batch_size=config.batch_size,
+                                                              pin_memory=True, drop_last=False)
+                X_eval, Y_eval, Z_latent = get_latentspace_representation(model, dataloader_eval,
+                                                                      device='cpu')
+
+                Z_manifold[:, 0] = (Z_manifold[:, 0]-Z_manifold[:, 0].min())/(
+                            Z_manifold[:, 0].max()-Z_manifold[:, 0].min())
+                Z_manifold[:, 1] = (Z_manifold[:, 1]-Z_manifold[:, 1].min())/(
+                            Z_manifold[:, 1].max()-Z_manifold[:, 1].min())
+                Z_latent[:, 0] = (Z_latent[:, 0]-Z_latent[:, 0].min())/(
+                            Z_latent[:, 0].max()-Z_latent[:, 0].min())
+                Z_latent[:, 1] = (Z_latent[:, 1]-Z_latent[:, 1].min())/(
+                            Z_latent[:, 1].max()-Z_latent[:, 1].min())
+
+                pwd_Z = pairwise_distances(Z_eval, Z_eval, n_jobs=1)
+                pwd_Ztrue = pairwise_distances(Z_manifold, Z_manifold, n_jobs=1)
+
+                # normalize distances
+                pairwise_distances_manifold = (pwd_Ztrue-pwd_Ztrue.min())/(pwd_Ztrue.max()-pwd_Ztrue.min())
+                pairwise_distances_Z = (pwd_Z-pwd_Z.min())/(pwd_Z.max()-pwd_Z.min())
+
+
 
                 # save comparison fig
                 plot_distcomp_Z_manifold(Z_manifold=Z_manifold, Z_latent=Z_eval,
@@ -151,9 +173,8 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
                                          pwd_Z=pairwise_distances_Z, labels=labels,
                                          path_to_save=rundir, name='manifold_Z_distcomp',
                                          fontsize=24, show=False)
-                pairwise_distances_manifold = (pairwise_distances_manifold-pairwise_distances_manifold.min())/(pairwise_distances_manifold.max()-pairwise_distances_manifold.min())
-                pairwise_distances_Z = (pairwise_distances_Z-pairwise_distances_Z.min())/(pairwise_distances_Z.max()-pairwise_distances_Z.min())
-                rmse_manifold = np.sqrt((np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None))
+
+                rmse_manifold = (np.square(pairwise_distances_manifold - pairwise_distances_Z)).mean()
                 result.update(dict(rmse_manifold_Z=rmse_manifold))
             except AttributeError as err:
                 print(err)
