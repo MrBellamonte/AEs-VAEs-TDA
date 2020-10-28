@@ -82,7 +82,7 @@ corgi_60_decay = ConfigGrid_WCAE(
         verbose=False,
     )
 
-corgi_30_decay = ConfigGrid_WCAE(
+corgi_30_decay_semi = ConfigGrid_WCAE(
         learning_rate=[1/100,1/1000],
         batch_size=[30],
         n_epochs=[5000],
@@ -114,7 +114,7 @@ corgi_30_decay = ConfigGrid_WCAE(
         method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], dist_x_land = [True],
                          lam_t_bi = [[0,1]],lam_t_decay = [{0: 8192, 25 : 4096, 50 : 2048, 75: 1024, 100 : 512, 125 : 256, 150: 128, 150: 64, 500 : 32, 1000 : 16}],
                          wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/AEs-VAEs-TDA/src/datasets/simulated/corgi_rotation_5_l')]),
-        experiment_dir='/cluster/scratch/schsimo/output/corgi/corgi_30_std',
+        experiment_dir='/cluster/scratch/schsimo/output/corgi/corgi_30_semi',
         seed=1,
         device='cpu',
         num_threads=2,
@@ -122,7 +122,7 @@ corgi_30_decay = ConfigGrid_WCAE(
     )
 
 
-corgi_60_decay = ConfigGrid_WCAE(
+corgi_60_decay_semi = ConfigGrid_WCAE(
         learning_rate=[1/100,1/1000],
         batch_size=[60],
         n_epochs=[5000],
