@@ -101,9 +101,14 @@ class TrainingLoop():
                                                    num_batches=len(train_loader),
                                                    batch_size=batch_size, k=self.method_args['k'])
             # compute pairwise distances in data space
-            dist_X_all = torch.zeros(len(train_loader), batch_size, batch_size)
-            for batch_i, (X_batch, label_batch) in enumerate(train_loader):
-                dist_X_all[batch_i, :, :] = torch.norm(X_batch[:, None]-X_batch, dim=2, p=2)
+
+            if self.method_args['dist_x_land']:
+                dist_X_all = land_dist_X_all
+            else:
+                dist_X_all = torch.zeros(len(train_loader), batch_size, batch_size)
+                for batch_i, (X_batch, label_batch) in enumerate(train_loader):
+                    dist_X_all[batch_i, :, :] = torch.norm(X_batch[:, None]-X_batch, dim=2, p=2)
+
         else:
             train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
                                       pin_memory=True, drop_last=False)
@@ -135,7 +140,21 @@ class TrainingLoop():
                         l = label
                     else:
                         l = None
-                    loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
+
+                    if self.method_args['lam_t_bi'] is None:
+                        if self.method_args['lam_t_decay'] is None:
+                            list(self.method_args['lam_t_decay'].keys())
+                            loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
+                        else:
+                            key = max([x for x in list(self.method_args['lam_t_decay'].keys()) if x <= epoch])
+
+                            loss, loss_components = self.model(x, dist_X, pair_mask_X, lam_t = self.method_args['lam_t_decay'][key], labels=l)
+                    else:
+                        if batch in self.method_args['lam_t_bi']:
+                            loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
+                        else:
+                            loss, loss_components = self.model(x, dist_X, pair_mask_X,lam_t = 0, labels=l)
+
                 else:
                     x = img.to(self.device)
                     loss, loss_components = self.model(x.float())

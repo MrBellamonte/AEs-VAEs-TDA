@@ -69,9 +69,12 @@ class ConfigWCAE:
         add_default_to_dict(self.sampling_kwargs, 'seed', self.seed)
         add_default_to_dict(self.method_args, 'n_jobs', 1)
         add_default_to_dict(self.method_args, 'verification', False)
-        add_default_to_dict(self.method_args, 'online_wc', False)
+        add_default_to_dict(self.method_args, 'wc_offline', None)
         add_default_to_dict(self.method_args, 'normalize', True)
         add_default_to_dict(self.method_args, 'mu_push', 1.05)
+        add_default_to_dict(self.method_args, 'dist_x_land', False)
+        add_default_to_dict(self.method_args, 'lam_t_bi', None)
+        add_default_to_dict(self.method_args, 'lam_t_decay', None)
 
         self.toposig_kwargs = dict(k=self.k, match_edges=self.match_edges, normalize = self.method_args['normalize'],mu_push = self.method_args['mu_push'])
 
@@ -138,7 +141,7 @@ class ConfigWCAE:
         assert 0 < self.batch_size
         assert 0 < self.n_epochs
 
-        assert self.model_class.__name__ in admissible_model_classes_TopoAE
+        #assert self.model_class.__name__ in admissible_model_classes_TopoAE
         s = inspect.getfullargspec(self.model_class.__init__)
         for a in s.kwonlyargs:
             assert a in self.model_kwargs

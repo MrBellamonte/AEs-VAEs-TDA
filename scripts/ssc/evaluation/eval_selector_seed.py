@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     metrics_min = ['rmse_manifold_Z','test_mean_Lipschitz_std_refZ', 'test_mean_mrre',
                    'training.metrics.notmatched_pairs_0D', 'test_rmse', 'test_llrmse_X_norm15',
-                   'test_llrmse_X_norm5', 'test_density_kl_global_001', 'test_density_kl_global_01']
+                   'test_llrmse_X_norm5', 'test_density_kl_global_00001', 'test_density_kl_global_001', 'test_density_kl_global_01']
     metrics_max = ['test_mean_continuity', 'test_mean_trustworthiness',
                    'training.metrics.matched_pairs_0D']
 
@@ -93,6 +93,7 @@ if __name__ == "__main__":
         'test_llrmse_X_norm15'                : 'llrmse_norm15',
         'test_llrmse_X_norm5'                 : 'llrmse_norm5',
         'test_density_kl_global_001'          : 'kl_global_001',
+        'test_density_kl_global_00001': 'kl_global_00001',
         'test_density_kl_global_01'           : 'kl_global_01',
         'test_mean_continuity'                : 'mean_continuity',
         'test_mean_trustworthiness'           : 'mean_trustworthiness',
@@ -103,7 +104,7 @@ if __name__ == "__main__":
 
     metrics_min_comp = ['rmse_manifold_Z','train_mean_mrre', 'train_rmse',
                         'train_llrmse_X_norm15', 'train_llrmse_X_norm5',
-                        'train_density_kl_global_001',
+                        'train_density_kl_global_001','train_density_kl_global_00001',
                         'train_density_kl_global_01', 'test_mean_Lipschitz_std_refZ']
     metrics_max_comp = ['train_mean_continuity', 'train_mean_trustworthiness']
     dir_name_mapping_comp = {
@@ -111,6 +112,7 @@ if __name__ == "__main__":
         'train_rmse'                  : 'rmse',
         'train_llrmse_X_norm15'       : 'llrmse_norm15',
         'train_llrmse_X_norm5'        : 'llrmse_norm5',
+        'train_density_kl_global_00001': 'kl_global_00001',
         'train_density_kl_global_001' : 'kl_global_001',
         'train_density_kl_global_01'  : 'kl_global_01',
         'train_mean_continuity'       : 'mean_continuity',

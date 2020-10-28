@@ -124,10 +124,10 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
         else:
             selected_dataset = test_dataset
 
+
         dataloader_eval = torch.utils.data.DataLoader(
             selected_dataset, batch_size=config.batch_size, pin_memory=True,
-            drop_last=False
-        )
+            drop_last=False)
 
         X_eval, Y_eval, Z_eval = get_latentspace_representation(model, dataloader_eval,
                                                                 device=device)
@@ -209,23 +209,23 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
             # Visualize latent space
             plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
                 rundir, 'train_latent_visualization.pdf'), title=None, show=False)
+        if config.eval.quant_eval:
+            ks = list(
+                range(config.eval.k_min, config.eval.k_max+config.eval.k_step, config.eval.k_step))
 
-        ks = list(
-            range(config.eval.k_min, config.eval.k_max+config.eval.k_step, config.eval.k_step))
+            evaluator = Multi_Evaluation(
+                dataloader=dataloader_eval, seed=_seed, model=model)
+            ev_result = evaluator.get_multi_evals(
+                X_eval, Z_eval, Y_eval, ks=ks)
+            prefixed_ev_result = {
+                config.eval.evaluate_on+'_'+key: value
+                for key, value in ev_result.items()
+            }
+            result.update(prefixed_ev_result)
+            s = json.dumps(result, default=default)
+            open(os.path.join(rundir, 'eval_metrics.json'), "w").write(s)
 
-        evaluator = Multi_Evaluation(
-            dataloader=dataloader_eval, seed=_seed, model=model)
-        ev_result = evaluator.get_multi_evals(
-            X_eval, Z_eval, Y_eval, ks=ks)
-        prefixed_ev_result = {
-            config.eval.evaluate_on+'_'+key: value
-            for key, value in ev_result.items()
-        }
-        result.update(prefixed_ev_result)
-        s = json.dumps(result, default=default)
-        open(os.path.join(rundir, 'eval_metrics.json'), "w").write(s)
-
-        result_avg = avg_array_in_dict(result)
+    result_avg = avg_array_in_dict(result)
     result_avg.update({'run_times_epoch': statistics.mean(run_times_epoch)})
 
     return result_avg

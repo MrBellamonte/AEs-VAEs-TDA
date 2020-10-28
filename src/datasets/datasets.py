@@ -6,6 +6,7 @@ from typing import Tuple
 import mnist
 import numpy as np
 import sklearn
+import torch
 from sklearn import datasets
 
 from .shapes import dsphere, torus
@@ -37,7 +38,9 @@ DEFAULT = {
     "swissroll"    : dict(seed=1, noise=0),
     "mnist"        : dict(n_samples=1000000, seed=None),
     "mnist_offline": dict(n_samples=1000000, seed=None,
-                          root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA')
+                          root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
+    "unity_rotating_block": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
+    "unity_rotating_corgi": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA')
 }
 
 
@@ -286,6 +289,61 @@ class MNIST_offline(DataSet):
         else:
             ind = random.sample(range(data.shape[0]), n_samples)
             return data[ind, :], labels[ind, :]
+
+    def sample_manifold(self):
+        raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
+
+
+class Unity_Rotblock(DataSet):
+    __slots__ = []
+    fancy_name = "Unity rotating block"
+
+    def __init__(self):
+        pass
+
+    def sample(self, train = True,root_path=DEFAULT['unity_rotating_block']['root_path'], seed = None):
+
+        if train:
+            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/block_rotation_1/train_dataset.pt'))
+
+        else:
+            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/block_rotation_1/test_dataset.pt'))
+
+        position = data[:][:][1].numpy()
+        images = data[:][:][0].numpy()
+
+        return images, position
+
+
+    def sample_manifold(self):
+        raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
+
+
+class Unity_RotCorgi(DataSet):
+    __slots__ = []
+    fancy_name = "Unity rotating corgi"
+
+    def __init__(self):
+        pass
+
+    def sample(self,landmarks = False, version=1 , train = True, root_path=DEFAULT['unity_rotating_corgi']['root_path'], seed = None):
+
+        if landmarks:
+            suffix = '_l'
+        else:
+            suffix = ''
+
+        if train:
+            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/corgi_rotation_{}{}/train_dataset.pt'.format(version,suffix)))
+
+        else:
+            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/corgi_rotation_{}{}/test_dataset.pt'.format(version,suffix)))
+
+        position = data[:][:][1].numpy()
+        images = data[:][:][0].numpy()
+
+        return images, position
+
 
     def sample_manifold(self):
         raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))

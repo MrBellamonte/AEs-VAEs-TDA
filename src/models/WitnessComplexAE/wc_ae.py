@@ -42,7 +42,7 @@ class WitnessComplexAutoencoder(AutoencoderModel):
         distances = torch.norm(x_flat[:, None] - x_flat, dim=2, p=p)
         return distances
 
-    def forward(self, x, dist_X, pair_mask_X, labels = None):
+    def forward(self, x, dist_X, pair_mask_X,lam_t =None, labels = None):
         """Compute the loss of the Topologically regularized autoencoder.
 
         Args:
@@ -67,7 +67,11 @@ class WitnessComplexAutoencoder(AutoencoderModel):
         # normalize topo_error according to batch_size
         batch_size = x.size(0)
         topo_error = topo_error / (float(batch_size)*self.k)
-        loss = self.lam_r * ae_loss + self.lam_t * topo_error
+        if lam_t is None:
+            loss = self.lam_r * ae_loss + self.lam_t * topo_error
+        else:
+            loss = self.lam_r*ae_loss+lam_t*topo_error
+
         loss_components = {
             'loss.autoencoder': ae_loss,
             'loss.topo_error': topo_error

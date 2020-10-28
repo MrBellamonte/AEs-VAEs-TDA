@@ -159,3 +159,215 @@ class ConvAE_MNIST(AutoencoderModel):
         reconst_error = self.reconst_error(x, x_reconst)
         return reconst_error, {'reconstruction_error': reconst_error}
 
+
+class ConvAElarge_Unity(AutoencoderModel):
+    """Convolutional Autoencoder for unity data large"""
+
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=2, stride=2)
+        self.conv2 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=4, stride=4)
+        self.conv3 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=5, stride=5)
+
+        self.conv3t = nn.ConvTranspose2d(in_channels=32, out_channels=16, kernel_size=5, stride=5)
+        self.conv2t = nn.ConvTranspose2d(in_channels=16, out_channels=8, kernel_size=4, stride=4)
+        self.conv1t = nn.ConvTranspose2d(in_channels=8, out_channels=3, kernel_size=2, stride=2)
+
+
+        self.encoder = nn.Sequential(
+            self.conv1,
+            nn.ReLU(True),
+            self.conv2,
+            nn.ReLU(True),
+            self.conv3,
+            nn.ReLU(True),
+            View((-1, 32*18*12)),
+            nn.Linear(32*18*12, 16),
+            nn.ReLU(True),
+            nn.Linear(16, 2),
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(2, 32),
+            nn.ReLU(True),
+            nn.Linear(32, 32*18*12),
+            View((-1, 32,12,18)),
+            self.conv3t,
+            nn.ReLU(True),
+            self.conv2t,
+            nn.ReLU(True),
+            self.conv1t,
+            nn.Tanh()
+        )
+        self.reconst_error = nn.MSELoss()
+    def encode(self, x):
+        """Compute latent representation using convolutional autoencoder."""
+        return self.encoder(x)
+
+    def decode(self, z):
+        """Compute reconstruction using convolutional autoencoder."""
+        return self.decoder(z)
+
+    def forward(self, x):
+        """Apply autoencoder to batch of input images.
+
+        Args:
+            x: Batch of images with shape [bs x channels x n_row x n_col]
+
+        Returns:
+            tuple(reconstruction_error, dict(other errors))
+
+        """
+        latent = self.encode(x)
+        x_reconst = self.decode(latent)
+        reconst_error = self.reconst_error(x, x_reconst)
+        return reconst_error, {'reconstruction_error': reconst_error}
+
+class ConvAE_Unity480320(AutoencoderModel):
+    """Convolutional Autoencoder for unity data large"""
+
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=4, kernel_size=3, stride=1)
+        self.conv2 = nn.Conv2d(in_channels=4, out_channels=8, kernel_size=2, stride=2, padding=1)
+        self.conv3 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=2, stride=2)
+        self.conv4 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=2, stride=2)
+        self.conv5 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=4)
+
+        self.conv5t = nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=4, stride=4)
+        self.conv4t = nn.ConvTranspose2d(in_channels=32, out_channels=16, kernel_size=2, stride=2)
+        self.conv3t = nn.ConvTranspose2d(in_channels=16, out_channels=8, kernel_size=2, stride=2)
+        self.conv2t = nn.ConvTranspose2d(in_channels=8, out_channels=4, kernel_size=2, stride=2)
+        self.conv1t = nn.ConvTranspose2d(in_channels=4, out_channels=3, kernel_size=1, stride=1)
+
+
+        self.encoder = nn.Sequential(
+            self.conv1,
+            nn.ReLU(True),
+            self.conv2,
+            nn.ReLU(True),
+            self.conv3,
+            nn.ReLU(True),
+            self.conv4,
+            nn.ReLU(True),
+            self.conv5,
+            nn.ReLU(True),
+            View((-1, 64*15*10)),
+            nn.Linear(64*15*10, 8),
+            nn.ReLU(True),
+            nn.Linear(8, 2),
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(2, 32),
+            nn.ReLU(True),
+            nn.Linear(32, 64*15*10),
+            View((-1, 64,10,15)),
+            self.conv5t,
+            nn.ReLU(True),
+            self.conv4t,
+            nn.ReLU(True),
+            self.conv3t,
+            nn.ReLU(True),
+            self.conv2t,
+            nn.ReLU(True),
+            self.conv1t,
+            nn.Tanh()
+        )
+        self.reconst_error = nn.MSELoss()
+    def encode(self, x):
+        """Compute latent representation using convolutional autoencoder."""
+        return self.encoder(x)
+
+    def decode(self, z):
+        """Compute reconstruction using convolutional autoencoder."""
+        return self.decoder(z)
+
+    def forward(self, x):
+        """Apply autoencoder to batch of input images.
+
+        Args:
+            x: Batch of images with shape [bs x channels x n_row x n_col]
+
+        Returns:
+            tuple(reconstruction_error, dict(other errors))
+
+        """
+        latent = self.encode(x)
+        x_reconst = self.decode(latent)
+        reconst_error = self.reconst_error(x, x_reconst)
+        return reconst_error, {'reconstruction_error': reconst_error}
+
+
+class ConvAE_Unity480320(AutoencoderModel):
+    """Convolutional Autoencoder for unity data large"""
+
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=4, kernel_size=3, stride=1)
+        self.conv2 = nn.Conv2d(in_channels=4, out_channels=8, kernel_size=2, stride=2, padding=1)
+        self.conv3 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=2, stride=2)
+        self.conv4 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=2, stride=2)
+        self.conv5 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=4)
+
+        self.conv5t = nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=4, stride=4)
+        self.conv4t = nn.ConvTranspose2d(in_channels=32, out_channels=16, kernel_size=2, stride=2)
+        self.conv3t = nn.ConvTranspose2d(in_channels=16, out_channels=8, kernel_size=2, stride=2)
+        self.conv2t = nn.ConvTranspose2d(in_channels=8, out_channels=4, kernel_size=2, stride=2)
+        self.conv1t = nn.ConvTranspose2d(in_channels=4, out_channels=3, kernel_size=1, stride=1)
+
+
+        self.encoder = nn.Sequential(
+            self.conv1,
+            nn.ReLU(True),
+            self.conv2,
+            nn.ReLU(True),
+            self.conv3,
+            nn.ReLU(True),
+            self.conv4,
+            nn.ReLU(True),
+            self.conv5,
+            nn.ReLU(True),
+            View((-1, 64*15*10)),
+            nn.Linear(64*15*10, 8),
+            nn.ReLU(True),
+            nn.Linear(8, 2),
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(2, 32),
+            nn.ReLU(True),
+            nn.Linear(32, 64*15*10),
+            View((-1, 64,10,15)),
+            self.conv5t,
+            nn.ReLU(True),
+            self.conv4t,
+            nn.ReLU(True),
+            self.conv3t,
+            nn.ReLU(True),
+            self.conv2t,
+            nn.ReLU(True),
+            self.conv1t,
+            nn.Tanh()
+        )
+        self.reconst_error = nn.MSELoss()
+    def encode(self, x):
+        """Compute latent representation using convolutional autoencoder."""
+        return self.encoder(x)
+
+    def decode(self, z):
+        """Compute reconstruction using convolutional autoencoder."""
+        return self.decoder(z)
+
+    def forward(self, x):
+        """Apply autoencoder to batch of input images.
+
+        Args:
+            x: Batch of images with shape [bs x channels x n_row x n_col]
+
+        Returns:
+            tuple(reconstruction_error, dict(other errors))
+
+        """
+        latent = self.encode(x)
+        x_reconst = self.decode(latent)
+        reconst_error = self.reconst_error(x, x_reconst)
+        return reconst_error, {'reconstruction_error': reconst_error}
+

@@ -12,9 +12,11 @@ class ConfigEval:
     k_max: int
     k_step: int
     eval_manifold: bool = False
+    quant_eval: bool = True
 
     def __post_init__(self):
         self.check()
+
 
     def ks(self):
         return list(range(self.k_min, self.k_max + self.k_step, self.k_step))
