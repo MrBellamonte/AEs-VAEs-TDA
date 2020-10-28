@@ -143,7 +143,7 @@ class TrainingLoop():
 
                     if self.method_args['lam_t_bi'] is None:
                         if self.method_args['lam_t_decay'] is None:
-                            list(self.method_args['lam_t_decay'].keys())
+
                             loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
                         else:
                             key = max([x for x in list(self.method_args['lam_t_decay'].keys()) if x <= epoch])
@@ -151,7 +151,14 @@ class TrainingLoop():
                             loss, loss_components = self.model(x, dist_X, pair_mask_X, lam_t = self.method_args['lam_t_decay'][key], labels=l)
                     else:
                         if batch in self.method_args['lam_t_bi']:
-                            loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
+                            if self.method_args['lam_t_decay'] is None:
+                                loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
+                            else:
+                                key = max(
+                                    [x for x in list(self.method_args['lam_t_decay'].keys()) if
+                                     x <= epoch])
+                                loss, loss_components = self.model(x, dist_X, pair_mask_X, lam_t=
+                                self.method_args['lam_t_decay'][key], labels=l)
                         else:
                             loss, loss_components = self.model(x, dist_X, pair_mask_X,lam_t = 0, labels=l)
 

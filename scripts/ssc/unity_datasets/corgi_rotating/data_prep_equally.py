@@ -29,7 +29,7 @@ def get_distanes(dataloader,bs):
 
 
 root_path ='/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/corgi_rotation_1/raw_image_data'
-root_path_save ='/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/corgi_rotation_equally30'
+root_path_save = '/src/datasets/simulated/corgi_rotation_5_l'
 
 print(os.listdir(root_path))
 transform_to_tensor = transforms.ToTensor()
