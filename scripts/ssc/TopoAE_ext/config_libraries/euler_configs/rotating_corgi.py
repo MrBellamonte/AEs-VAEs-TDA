@@ -165,7 +165,7 @@ corgi_60_decay_semi = ConfigGrid_WCAE(
 
 corgi_30_decay_semi_long = ConfigGrid_WCAE(
         learning_rate=[1/100,1/1000],
-        batch_size=[60],
+        batch_size=[30],
         n_epochs=[5000],
         weight_decay=[1e-6,1e-8,0],
         early_stopping=[200],
@@ -204,7 +204,7 @@ corgi_30_decay_semi_long = ConfigGrid_WCAE(
 
 corgi_30_decay_semi_long_0 = ConfigGrid_WCAE(
         learning_rate=[1/100,1/1000],
-        batch_size=[60],
+        batch_size=[30],
         n_epochs=[5000],
         weight_decay=[1e-6,1e-8,0],
         early_stopping=[200],
