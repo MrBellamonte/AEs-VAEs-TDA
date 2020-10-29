@@ -164,12 +164,12 @@ class LogDatasetLoss(Callback):
                 if self.method_args['lam_t_bi'] is None:
                     if self.method_args['lam_t_decay'] is None:
 
-                        loss, loss_components = self.model(data, dist_X, pair_mask_X)
+                        loss, loss_components = model(data, dist_X, pair_mask_X)
                     else:
                         key = max(
                             [x for x in list(self.method_args['lam_t_decay'].keys()) if x <= epoch])
 
-                        loss, loss_components = self.model(data, dist_X, pair_mask_X,
+                        loss, loss_components = model(data, dist_X, pair_mask_X,
                                                            lam_t=self.method_args['lam_t_decay'][
                                                                key])
 
