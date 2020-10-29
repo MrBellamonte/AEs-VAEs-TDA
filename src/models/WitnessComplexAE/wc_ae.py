@@ -290,8 +290,7 @@ class TopologicalSignatureDistanceWC(nn.Module):
                     plt.plot(lanten_np[pair, 0], lanten_np[pair, 1], color='blue',zorder = 3)
                 sns.scatterplot('x', 'y', hue='label', data=data, palette=sns.color_palette('Spectral', len(np.unique(labels))), zorder = 10, legend = None)
                 sns.despine(left=True, bottom=True)
-                plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False,
-                                left=False)
+                plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False,left=False)
 
                 plt.show()
                 plt.close()
