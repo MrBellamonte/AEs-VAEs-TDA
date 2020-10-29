@@ -198,7 +198,7 @@ corgi_30_decay_semi_long = ConfigGrid_WCAE(
         experiment_dir='/cluster/scratch/schsimo/output/corgi/corgi_30_semi_long',
         seed=1,
         device='cpu',
-        num_threads=2,
+        num_threads=3,
         verbose=False,
     )
 
@@ -237,6 +237,6 @@ corgi_30_decay_semi_long_0 = ConfigGrid_WCAE(
         experiment_dir='/cluster/scratch/schsimo/output/corgi/corgi_30_semi_long_0',
         seed=1,
         device='cpu',
-        num_threads=2,
+        num_threads=3,
         verbose=False,
     )
