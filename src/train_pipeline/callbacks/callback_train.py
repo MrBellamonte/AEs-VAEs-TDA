@@ -148,7 +148,7 @@ class LogDatasetLoss(Callback):
             self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
                                           drop_last=True, pin_memory=True, shuffle=False)
 
-    def _compute_average_losses(self, model):
+    def _compute_average_losses(self, model, epoch = None):
         losses = defaultdict(list)
         model.eval()
 
@@ -160,7 +160,20 @@ class LogDatasetLoss(Callback):
             if self.method_args['name'] == 'topoae_wc':
                 dist_X = self.dist_X_all[batch, :, :].to(self.device)
                 pair_mask_X = self.pair_mask_X_all[batch, :, :].to(self.device)
-                loss, loss_components = model(data, dist_X, pair_mask_X)
+
+                if self.method_args['lam_t_bi'] is None:
+                    if self.method_args['lam_t_decay'] is None:
+
+                        loss, loss_components = self.model(data, dist_X, pair_mask_X)
+                    else:
+                        key = max(
+                            [x for x in list(self.method_args['lam_t_decay'].keys()) if x <= epoch])
+
+                        loss, loss_components = self.model(data, dist_X, pair_mask_X,
+                                                           lam_t=self.method_args['lam_t_decay'][
+                                                               key])
+
+
                 loss = convert_to_base_type(loss)
             else:
                 loss, loss_components = model(data)
@@ -193,7 +206,7 @@ class LogDatasetLoss(Callback):
     def on_epoch_begin(self, model, epoch, **kwargs):
         """Store the loss on the dataset prior to training."""
         if epoch == 1:  # This should be prior to the first training step
-            losses = self._compute_average_losses(model)
+            losses = self._compute_average_losses(model, epoch)
             if self.print_progress:
                 print(self._progress_string(epoch-1, losses))
 
@@ -206,7 +219,7 @@ class LogDatasetLoss(Callback):
 
     def on_epoch_end(self, model, epoch, **kwargs):
         """Score evaluation metrics at end of epoch."""
-        losses = self._compute_average_losses(model)
+        losses = self._compute_average_losses(model, epoch = epoch)
         if self.print_progress:
             print(self._progress_string(epoch, losses))
         for key, value in losses.items():

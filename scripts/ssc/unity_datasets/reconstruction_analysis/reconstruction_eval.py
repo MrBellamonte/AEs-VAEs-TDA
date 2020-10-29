@@ -20,7 +20,10 @@ if __name__ == "__main__":
 
     exp5 = 'Unity_RotCorgi-seed1-ConvAE_Unity480320-default-lr1_100-bs60-nep500-rlw1-tlw512-mepush_active1-k2-rmax10-seed1-9048549c'
 
-    path_source = os.path.join(root_path,exp5)
+    root_path2 = '/Users/simons/MT_data/sync/euler_sync_scratch/output/corgi/corgi_30_std/'
+    exp1_2 = 'Unity_RotCorgi-version5-landmarksTrue-seed1-ConvAE_Unity480320-default-lr1_100-bs30-nep5000-rlw1-tlw1024-mepush_active1-k2-rmax10-seed1-a635373e'
+
+    path_source = os.path.join(root_path2,exp1_2)
 
 
     autoencoder = ConvAE_Unity480320()
