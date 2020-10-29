@@ -177,7 +177,7 @@ corgi_30_decay_semi_long = ConfigGrid_WCAE(
         model_class=[ConvAE_Unity480320],
         model_kwargs=[dict()],
         dataset=[Unity_RotCorgi()],
-        sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA',version = 6, landmarks = True)],
+        sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA',version = 5, landmarks = True)],
         eval=[ConfigEval(
             active=True,
             evaluate_on='test',
@@ -216,7 +216,7 @@ corgi_30_decay_semi_long_0 = ConfigGrid_WCAE(
         model_class=[ConvAE_Unity480320],
         model_kwargs=[dict()],
         dataset=[Unity_RotCorgi()],
-        sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA',version = 6, landmarks = True)],
+        sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA',version = 5, landmarks = True)],
         eval=[ConfigEval(
             active=True,
             evaluate_on='test',
