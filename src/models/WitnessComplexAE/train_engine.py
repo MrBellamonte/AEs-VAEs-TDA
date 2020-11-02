@@ -115,11 +115,16 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
 
 
 def simulator_TopoAE_ext(config):
-    ex.observers.append(FileStorageObserver(config.experiment_dir))
-    ex.observers.append(SetID('myid'))
     id = config.creat_uuid()
+    try:
+        ex.observers[0] = SetID(id)
+        ex.observers[1] = FileStorageObserver(config.experiment_dir)
+    except:
+        ex.observers.append(SetID(id))
+        ex.observers.append(FileStorageObserver(config.experiment_dir))
+
     ex_dir_new = os.path.join(config.experiment_dir, id)
-    ex.observers[1] = SetID(id)
+
     ex.run(config_updates={'config'         : config, 'experiment_dir': ex_dir_new,
                            'experiment_root': config.experiment_dir,
                            'seed'           : config.seed, 'device': config.device,
@@ -127,15 +132,6 @@ def simulator_TopoAE_ext(config):
                            'verbose'        : config.verbose
                            })
 
-
-    # for config in configs:
-    #     id = config.creat_uuid()
-    #     ex_dir_new = os.path.join(config_grid.experiment_dir, id)
-    #     ex.observers[1] = SetID(id)
-    #     ex.run(config_updates={'config': config, 'experiment_dir' : ex_dir_new, 'experiment_root' : config_grid.experiment_dir,
-    #                            'seed' : config_grid.seed, 'device' : config_grid.device, 'num_threads' : config_grid.num_threads,
-    #                            'verbose' : config_grid.verbose
-    #                            })
 
 
 
