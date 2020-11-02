@@ -158,7 +158,7 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
                 Z_latent[:, 1] = (Z_latent[:, 1]-Z_latent[:, 1].min())/(
                             Z_latent[:, 1].max()-Z_latent[:, 1].min())
 
-                pwd_Z = pairwise_distances(Z_eval, Z_eval, n_jobs=1)
+                pwd_Z = pairwise_distances(Z_latent, Z_latent, n_jobs=1)
                 pwd_Ztrue = pairwise_distances(Z_manifold, Z_manifold, n_jobs=1)
 
                 # normalize distances
@@ -168,7 +168,7 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
 
 
                 # save comparison fig
-                plot_distcomp_Z_manifold(Z_manifold=Z_manifold, Z_latent=Z_eval,
+                plot_distcomp_Z_manifold(Z_manifold=Z_manifold, Z_latent=Z_latent,
                                          pwd_manifold=pairwise_distances_manifold,
                                          pwd_Z=pairwise_distances_Z, labels=labels,
                                          path_to_save=rundir, name='manifold_Z_distcomp',

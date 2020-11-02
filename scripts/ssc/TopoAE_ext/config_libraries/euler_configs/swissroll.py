@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 
 from scripts.ssc.TopoAE_ext.config_libraries.euler_configs.euler_wc_offline_configs.swissroll_nonoise import \
@@ -147,3 +149,5 @@ swissroll_h22 = [ConfigGrid_WCAE(
     num_threads=1,
     verbose=False,
 ) for seed, bs, dict_wc in zip(seeds_h2_all, bs_all_h2, SWISSROLL_NONOISE_h2)]
+
+swissroll_h22_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in swissroll_h22]))

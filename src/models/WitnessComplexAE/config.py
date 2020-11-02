@@ -37,7 +37,12 @@ class ConfigWCAE:
                  'sampling_kwargs',
                  'eval',
                  'uid',
-                 'seed']
+                 'seed',
+                 'experiment_dir',
+                 'device',
+                 'num_threads',
+                 'verbose',
+                 ]
     learning_rate: float
     batch_size: int
     n_epochs: int
@@ -57,6 +62,10 @@ class ConfigWCAE:
     eval: ConfigEval
     uid: str
     seed: int
+    experiment_dir : str
+    device : str
+    num_threads : int
+    verbose : bool
 
 
     def __post_init__(self):
@@ -227,7 +236,11 @@ class ConfigGrid_WCAE:
         ret = []
 
         for v in itertools.product(*values):
-            ret_i = {'seed': self.seed}
+            ret_i = {'seed': self.seed,
+                     'experiment_dir': self.experiment_dir,
+                     'device': self.device,
+                     'num_threads': self.num_threads,
+                     'verbose': self.verbose}
 
             for kc, kc_v in zip(key_chains, v):
                 tmp = ret_i

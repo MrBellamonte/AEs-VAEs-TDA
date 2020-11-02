@@ -39,9 +39,19 @@ def eval(result,X,Z,Y,rundir,config,train = True):
             Z_manifold, X_transformed, labels = dataset.sample_manifold(
                 **config.sampling_kwargs, train=train)
 
+            Z_manifold[:, 0] = (Z_manifold[:, 0]-Z_manifold[:, 0].min())/(
+                    Z_manifold[:, 0].max()-Z_manifold[:, 0].min())
+            Z_manifold[:, 1] = (Z_manifold[:, 1]-Z_manifold[:, 1].min())/(
+                    Z_manifold[:, 1].max()-Z_manifold[:, 1].min())
+            Z[:, 0] = (Z[:, 0]-Z[:, 0].min())/(
+                    Z[:, 0].max()-Z[:, 0].min())
+            Z[:, 1] = (Z[:, 1]-Z[:, 1].min())/(
+                    Z[:, 1].max()-Z[:, 1].min())
+
+
             # compute RMSE
-            pairwise_distances_manifold = squareform(pdist(Z_manifold))
-            pairwise_distances_Z = squareform(pdist(Z))
+            pwd_Z = pairwise_distances(Z_eval, Z_eval, n_jobs=1)
+            pwd_Ztrue = pairwise_distances(Z_manifold, Z_manifold, n_jobs=1)
             rmse_manifold = np.sqrt(
                 (np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None))
             result.update(dict(rmse_manifold_Z=rmse_manifold))

@@ -7,6 +7,7 @@ from joblib import Parallel, delayed
 from src.competitors.train_engine import simulator_competitor
 
 from src.models.TopoAE.train_engine import simulator_TopoAE
+from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
 
 
@@ -39,6 +40,11 @@ if __name__ == "__main__":
         mod_name, config_name = conifg_srt.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
+
+        if isinstance(configs, ConfigGrid_WCAE):
+            configs = configs.configs_from_grid()
+        else:
+            configs = configs
 
         Parallel(n_jobs=args.n_jobs)(delayed(simulator_TopoAE_ext)(config) for config in configs)
 
