@@ -98,18 +98,36 @@ def train_TopoAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, experi
 
     df.to_csv(os.path.join(experiment_root, 'eval_metrics_all.csv'), mode='a', header=False)
 
+def simulator_TopoAE(config):
+    id = config.creat_uuid()
+    try:
+        ex.observers[0] = SetID(id)
+        ex.observers[1] = FileStorageObserver(config.experiment_dir)
+    except:
+        ex.observers.append(SetID(id))
+        ex.observers.append(FileStorageObserver(config.experiment_dir))
 
-def simulator_TopoAE(config_grid: ConfigGrid_TopoAE):
-    ex.observers.append(FileStorageObserver(config_grid.experiment_dir))
-    ex.observers.append(SetID('myid'))
+    ex_dir_new = os.path.join(config.experiment_dir, id)
 
-    for config in config_grid.configs_from_grid():
-        id = config.creat_uuid()
-        ex_dir_new = os.path.join(config_grid.experiment_dir, id)
-        ex.observers[1] = SetID(id)
-        ex.run(config_updates={'config'         : config, 'experiment_dir': ex_dir_new,
-                               'experiment_root': config_grid.experiment_dir,
-                               'seed'           : config_grid.seed, 'device': config_grid.device,
-                               'num_threads'    : config_grid.num_threads,
-                               'verbose'        : config_grid.verbose
-                               })
+    ex.run(config_updates={'config'         : config, 'experiment_dir': ex_dir_new,
+                           'experiment_root': config.experiment_dir,
+                           'seed'           : config.seed, 'device': config.device,
+                           'num_threads'    : config.num_threads,
+                           'verbose'        : config.verbose
+                           })
+
+
+# def simulator_TopoAE(config_grid: ConfigGrid_TopoAE):
+#     ex.observers.append(FileStorageObserver(config_grid.experiment_dir))
+#     ex.observers.append(SetID('myid'))
+#
+#     for config in config_grid.configs_from_grid():
+#         id = config.creat_uuid()
+#         ex_dir_new = os.path.join(config_grid.experiment_dir, id)
+#         ex.observers[1] = SetID(id)
+#         ex.run(config_updates={'config'         : config, 'experiment_dir': ex_dir_new,
+#                                'experiment_root': config_grid.experiment_dir,
+#                                'seed'           : config_grid.seed, 'device': config_grid.device,
+#                                'num_threads'    : config_grid.num_threads,
+#                                'verbose'        : config_grid.verbose
+#                                })
