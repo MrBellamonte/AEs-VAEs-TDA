@@ -123,7 +123,7 @@ def simulator_TopoAE_ext(config):
     ex.run(config_updates={'config'         : config, 'experiment_dir': ex_dir_new,
                            'experiment_root': config.experiment_dir,
                            'seed'           : config.seed, 'device': config.device,
-                           'num_threads'    : config.num_threds,
+                           'num_threads'    : config.num_threads,
                            'verbose'        : config.verbose
                            })
 
