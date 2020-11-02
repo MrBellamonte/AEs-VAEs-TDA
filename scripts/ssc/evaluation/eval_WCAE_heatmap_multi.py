@@ -31,7 +31,7 @@ if __name__ == "__main__":
     fig, axs = plt.subplots(ncols=4, figsize=(24,5),constrained_layout=True)
     metrics = ['rmse_manifold_Z', 'training.loss.autoencoder', 'test_mean_Lipschitz_std_refZ','test_mean_trustworthiness']
     metrics_pretty = [r'$MSE_{\matcal{M},\matcal{Z}}$', r'$\matcal{L}_r$', r'$\hat{\sigma}_{45}^{iso}$',r'$1-$Trust']
-    max_metrics = ['test_mean_trustworthiness']
+    max_metrics = ['rmse_manifold_Z']
     j = 0
     js = [1,2,3]
     jbs = 2
@@ -41,6 +41,15 @@ if __name__ == "__main__":
 
     modes = ['mean','best']
     mode = modes[1]
+    grid = ImageGrid(fig, 111,  # as in plt.subplot(111)
+                     nrows_ncols=(1, 4),
+                     axes_pad=0.25,
+                     share_all=False,
+                     cbar_location="right",
+                     cbar_mode="single",
+                     cbar_size="10%",
+                     cbar_pad=1,
+                     )
 
     for jbs, bs in enumerate(bss):
         df_ = df[df['metric'] == metrics[j]]
@@ -88,5 +97,18 @@ if __name__ == "__main__":
 
         print(df_heatmap)
 
-        sns.heatmap(df_heatmap, cmap="YlGnBu", ax = axs[jbs])
+        #sns.heatmap(df_heatmap, cmap="YlGnBu", ax = axs[jbs])
+        ax = axs[jbs]
+        cntr = sns.heatmap(df_heatmap, cmap='viridis')
+
+        make_square_axes(ax)
+        if jbs == 2:
+            cntr_ = cntr
+
+    #grid[1].cax.colorbar(cntr_)
+    grid[1].cax.toggle_label(True)
+    grid[1].cax.tick_params(labelsize=15)
+    grid[1].cax.set_label('a label')
+
+    #grid[1].cax.set_title(metrics_pretty[j], fontsize=20, pad=20)
     plt.show()

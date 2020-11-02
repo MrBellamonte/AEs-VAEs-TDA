@@ -32,12 +32,19 @@ if __name__ == "__main__":
     metrics = ['rmse_manifold_Z', 'training.loss.autoencoder', 'test_mean_Lipschitz_std_refZ','test_mean_trustworthiness']
     metrics_pretty = [r'$MSE_{\matcal{M},\matcal{Z}}$', r'$\matcal{L}_r$', r'$\hat{\sigma}_{45}^{iso}$',r'$1-$Trust']
     max_metrics = ['test_mean_trustworthiness']
-    j = 0
+
+
+
+
+    j = 2
     js = [1,2,3]
     jbs = 1
     bss = [64,128,256,512]
     modes = ['mean', 'best']
-    for mode in modes:
+
+    fig, ax = plt.subplots(nrows=len(bss),ncols= 2,figsize=(10,(5*len(bss))) )
+
+    for j_mode,mode in enumerate(modes):
         for jbs,bs in enumerate(bss):
 
 
@@ -75,14 +82,6 @@ if __name__ == "__main__":
 
                 df_temp = df_temp.rename(columns = {'value' : k, 'mu_push' : r'''$\nu$'''}).set_index([r'''$\nu$'''])
 
-
-                #df_temp = df_temp[['mu_push','value']]
-
-
-
-                #headers = df_temp.iloc[0]
-                #new_df = pd.DataFrame(df_temp.values[1:], columns=headers)
-
                 print(df_temp)
                 df_heatmap = df_heatmap.append(df_temp.T)
 
@@ -90,6 +89,8 @@ if __name__ == "__main__":
             df_heatmap.index.name = 'number of neighbors'
 
 
-            sns.heatmap(df_heatmap, cmap='coolwarm',robust = True, annot=True,cbar=False,square=True)
-            plt.savefig(os.path.join(save_path,'heatmap_bs{}_j{}_mode{}.pdf'.format(bss[jbs],metrics[j],mode)))
-            plt.show()
+            sns.heatmap(df_heatmap, cmap='coolwarm',robust = True, annot=True,cbar=False,ax=ax[jbs,j_mode])
+            ax[jbs,j_mode].set_title(r'''$n_{bs}=${BS} ({mode})'''.format(bs = '{bs}', BS=bs,mode = mode))
+    fig.tight_layout()
+    plt.savefig(os.path.join(save_path,'heatmap_multi_{}.pdf'.format(metrics[j])))
+    plt.show()
