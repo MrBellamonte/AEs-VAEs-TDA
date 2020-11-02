@@ -164,7 +164,7 @@ TopoAE_finalists = [ConfigGrid_TopoAE(
 
 
 
-swissroll_multiseed_final_final = [ConfigGrid_TopoAE(
+swissroll_multiseed_final_final = ConfigGrid_TopoAE(
     learning_rate=[1/10,1/100,1/1000],
     batch_size=random.sample([int(i) for i in [64,128,256,512]], 4),
     n_epochs=[1000],
@@ -197,10 +197,10 @@ swissroll_multiseed_final_final = [ConfigGrid_TopoAE(
     uid = [''],
     method_args = [None],
     experiment_dir='/cluster/scratch/schsimo/output/TopoAE_SwissRoll_final',
-    seed = seed,
+    seed = [36, 3851, 2570, 4304, 1935, 7954, 5095, 5310, 1577, 3288],
     device = 'cpu',
     num_threads=1,
     verbose = False
-) for seed in [36, 3851, 2570, 4304, 1935, 7954, 5095, 5310, 1577, 3288]]
+)
 
 
