@@ -26,6 +26,9 @@ def parse_input():
     parser.add_argument('-dir', "--directory",
 
                         help="Experiment directory", type=str)
+    parser.add_argument('-n', "--n",
+                        default = 1,
+                        help="Numbber of topresults ", type=int)
     return parser.parse_args()
 
 
@@ -34,6 +37,7 @@ if __name__ == "__main__":
 
     # SET DF PATH
     exp_dir = args.directory
+    N = args.n
 
     metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ']
 
@@ -51,13 +55,13 @@ if __name__ == "__main__":
             df_selected.loc[(df_selected.uid == uuid),['seed']] = int(uuid.split('-')[10][4:])
         df_selected = df_selected[['uid','seed','batch_size','value']]
         df_selected = df_selected.sort_values('value', ascending=True).groupby(
-            ['seed','batch_size']).head(3)
+            ['seed','batch_size']).head(N)
 
 
 
         for bs in list(set(list(df_selected['batch_size']))):
             # create directory for selection
-            eval_root = os.path.join(exp_dir,'selector', 'bs{}_metric{}'.format(bs,metric))
+            eval_root = os.path.join(exp_dir,'selector{}'.format(N), 'bs{}_metric{}'.format(bs,metric))
             try:
                 os.makedirs(eval_root)
             except:
