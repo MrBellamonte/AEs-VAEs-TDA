@@ -4,22 +4,25 @@ import os
 import pandas as pd
 import shutil
 
-def get_latent_rename(exp_root, eval_root, uid, latent_name):
+def get_plot_rename(exp_root, eval_root, uid, latent_name, plot = 'train_latent_visualization'):
     uid_rood = os.path.join(exp_root, uid)
 
-    existing_file = open(os.path.join(uid_rood, 'train_latent_visualization.pdf'), "r")
+    existing_file = open(os.path.join(uid_rood, '{}.pdf'.format(plot)), "r")
     new_file = open(os.path.join(eval_root, latent_name+'.pdf'), "w")
 
-    src_file = os.path.join(uid_rood, 'train_latent_visualization.pdf')
+    src_file = os.path.join(uid_rood, '{}.pdf'.format(plot))
     dest_dir = eval_root
 
     shutil.copy(src_file, dest_dir)  # copy the file to destination dir
 
-    dst_file = os.path.join(eval_root, 'train_latent_visualization.pdf')
+    dst_file = os.path.join(eval_root, '{}.pdf'.format(plot))
     new_dst_file_name = os.path.join(eval_root, latent_name+'.pdf')
 
     os.rename(dst_file, new_dst_file_name)  # rename
     os.chdir(dest_dir)
+
+
+
 
 def parse_input():
     parser = argparse.ArgumentParser()
@@ -73,9 +76,12 @@ if __name__ == "__main__":
             rank_count = 1
             for uid in uids:
                 uid_dict.update({uid: '{}_{}'.format(rank_count, uid)})
-                latent_name = '{}_{}'.format(rank_count, uid)
+                latent_name = 'latents{}_{}'.format(rank_count, uid)
+                manifolddist_name = 'manifold_dist{}_{}'.format(rank_count, uid)
 
-                get_latent_rename(exp_dir, eval_root, uid, latent_name)
+
+                get_plot_rename(exp_dir, eval_root, uid, latent_name)
+                get_plot_rename(exp_dir, eval_root, uid, manifolddist_name,plot = 'manifold_Z_distcomp')
                 rank_count += 1
 
             df_selected.to_csv(
