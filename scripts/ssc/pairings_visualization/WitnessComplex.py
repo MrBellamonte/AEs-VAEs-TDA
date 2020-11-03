@@ -20,8 +20,8 @@ from src.datasets.datasets import SwissRoll
 if __name__ == "__main__":
     dataset_sampler = SwissRoll()
 
-    n_samples_array = [48] #[32,48,64,96,128]
-    n_witnesses_array = [256] #[256, 512]
+    n_samples_array = [6] #[32,48,64,96,128]
+    n_witnesses_array = [2048] #[256, 512]
     seeds = [13]#[10,13,20]
     for n_witnesses in n_witnesses_array:
         for seed in seeds:

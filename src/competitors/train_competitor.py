@@ -6,6 +6,7 @@ import os
 import numpy as np
 import pandas as pd
 from scipy.spatial.distance import squareform, pdist
+from sklearn.metrics import pairwise_distances
 from sklearn.model_selection import train_test_split
 
 from src.evaluation.measures_optimized import MeasureCalculator
@@ -50,8 +51,11 @@ def eval(result,X,Z,Y,rundir,config,train = True):
 
 
             # compute RMSE
-            pwd_Z = pairwise_distances(Z_eval, Z_eval, n_jobs=1)
+            pwd_Z = pairwise_distances(Z, Z, n_jobs=1)
             pwd_Ztrue = pairwise_distances(Z_manifold, Z_manifold, n_jobs=1)
+            pairwise_distances_manifold = (pwd_Ztrue-pwd_Ztrue.min())/(
+                        pwd_Ztrue.max()-pwd_Ztrue.min())
+            pairwise_distances_Z = (pwd_Z-pwd_Z.min())/(pwd_Z.max()-pwd_Z.min())
             rmse_manifold = np.sqrt(
                 (np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None))
             result.update(dict(rmse_manifold_Z=rmse_manifold))
