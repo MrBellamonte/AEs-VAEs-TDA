@@ -33,7 +33,7 @@ if __name__ == "__main__":
     args = parse_input()
 
     # SET DF PATH
-    exp_dir = args.dir
+    exp_dir = args.directory
 
     metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ']
 
