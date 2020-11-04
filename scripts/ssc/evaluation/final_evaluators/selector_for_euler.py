@@ -32,6 +32,9 @@ def parse_input():
     parser.add_argument('-n', "--n",
                         default = 1,
                         help="Numbber of topresults ", type=int)
+    parser.add_argument('-c', "--competitor",
+                        default = 1,
+                        help="Numbber of topresults ", type=bool)
     return parser.parse_args()
 
 
@@ -40,6 +43,7 @@ if __name__ == "__main__":
 
     # SET DF PATH
     exp_dir = args.directory
+    competitor = args.competitor
     N = args.n
 
     metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ']
@@ -55,14 +59,26 @@ if __name__ == "__main__":
         df_selected['seed'] = 0
 
         for uuid in list(set(list(df_selected.uid))):
-            df_selected.loc[(df_selected.uid == uuid),['seed']] = int(uuid.split('-')[10][4:])
-        df_selected = df_selected[['uid','seed','batch_size','value']]
-        df_selected = df_selected.sort_values('value', ascending=True).groupby(
-            ['seed','batch_size']).head(N)
+
+            if competitor:
+                df_selected.loc[(df_selected.uid == uuid), ['seed']] = int(uuid.split('-')[6][4:])
+            else:
+                df_selected.loc[(df_selected.uid == uuid),['seed']] = int(uuid.split('-')[10][4:])
+
+        if competitor:
+            df_selected = df_selected[['uid','seed','value']]
+            df_selected = df_selected.sort_values('value', ascending=True).groupby(
+                ['seed']).head(N)
+            bss = ['na']
+        else:
+            df_selected = df_selected[['uid','seed','batch_size','value']]
+            df_selected = df_selected.sort_values('value', ascending=True).groupby(
+                ['seed','batch_size']).head(N)
+            bss = list(set(list(df_selected['batch_size'])))
 
 
 
-        for bs in list(set(list(df_selected['batch_size']))):
+        for bs in bss:
             # create directory for selection
             eval_root = os.path.join(exp_dir,'selector{}'.format(N), 'bs{}_metric{}'.format(bs,metric))
             try:
@@ -70,7 +86,10 @@ if __name__ == "__main__":
             except:
                 pass
 
-            df_selected_bs = df_selected[df_selected['batch_size']==bs]
+            if competitor:
+                pass
+            else:
+                df_selected_bs = df_selected[df_selected['batch_size']==bs]
             uids = list(df_selected_bs.uid)
             uid_dict = dict()
             rank_count = 1

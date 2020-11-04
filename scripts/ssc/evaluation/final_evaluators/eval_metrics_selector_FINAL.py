@@ -9,7 +9,9 @@ if __name__ == "__main__":
 
     bss = [64, 128, 256, 512]
 
-    SWISSROLL_TOPOAE = True
+    SWISSROLL_TOPOAE = False
+    SWISSROLL_WCAE = True
+    SWISSROLL_WCAE2 = False
     UMAP_final = False
     tSNE_final = False
 
@@ -18,6 +20,16 @@ if __name__ == "__main__":
     if SWISSROLL_TOPOAE:
         exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/TopoAE_SwissRoll_final'
         root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/TopoAE_SwissRoll_final'
+        df_path = os.path.join(exp_dir,'eval_metrics_all.csv')
+        bss = [64, 128, 256, 512]
+    elif SWISSROLL_WCAE:
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise'
+        root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise'
+        df_path = os.path.join(exp_dir,'metrics_selected_processed_new_new.csv')
+        bss = [64, 128, 256, 512]
+    elif SWISSROLL_WCAE2:
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2'
+        root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2'
         df_path = os.path.join(exp_dir,'eval_metrics_all.csv')
         bss = [64, 128, 256, 512]
     else:
