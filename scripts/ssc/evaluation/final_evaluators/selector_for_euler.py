@@ -33,7 +33,7 @@ def parse_input():
                         default = 1,
                         help="Numbber of topresults ", type=int)
     parser.add_argument('-c', "--competitor",
-                        default = 1,
+                        default = False,
                         help="Numbber of topresults ", type=bool)
     return parser.parse_args()
 
