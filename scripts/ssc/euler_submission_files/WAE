@@ -1,0 +1,6 @@
+
+
+
+
+
+bsub -n 5 -W 120:00 -J "WCAE_mnist1024" -R "rusage[mem=2560]" -oo /cluster/scratch/schsimo/output/mnist1024 'make run_simulator_main config_grid='euler_configs.mnist.mnist_s838_1024' model='topoae_ext''
