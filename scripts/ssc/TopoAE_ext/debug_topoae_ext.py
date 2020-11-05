@@ -4,5 +4,5 @@ from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
 
 if __name__ == "__main__":
 
-    config = mnist_test256.configs_from_grid()[0]
+    config = mnist_test2.configs_from_grid()[0]
     simulator_TopoAE_ext(config)

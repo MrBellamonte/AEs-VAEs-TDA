@@ -158,7 +158,7 @@ mnist_test3 = ConfigGrid_WCAE(
 
 mnist_test256 = ConfigGrid_WCAE(
     learning_rate=[1/100],
-    batch_size=[256],
+    batch_size=[512],
     n_epochs=[1],
     weight_decay=[1e-6],
     early_stopping=[50],
@@ -184,7 +184,7 @@ mnist_test256 = ConfigGrid_WCAE(
     )],
     uid=[''],
     toposig_kwargs=[dict()],
-    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict(path_to_data = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs256-seed838-noiseNone-4a5487de')]),
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict(path_to_data = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs512-seed838-noiseNone-ced06774')]),
     experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed_2',
     seed=838,
     device='cpu',
