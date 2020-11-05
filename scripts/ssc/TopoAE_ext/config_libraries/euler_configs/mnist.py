@@ -121,13 +121,13 @@ mnist_s838_1024_s1 = ConfigGrid_WCAE(
 
 
 mnist_s838_1024_cuda_test = ConfigGrid_WCAE(
-    learning_rate=[1/100],
+    learning_rate=[1/1000],
     batch_size=[1024],
     n_epochs=[5],
     weight_decay=[1e-6],
     early_stopping=[50],
     rec_loss_weight=[1],
-    top_loss_weight=[int(i) for i in np.logspace(0, 10, num=6, base=2.0)],
+    top_loss_weight=[1],
     match_edges=['push_active'],
     k=[1],
     r_max=[10],
