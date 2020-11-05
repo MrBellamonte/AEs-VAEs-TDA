@@ -79,17 +79,15 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
     # Initialize model
     # save normalization constants somewhere
     if isinstance(dataset,(MNIST,MNIST_offline)):
-        norm_X = 28**2 #-> dimension of images is 28x28, max delta per pixel is 1, since data is normalized.
+        norm_X = 28**2/10 #-> dimension of images is 28x28, max delta per pixel is 1, since data is normalized.
     elif isinstance(dataset,(Unity_Rotblock,Unity_RotCorgi)):
         norm_X = 180
-    elif X_train.shape[0]>2048:
+    elif X_train.shape[0]>4096:
         #todo fix somehow
         inds = random.sample(range(X_train.shape[0]), 2048)
-        norm_X = torch.norm(dataset_train[inds][:][0][:, None]-dataset_train[inds][:][0], dim=2,
-                            p=2).max()
+        norm_X = torch.cdist(dataset_train[inds][:][0],-dataset_train[inds][:][0]).max()
     else:
-        norm_X = torch.norm(dataset_train[:][:][0][:, None]-dataset_train[:][:][0], dim=2,
-                            p=2).max()
+        norm_X = torch.cdist(dataset_train[:][:][0], -dataset_train[:][:][0]).max()
 
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
