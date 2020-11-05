@@ -46,7 +46,7 @@ mnist_s838_256_s1 = ConfigGrid_WCAE(
     verbose=False,
 )
 
-mnist_s838_256_s1 = ConfigGrid_WCAE(
+mnist_s838_256_s2 = ConfigGrid_WCAE(
     learning_rate=[1/100,1/1000],
     batch_size=[256],
     n_epochs=[1000],
