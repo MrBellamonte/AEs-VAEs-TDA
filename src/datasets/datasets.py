@@ -297,10 +297,11 @@ class MNIST_offline(DataSet):
 
         random.seed(seed)
         if (n_samples is None) or (n_samples >= data.shape[0]):
-            return data, labels
+            ind = random.sample(range(data.shape[0]), data.shape[0])
+            return data[ind, :], labels[ind]
         else:
             ind = random.sample(range(data.shape[0]), n_samples)
-            return data[ind, :], labels[ind, :]
+            return data[ind, :], labels[ind]
 
     def sample_manifold(self):
         raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
