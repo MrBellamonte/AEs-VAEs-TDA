@@ -11,7 +11,7 @@ wcpath_mnist_s838_1024='/cluster/home/schsimo/MT/output/WitnessComplexes/mnist/M
 
 
 mnist_s838_256_s1 = ConfigGrid_WCAE(
-    learning_rate=[1/100],
+    learning_rate=[1/100,1/1000],
     batch_size=[256],
     n_epochs=[1000],
     weight_decay=[1e-6],
@@ -19,7 +19,7 @@ mnist_s838_256_s1 = ConfigGrid_WCAE(
     rec_loss_weight=[1],
     top_loss_weight=[int(i) for i in np.logspace(0, 10, num=6, base=2.0)],
     match_edges=['push_active'],
-    k=[1],
+    k=[1,2],
     r_max=[10],
     model_class=[ConvAE_MNIST],
     model_kwargs=[dict()],
@@ -38,11 +38,11 @@ mnist_s838_256_s1 = ConfigGrid_WCAE(
     )],
     uid=[''],
     toposig_kwargs=[dict()],
-    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict(path_to_data = wcpath_mnist_s838_256)]),
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.25], online_wc=[True], wc_offline = [dict(path_to_data = wcpath_mnist_s838_256)]),
     experiment_dir='/cluster/scratch/schsimo/output/mnist256',
     seed=838,
     device='cpu',
-    num_threads=2,
+    num_threads=8,
     verbose=False,
 )
 
