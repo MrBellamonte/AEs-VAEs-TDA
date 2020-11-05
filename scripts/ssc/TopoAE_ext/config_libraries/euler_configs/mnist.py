@@ -153,5 +153,5 @@ mnist_s838_1024_cuda_test = ConfigGrid_WCAE(
     seed=838,
     device='cuda',
     num_threads=2,
-    verbose=False,
+    verbose=True,
 )
