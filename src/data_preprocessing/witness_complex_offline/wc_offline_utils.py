@@ -154,17 +154,25 @@ def fetch_data(uid: str = None, path_global_register: str = None, path_to_data: 
     if (type == 'train') or  (type == 'training'):
         dl_name = NAME_DATALOADER_TRAIN
         dm_name = NAME_DISTANCES_TRAIN
+        dmx_name = NAME_DISTANCES_X_TRAIN
     elif (type == 'eval') or (type == 'validation'):
         dl_name = NAME_DATALOADER_EVAL
         dm_name = NAME_DISTANCES_EVAL
+        dmx_name = NAME_DISTANCES_X_EVAL
     else:
         dl_name = NAME_DATALOADER_TEST
         dm_name = NAME_DISTANCES_TEST
+        dmx_name = NAME_DISTANCES_X_TEST
 
     dataloader = torch.load(os.path.join(path_to_data,'{}.pt'.format(dl_name)))
     landmark_distances =  torch.load(os.path.join(path_to_data,'{}.pt'.format(dm_name)))
 
-    return dataloader, landmark_distances
+    if os.path.exists(os.path.join(path_to_data,'{}.pt'.format(dmx_name))):
+        data_distances =  torch.load(os.path.join(path_to_data,'{}.pt'.format(dmx_name)))
+    else:
+        data_distances = False
+
+    return dataloader, landmark_distances, data_distances
 
 
 def get_kNNmask(landmark_distances, num_batches, batch_size, k):

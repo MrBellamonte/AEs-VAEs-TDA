@@ -36,8 +36,8 @@ DEFAULT = {
     "spheres"      : dict(d=100, n_spheres=11, r=5, seed=42, noise=0, ratio_largesphere=10),
     "doubletorus"  : dict(c1=6, a1=4, c2=6, a2=1, seed=1, noise=0),
     "swissroll"    : dict(seed=1, noise=0),
-    "mnist"        : dict(n_samples=1000000, seed=None),
-    "mnist_offline": dict(n_samples=1000000, seed=None,
+    "mnist"        : dict(n_samples=1000000, seed=None,normalization=True),
+    "mnist_offline": dict(n_samples=1000000, seed=None,normalization=True,
                           root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
     "unity_rotating_block": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
     "unity_rotating_corgi": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA')
@@ -222,7 +222,7 @@ class MNIST(DataSet):
     def __init__(self):
         pass
 
-    def sample(self, n_samples=DEFAULT['mnist']['n_samples'], seed=DEFAULT['mnist']['seed'],
+    def sample(self, n_samples=DEFAULT['mnist']['n_samples'], seed=DEFAULT['mnist']['seed'], normalization=DEFAULT['mnist']['normalization'],
                train=True):
 
         if seed is None:
@@ -237,10 +237,14 @@ class MNIST(DataSet):
         if train:
             seed = seeds[0]
             data = np.vstack([img.reshape(-1, ) for img in mnist.train_images()])
+            if normalization:
+                data = data/255
             labels = mnist.train_labels()
         else:
             seed = seeds[1]
             data = np.vstack([img.reshape(-1, ) for img in mnist.test_images()])
+            if normalization:
+                data = data/255
             labels = mnist.test_labels()
 
         random.seed(seed)
@@ -263,7 +267,8 @@ class MNIST_offline(DataSet):
 
     def sample(self, n_samples=DEFAULT['mnist_offline']['n_samples'],
                seed=DEFAULT['mnist_offline']['seed'], train=True,
-               root_path=DEFAULT['mnist_offline']['root_path']):
+               root_path=DEFAULT['mnist_offline']['root_path'],
+               normalization=DEFAULT['mnist']['normalization']):
 
         if seed is None:
             seeds = [0, 1]
@@ -277,10 +282,17 @@ class MNIST_offline(DataSet):
         if train:
             seed = seeds[0]
             data = np.load(os.path.join(root_path, 'src/datasets/mnist_data/train_data.npy'))
+
+            #avoid that data gets normalized twice
+            if (data.max()>200) and normalization:
+                data = data/255
             labels = np.load(os.path.join(root_path, 'src/datasets/mnist_data/train_labels.npy'))
         else:
             seed = seeds[1]
             data = np.load(os.path.join(root_path, 'src/datasets/mnist_data/test_data.npy'))
+            # avoid that data gets normalized twice
+            if (data.max()>200) and normalization:
+                data = data/255
             labels = np.load(os.path.join(root_path, 'src/datasets/mnist_data/test_labels.npy'))
 
         random.seed(seed)

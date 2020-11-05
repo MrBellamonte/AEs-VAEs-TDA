@@ -132,18 +132,27 @@ class LogDatasetLoss(Callback):
             else:
                 if 'path_global_register' in method_args['wc_offline'] and 'uid' in method_args['wc_offline']:
 
-                    self.data_loader, self.dist_X_all = fetch_data(uid=method_args['wc_offline']['uid'],
+                    self.data_loader, self.land_dist_X_all, self.dist_X_all = fetch_data(uid=method_args['wc_offline']['uid'],
                                                                    path_global_register=
                                                                    method_args['wc_offline'][
                                                                        'path_global_register'],
                                                                    type=dataset_name)
                 else:
-                    self.data_loader, self.dist_X_all = fetch_data(path_to_data=method_args['wc_offline'][
+                    self.data_loader, self.land_dist_X_all, self.dist_X_all = fetch_data(path_to_data=method_args['wc_offline'][
                                                                        'path_to_data'],
                                                                    type=dataset_name)
-                self.pair_mask_X_all = get_kNNmask(landmark_distances=self.dist_X_all,
+                self.pair_mask_X_all = get_kNNmask(landmark_distances=self.land_dist_X_all,
                                                    num_batches=len(self.data_loader),
                                                    batch_size=batch_size, k=self.method_args['k'])
+            if self.dist_X_all is False:
+                if self.method_args['dist_x_land']:
+                    self.dist_X_all = self.land_dist_X_all
+                else:
+                    self.dist_X_all = torch.zeros(len(self.data_loader), batch_size, batch_size)
+                    for batch_i, (X_batch, label_batch) in enumerate(self.data_loader):
+                        self.dist_X_all[batch_i, :, :] = torch.cdist(X_batch, X_batch)
+            else:
+                pass
         else:
             self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
                                           drop_last=True, pin_memory=True, shuffle=False)

@@ -88,26 +88,28 @@ class TrainingLoop():
 
                 if 'path_global_register' in self.method_args['wc_offline'] and 'uid' in self.method_args['wc_offline']:
 
-                    train_loader, land_dist_X_all = fetch_data(uid=self.method_args['wc_offline']['uid'],
+                    train_loader, land_dist_X_all, dist_X_all = fetch_data(uid=self.method_args['wc_offline']['uid'],
                                                                    path_global_register=
                                                                    self.method_args['wc_offline'][
                                                                        'path_global_register'],
                                                                    type='train')
                 else:
-                    train_loader, land_dist_X_all = fetch_data(path_to_data=self.method_args['wc_offline'][
+                    train_loader, land_dist_X_all, dist_X_all = fetch_data(path_to_data=self.method_args['wc_offline'][
                                                                        'path_to_data'],
                                                                    type='train')
                 pair_mask_X_all = get_kNNmask(landmark_distances=land_dist_X_all,
                                                    num_batches=len(train_loader),
                                                    batch_size=batch_size, k=self.method_args['k'])
             # compute pairwise distances in data space
-
-            if self.method_args['dist_x_land']:
-                dist_X_all = land_dist_X_all
+            if dist_X_all is False:
+                if self.method_args['dist_x_land']:
+                    dist_X_all = land_dist_X_all
+                else:
+                    dist_X_all = torch.zeros(len(train_loader), batch_size, batch_size)
+                    for batch_i, (X_batch, label_batch) in enumerate(train_loader):
+                        dist_X_all[batch_i, :, :] = torch.cdist(X_batch, X_batch)
             else:
-                dist_X_all = torch.zeros(len(train_loader), batch_size, batch_size)
-                for batch_i, (X_batch, label_batch) in enumerate(train_loader):
-                    dist_X_all[batch_i, :, :] = torch.norm(X_batch[:, None]-X_batch, dim=2, p=2)
+                pass
 
         else:
             train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
