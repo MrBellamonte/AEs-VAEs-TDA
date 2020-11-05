@@ -1,4 +1,5 @@
 import itertools
+import random
 
 import numpy as np
 
@@ -121,7 +122,7 @@ mnist_s838_1024_1 = ConfigGrid_WCAE(
 )
 
 
-mnist_s838_1 = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in [mnist_s838_256_1, mnist_s838_512_1,mnist_s838_1024_1]]))
+mnist_s838_1 = random.shuffle(list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in [mnist_s838_256_1, mnist_s838_512_1,mnist_s838_1024_1]])))
 
 
 mnist_s838_1024_cuda_test = ConfigGrid_WCAE(
