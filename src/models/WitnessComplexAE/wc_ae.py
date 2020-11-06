@@ -33,11 +33,10 @@ class WitnessComplexAutoencoder(AutoencoderModel):
 
         if self.normalize:
             self.latent_norm = torch.nn.Parameter(data=torch.ones(1),
-                                              requires_grad=True)
+                                              requires_grad=True).to(self.device)
         else:
-            self.latent_norm = torch.from_numpy(np.array((1)))
+            self.latent_norm = torch.from_numpy(np.array((1))).to(self.device)
 
-        self.latent_norm.to(self.device)
 
     @staticmethod
     def _compute_distance_matrix(x, p=2):

@@ -138,6 +138,9 @@ class TrainingLoop():
                     x = img.to(self.device)
                     dist_X = dist_X_all[batch, :, :].to(self.device)
                     pair_mask_X = pair_mask_X_all[batch, :, :].to(self.device)
+                    print('CUDA: {}'.format(x.is_cuda))
+                    print('CUDA: {}'.format(dist_X.is_cuda))
+                    print('CUDA: {}'.format(pair_mask_X.is_cuda))
                     if (batch == 1) and (epoch in [5,10,15,20,25,30,35,40]):
                         l = label
                     else:
