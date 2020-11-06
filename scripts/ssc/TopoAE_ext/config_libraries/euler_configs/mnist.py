@@ -101,7 +101,7 @@ mnist_s838_1024_1 = ConfigGrid_WCAE(
     dataset=[MNIST_offline()],
     sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     eval=[ConfigEval(
-        active=False,
+        active=True,
         evaluate_on='test',
         eval_manifold=False,
         save_eval_latent=True,
