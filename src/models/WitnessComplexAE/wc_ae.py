@@ -26,6 +26,8 @@ class WitnessComplexAutoencoder(AutoencoderModel):
         toposig_kwargs = toposig_kwargs if toposig_kwargs else {}
         self.k = toposig_kwargs['k']
         self.normalize = toposig_kwargs['normalize']
+
+        toposig_kwargs['device'] = device
         self.topo_sig = TopologicalSignatureDistanceWC(**toposig_kwargs)
         self.autoencoder = autoencoder
         self.norm_X = norm_X
@@ -95,7 +97,7 @@ class WitnessComplexAutoencoder(AutoencoderModel):
 class TopologicalSignatureDistanceWC(nn.Module):
     """Topological signature."""
 
-    def __init__(self, k, match_edges, mu_push,normalize = True):
+    def __init__(self, k, match_edges, mu_push,device = 'cpu',normalize = True):
         """Topological signature computation.
 
         Args:
@@ -107,11 +109,13 @@ class TopologicalSignatureDistanceWC(nn.Module):
         self.k = k
         self.match_edges = match_edges
         self.mu_push = mu_push
+        self.device = device
 
 
     def _get_pairings_dist_Z(self, latent,latent_norm):
         latent_distances = torch.norm(latent[:, None]-latent, dim=2, p=2)
         latent_distances = latent_distances/latent_norm
+        latent_distances = latent_distances.to(self.device)
         sorted, indices = torch.sort(latent_distances)
 
         kNN_mask = torch.zeros((latent.size(0), latent.size(0),)).scatter(1, indices[:, 1:(self.k+1)], 1)
