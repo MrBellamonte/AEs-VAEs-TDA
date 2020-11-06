@@ -28,6 +28,7 @@ class WitnessComplexAutoencoder(AutoencoderModel):
         self.normalize = toposig_kwargs['normalize']
 
         toposig_kwargs['device'] = device
+        print('DEVICE DICT:{}'.format(toposig_kwargs['device']))
         self.topo_sig = TopologicalSignatureDistanceWC(**toposig_kwargs)
         self.autoencoder = autoencoder
         self.norm_X = norm_X
@@ -43,7 +44,7 @@ class WitnessComplexAutoencoder(AutoencoderModel):
     @staticmethod
     def _compute_distance_matrix(x, p=2):
         x_flat = x.view(x.size(0), -1)
-        distances = torch.norm(x_flat[:, None] - x_flat, dim=2, p=p)
+        distances = torch.cdist(x_flat, x_flat)
         return distances
 
     def forward(self, x, dist_X, pair_mask_X,lam_t =None, labels = None):
@@ -113,12 +114,13 @@ class TopologicalSignatureDistanceWC(nn.Module):
 
 
     def _get_pairings_dist_Z(self, latent,latent_norm):
-        latent_distances = torch.norm(latent[:, None]-latent, dim=2, p=2)
+        latent_distances = torch.cdist(latent, latent)
         latent_distances = latent_distances/latent_norm
         latent_distances = latent_distances.to(self.device)
         sorted, indices = torch.sort(latent_distances)
 
-        kNN_mask = torch.zeros((latent.size(0), latent.size(0),)).scatter(1, indices[:, 1:(self.k+1)], 1)
+        kNN_mask = torch.zeros((latent.size(0), latent.size(0),)).to(self.device)
+        kNN_mask = kNN_mask.scatter(1, indices[:, 1:(self.k+1)], 1)
         return latent_distances, kNN_mask
 
     def _count_matching_pairs(self, mask_X, mask_Z):
