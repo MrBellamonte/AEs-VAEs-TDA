@@ -10,10 +10,18 @@ bsub -n 12 -W 120:00 -R "rusage[mem=7680]" -J "WCAE_mnist256_s1" -w "done(WCAE_1
 bsub -n 10 -W 120:00 -R "rusage[mem=7680]" -J "WCAE_mnist256_s2" -w "done(WCAE_1)" "rusage[mem=8192]" -oo /cluster/scratch/schsimo/output/mnist256 'make run_simulator_main_parallel config_grid='euler_configs.mnist.mnist_s838_256_s2' model='topoae_ext' n_jobs='10''
 
 
-bsub -n 45 -W 120:00 -R "rusage[mem=1536]" -J "WCAE_mnist_s838_1" -w "done(WCAE_1)" -oo /cluster/scratch/schsimo/output/mnist_collect 'make run_simulator_main_parallel config_grid='euler_configs.mnist.mnist_s838_1' model='topoae_ext' n_jobs='45''
+bsub -n 45 -W 120:00 -R "rusage[mem=1536]" -J "WCAE_mnist_s838_1" -oo /cluster/scratch/schsimo/output/mnist_collect 'make run_simulator_main_parallel config_grid='euler_configs.mnist.mnist_s838_1' model='topoae_ext' n_jobs='45''
 
 
 
 
 # LEONHARD MNIST
 bsub -n 2 -W 1:00 -J "WCAE_mnist1024_s1" -R "rusage[mem=6144,ngpus_excl_p=8]" -oo /cluster/scratch/schsimo/output/mnist1024 'make run_simulator_main config_grid='euler_configs.mnist.mnist_s838_1024_cuda_test' model='topoae_ext''
+
+
+
+
+# SYNC SELECTOR
+
+rsync schsimo@euler.ethz.ch:/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise2/eval_metrics_all.csv /Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2
+rsync -a schsimo@euler.ethz.ch:/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise2/SwissRoll-n_samples2560-seed2570-Autoencoder_MLP_topoae-32-32-lr1_10-bs128-nep1000-rlw1-tlw2048-mepush_active11_10-k4-rmax10-seed2570-398bdfa3 /Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2

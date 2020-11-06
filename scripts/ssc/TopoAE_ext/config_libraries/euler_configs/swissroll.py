@@ -21,7 +21,7 @@ bs_all_h2 = len(seeds_h2)*bs
 
 seeds_all = np.repeat(seeds,4)
 seeds_h1_all = np.repeat(seeds_h1,4)
-seeds_h2_all = np.repeat(seeds_h1,4)
+seeds_h2_all = np.repeat(seeds_h2,4)
 
 swissroll_h1 = [ConfigGrid_WCAE(
     learning_rate=[1/10, 1/100, 1/1000],

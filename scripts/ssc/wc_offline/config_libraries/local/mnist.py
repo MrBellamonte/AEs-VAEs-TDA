@@ -16,3 +16,5 @@ mnist_1 = ConfigWC_Grid(
     root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/mnist',
     verbose = True
 )
+
+
