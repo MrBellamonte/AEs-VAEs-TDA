@@ -92,7 +92,7 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
     model = WitnessComplexAutoencoder(autoencoder, lam_r=config.rec_loss_weight, lam_t=config.top_loss_weight,
-                                      toposig_kwargs=config.toposig_kwargs, norm_X = norm_X)
+                                      toposig_kwargs=config.toposig_kwargs, norm_X = norm_X, device=config.device)
     model.to(device)
 
     # Train and evaluate model
