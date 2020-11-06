@@ -224,7 +224,7 @@ mnist_test256_1024_leonhard = ConfigGrid_WCAE(
     experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed_2',
     seed=838,
     device='cpu',
-    num_threads=1,
+    num_threads=2,
     verbose=True,
 )
 
