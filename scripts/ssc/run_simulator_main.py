@@ -2,6 +2,8 @@ import argparse
 
 import importlib
 
+import torch
+
 from src.competitors.train_engine import simulator_competitor
 from src.data_preprocessing.witness_complex_offline.compute_wc import compute_wc_multiple
 from src.models.TopoAE.train_engine import simulator_TopoAE
@@ -43,6 +45,7 @@ if __name__ == "__main__":
 
         for config in configs:
             simulator_TopoAE_ext(config)
+        print('MAX USED GPU MEMORY: {}'.format(torch.cuda.max_memory_allocated()/10**6))
     elif args.model == 'competitor':
         conifg_srt = 'scripts.ssc.Competitors.config_libraries.'+args.configs
         mod_name, config_name = conifg_srt.rsplit('.', 1)

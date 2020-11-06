@@ -137,7 +137,7 @@ mnist_s838_1024_cuda_test = ConfigGrid_WCAE(
     rec_loss_weight=[1],
     top_loss_weight=[1],
     match_edges=['push_active'],
-    k=[1],
+    k=[1,2],
     r_max=[10],
     model_class=[ConvAE_MNIST],
     model_kwargs=[dict()],
@@ -160,7 +160,7 @@ mnist_s838_1024_cuda_test = ConfigGrid_WCAE(
     experiment_dir='/cluster/scratch/schsimo/output/mnist1024',
     seed=838,
     device='cuda',
-    num_threads=2,
+    num_threads=1,
     verbose=True,
 )
 
