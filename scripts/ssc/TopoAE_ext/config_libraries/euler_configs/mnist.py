@@ -44,7 +44,7 @@ mnist_s838_256_1 = ConfigGrid_WCAE(
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125], online_wc=[True], wc_offline = [dict(path_to_data = wcpath_mnist_s838_256)]),
     experiment_dir='/cluster/scratch/schsimo/output/mnist256',
     seed=838,
-    device='cpu',
+    device='cuda',
     num_threads=1,
     verbose=False)
 
@@ -80,7 +80,7 @@ mnist_s838_512_1 = ConfigGrid_WCAE(
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125], online_wc=[True], wc_offline = [dict(path_to_data = wcpath_mnist_s838_512)]),
     experiment_dir='/cluster/scratch/schsimo/output/mnist512',
     seed=838,
-    device='cpu',
+    device='cuda',
     num_threads=1,
     verbose=False,
 )

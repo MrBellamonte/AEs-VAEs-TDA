@@ -147,7 +147,7 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
                 dataloader_eval = torch.utils.data.DataLoader(dataset_test, batch_size=config.batch_size,
                                                               pin_memory=True, drop_last=False)
                 X_eval, Y_eval, Z_latent = get_latentspace_representation(model, dataloader_eval,
-                                                                      device='cpu')
+                                                                      device=device)
 
                 Z_manifold[:, 0] = (Z_manifold[:, 0]-Z_manifold[:, 0].min())/(
                             Z_manifold[:, 0].max()-Z_manifold[:, 0].min())
