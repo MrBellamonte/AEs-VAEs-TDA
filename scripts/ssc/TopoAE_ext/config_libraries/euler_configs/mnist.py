@@ -116,7 +116,7 @@ mnist_s838_1024_1 = ConfigGrid_WCAE(
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125], online_wc=[True], wc_offline = [dict(path_to_data = wcpath_mnist_s838_1024)]),
     experiment_dir='/cluster/scratch/schsimo/output/mnist1024',
     seed=838,
-    device='cpu',
+    device='cuda',
     num_threads=1,
     verbose=False,
 )
