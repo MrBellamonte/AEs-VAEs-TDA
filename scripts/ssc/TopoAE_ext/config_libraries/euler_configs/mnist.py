@@ -160,7 +160,7 @@ mnist_s838_1024_cuda_test = ConfigGrid_WCAE(
     experiment_dir='/cluster/scratch/schsimo/output/mnist1024',
     seed=838,
     device='cuda',
-    num_threads=2,
+    num_threads=1,
     verbose=True,
 )
 
