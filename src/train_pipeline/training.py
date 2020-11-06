@@ -150,7 +150,7 @@ class TrainingLoop():
                         else:
                             key = max([x for x in list(self.method_args['lam_t_decay'].keys()) if x <= epoch])
 
-                            loss, loss_components = self.model(x, dist_X, pair_mask_X, lam_t = self.method_args['lam_t_decay'][key], labels=l)
+                            loss, loss_components = self.model(x, dist_X, pair_mask_X, device=self.device ,lam_t = self.method_args['lam_t_decay'][key], labels=l)
                     else:
                         if batch in self.method_args['lam_t_bi']:
                             if self.method_args['lam_t_decay'] is None:

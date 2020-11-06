@@ -12,7 +12,7 @@ from src.models.autoencoder.base import AutoencoderModel
 class WitnessComplexAutoencoder(AutoencoderModel):
     """Topologically regularized autoencoder."""
 
-    def __init__(self,autoencoder,lam_t=1.,lam_r=1., toposig_kwargs=dict(k=1,normalize = True,match_edges='symmetric',mu_push=1), norm_X=1):
+    def __init__(self,autoencoder,lam_t=1.,lam_r=1., toposig_kwargs=dict(k=1,normalize = True,match_edges='symmetric',mu_push=1), norm_X=1, device = 'cpu'):
         """Topologically Regularized Autoencoder.
 
         Args:
@@ -29,12 +29,15 @@ class WitnessComplexAutoencoder(AutoencoderModel):
         self.topo_sig = TopologicalSignatureDistanceWC(**toposig_kwargs)
         self.autoencoder = autoencoder
         self.norm_X = norm_X
+        self.device = device
 
         if self.normalize:
             self.latent_norm = torch.nn.Parameter(data=torch.ones(1),
                                               requires_grad=True)
         else:
-            self.latent_norm = 1
+            self.latent_norm = torch.from_numpy(np.array((1)))
+
+        self.latent_norm.to(self.device)
 
     @staticmethod
     def _compute_distance_matrix(x, p=2):
