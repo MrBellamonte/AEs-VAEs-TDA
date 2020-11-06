@@ -44,7 +44,8 @@ def cfg():
 
 @ex.automain
 def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, experiment_root, device, num_threads, verbose):
-
+    if device == 'cpu' and num_threads is not None:
+        torch.set_num_threads(num_threads)
     try:
         os.makedirs(experiment_dir)
     except:
@@ -72,8 +73,7 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
     dataset_test = TensorDataset(torch.Tensor(X_test), torch.Tensor(y_test))
 
     torch.manual_seed(_seed)
-    if device == 'cpu' and num_threads is not None:
-        torch.set_num_threads(num_threads)
+
 
 
     # Initialize model

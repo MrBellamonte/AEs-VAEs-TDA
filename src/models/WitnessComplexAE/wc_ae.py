@@ -41,12 +41,6 @@ class WitnessComplexAutoencoder(AutoencoderModel):
             self.latent_norm = torch.from_numpy(np.array((1))).to(self.device)
 
 
-    @staticmethod
-    def _compute_distance_matrix(x, p=2):
-        x_flat = x.view(x.size(0), -1)
-        distances = torch.cdist(x_flat, x_flat)
-        return distances
-
     def forward(self, x, dist_X, pair_mask_X,lam_t =None, labels = None):
         """Compute the loss of the Topologically regularized autoencoder.
 
@@ -114,11 +108,10 @@ class TopologicalSignatureDistanceWC(nn.Module):
 
 
     def _get_pairings_dist_Z(self, latent,latent_norm):
-        latent_distances = torch.cdist(latent, latent)
+        latent_distances = torch.norm(latent[:, None]-latent, dim=2, p=2) #torch.cdist would be faster, but is numerically unstable for backpropagation
         latent_distances = latent_distances/latent_norm
         latent_distances = latent_distances.to(self.device)
         sorted, indices = torch.sort(latent_distances)
-
         kNN_mask = torch.zeros((latent.size(0), latent.size(0),)).to(self.device)
         kNN_mask = kNN_mask.scatter(1, indices[:, 1:(self.k+1)], 1)
         return latent_distances, kNN_mask
@@ -176,15 +169,13 @@ class TopologicalSignatureDistanceWC(nn.Module):
             sig1 = dist_X.mul(pair_mask_X)
             sig1_2 = dist_Z.mul(pair_mask_X)
 
-            #distance1_2 = torch.square((sig1-sig1_2)).sum()
-            distance1_2 = torch.mul((sig1-sig1_2),(sig1-sig1_2)).sum()
+            distance1_2 = torch.square((sig1-sig1_2)).sum()
 
             # L_Z->X
             sig2 = dist_Z.mul(pair_mask_Z)
             sig2_1 = dist_X.mul(pair_mask_Z)
 
-            #distance2_1 = torch.square((sig2_1-sig2)).sum()
-            distance2_1 = torch.mul((sig2_1-sig2), (sig2_1-sig2)).sum()
+            distance2_1 = torch.square((sig2_1-sig2)).sum()
 
             distance_components['metrics.distance1-2'] = distance1_2
             distance_components['metrics.distance2-1'] = distance2_1
@@ -199,15 +190,13 @@ class TopologicalSignatureDistanceWC(nn.Module):
             sig1 = dist_X.mul(pair_mask_X)
             sig1_2 = dist_Z.mul(pair_mask_X)
 
-            #distance1_2 = torch.square((sig1-sig1_2)).sum()
-            distance1_2 = torch.mul((sig1-sig1_2), (sig1-sig1_2)).sum()
+            distance1_2 = torch.square((sig1-sig1_2)).sum()
 
             # L_Z->X
             sig2 = dist_Z.mul(pair_mask_Z)
             sig2_1 = dist_X.mul(pair_mask_Z)
 
-            #distance2_1 = torch.square(torch.clamp((sig2_1-sig2),min = 0)).sum()
-            distance2_1 = torch.mul(torch.clamp((sig2_1-sig2),min = 0), torch.clamp((sig2_1-sig2),min = 0)).sum()
+            distance2_1 = torch.square(torch.clamp((sig2_1-sig2),min = 0)).sum()
 
             distance_components['metrics.distance1-2'] = distance1_2
             distance_components['metrics.distance2-1'] = distance2_1
@@ -222,8 +211,7 @@ class TopologicalSignatureDistanceWC(nn.Module):
             sig1 = dist_X.mul(pair_mask_X)
             sig1_2 = dist_Z.mul(pair_mask_X)
 
-            #distance1_2 = torch.square((sig1-sig1_2)).sum()
-            distance1_2 = torch.mul((sig1-sig1_2), (sig1-sig1_2)).sum()
+            distance1_2 = torch.square((sig1-sig1_2)).sum()
 
             # L_Z->X
             dist_X_ref = dist_X.detach().clone()
@@ -232,8 +220,7 @@ class TopologicalSignatureDistanceWC(nn.Module):
             sig2 = dist_Z.mul(mask_Z_nonmatching)
             sig2_ref = dist_X_ref.mul(mask_Z_nonmatching)
 
-            #distance2_1 = torch.square(torch.clamp((sig2_ref-sig2),min = 0)).sum()
-            distance2_1 = torch.mul(torch.clamp((sig2_ref-sig2),min = 0), torch.clamp((sig2_ref-sig2),min = 0)).sum()
+            distance2_1 = torch.square(torch.clamp((sig2_ref-sig2),min = 0)).sum()
             distance_components['metrics.distance1-2'] = distance1_2
             distance_components['metrics.distance2-1'] = distance2_1
 
@@ -255,15 +242,13 @@ class TopologicalSignatureDistanceWC(nn.Module):
             # L_Z->X
             pair_mask_X2 = torch.ones_like(pair_mask_X) - pair_mask_X
             sig_push = dist_Z.mul(pair_mask_X2)
-            #sig_push_sum = torch.square(sig_push).sum()
-            sig_push_sum = torch.mul(sig_push, sig_push).sum()
+            sig_push_sum = torch.square(sig_push).sum()
 
             # L_Z->X
             sig2 = dist_Z.mul(pair_mask_Z)
             sig2_1 = dist_X.mul(pair_mask_Z)
 
-            distance2_1 = 100000/sig_push_sum + torch.mul(torch.clamp((sig2_1-sig2),min = 0), torch.clamp((sig2_1-sig2),min = 0)).sum()
-
+            distance2_1 = 100000/sig_push_sum + torch.square(torch.clamp((sig2_1-sig2),min = 0)).sum()
 
             distance_components['metrics.distance1-2'] = distance1_2
             distance_components['metrics.distance2-1'] = distance2_1
@@ -274,15 +259,13 @@ class TopologicalSignatureDistanceWC(nn.Module):
             sig1 = dist_X.mul(pair_mask_X)
             sig1_2 = dist_Z.mul(pair_mask_X)
 
-            #distance1_2 = torch.square((sig1-sig1_2)).sum()
-            distance1_2 = torch.mul((sig1-sig1_2), (sig1-sig1_2)).sum()
+            distance1_2 = torch.square((sig1-sig1_2)).sum()
 
             # L_Z->X
             sig2 = dist_Z.mul(pair_mask_Z)
             sig2_1 = dist_X.mul(pair_mask_Z)
 
-            #distance2_1 = torch.square((sig2_1-sig2)).sum()
-            distance2_1 = torch.mul((sig2_1-sig2), (sig2_1-sig2)).sum()
+            distance2_1 = torch.square((sig2_1-sig2)).sum()
 
             distance_components['metrics.distance1-2'] = distance1_2
             distance_components['metrics.distance2-1'] = distance2_1
