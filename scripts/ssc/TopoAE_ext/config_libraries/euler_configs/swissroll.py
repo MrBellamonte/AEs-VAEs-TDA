@@ -110,4 +110,7 @@ swissroll_h22 = [ConfigGrid_WCAE(
 swissroll_h22_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in swissroll_h22]))
 swissroll_h11_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in swissroll_h1]))
 
-swissroll_h1122_list = swissroll_h11_list.append(swissroll_h22_list)
+swissroll_h1122_list = swissroll_h11_list + swissroll_h22_list
+
+
+

@@ -1,6 +1,6 @@
 
 #EULER SWISSROLL
-bsub -n 46 -W 23:00 -J "WCAE_1" -oo /cluster/scratch/schsimo/output/WCAE_swissroll_nonoise2 'make run_simulator_main_parallel config_grid='euler_configs.swissroll.swissroll_h22_list' model='topoae_ext' n_jobs='46''
+bsub -n 47 -W 72:00 -J "WCAE_1" -oo /cluster/scratch/schsimo/output/WCAE_swissroll_nonoise_FINAL 'make run_simulator_main_parallel config_grid='euler_configs.swissroll.swissroll_h1122_list' model='topoae_ext' n_jobs='47''
 
 
 # EULER MNIST:
