@@ -162,13 +162,8 @@ class ConfigWCAE:
 
         return dict(
             uid = self.uid,
-            learning_rate = self.learning_rate,
+            seed=self.seed,
             batch_size = self.batch_size,
-            n_epochs = self.n_epochs,
-            weight_decay = self.weight_decay,
-            early_stopping = self.early_stopping,
-            rec_loss_weight = self.rec_loss_weight,
-            top_loss_weight = self.top_loss_weight,
         )
 
 

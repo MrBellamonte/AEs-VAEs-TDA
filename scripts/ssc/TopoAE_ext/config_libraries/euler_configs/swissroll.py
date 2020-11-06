@@ -58,7 +58,7 @@ swissroll_h1 = [ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.05,1.1,1.15,1.2,1.25], online_wc=[True], wc_offline = [dict_wc]),
-    experiment_dir='/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise2',
+    experiment_dir='/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise_FINAL',
     seed=int(seed),
     device='cpu',
     num_threads=1,
@@ -100,7 +100,7 @@ swissroll_h22 = [ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.05,1.1,1.15,1.2,1.25], online_wc=[True], wc_offline = [dict_wc]),
-    experiment_dir='/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise2',
+    experiment_dir='/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise_FINAL',
     seed=int(seed),
     device='cpu',
     num_threads=1,
@@ -109,3 +109,5 @@ swissroll_h22 = [ConfigGrid_WCAE(
 
 swissroll_h22_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in swissroll_h22]))
 swissroll_h11_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in swissroll_h1]))
+
+swissroll_h1122_list = swissroll_h11_list.append(swissroll_h22_list)
