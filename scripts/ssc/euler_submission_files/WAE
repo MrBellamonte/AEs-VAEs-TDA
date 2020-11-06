@@ -10,7 +10,7 @@ bsub -n 12 -W 120:00 -R "rusage[mem=7680]" -J "WCAE_mnist256_s1" -w "done(WCAE_1
 bsub -n 10 -W 120:00 -R "rusage[mem=7680]" -J "WCAE_mnist256_s2" -w "done(WCAE_1)" "rusage[mem=8192]" -oo /cluster/scratch/schsimo/output/mnist256 'make run_simulator_main_parallel config_grid='euler_configs.mnist.mnist_s838_256_s2' model='topoae_ext' n_jobs='10''
 
 
-bsub -n 45 -W 120:00 -R "rusage[mem=2048]" -J "WCAE_mnist_s838_1" -w "done(WCAE_1)" "rusage[mem=8192]" -oo /cluster/scratch/schsimo/output/mnist_collect 'make run_simulator_main_parallel config_grid='euler_configs.mnist.mnist_s838_1' model='topoae_ext' n_jobs='45''
+bsub -n 45 -W 120:00 -R "rusage[mem=1536]" -J "WCAE_mnist_s838_1" -w "done(WCAE_1)" -oo /cluster/scratch/schsimo/output/mnist_collect 'make run_simulator_main_parallel config_grid='euler_configs.mnist.mnist_s838_1' model='topoae_ext' n_jobs='45''
 
 
 

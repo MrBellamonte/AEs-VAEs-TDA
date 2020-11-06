@@ -1,6 +1,7 @@
 import argparse
 
 import importlib
+import random
 
 from joblib import Parallel, delayed
 
@@ -51,7 +52,7 @@ if __name__ == "__main__":
             configs = configs.configs_from_grid()
         else:
             configs = configs
-
+        random.shuffle(configs)
         Parallel(n_jobs=args.n_jobs)(delayed(simulator_TopoAE_ext)(config) for config in configs)
 
     elif args.model == 'competitor':
