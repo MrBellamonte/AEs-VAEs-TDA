@@ -1,5 +1,6 @@
 import argparse
 import os
+from distutils.dir_util import copy_tree
 
 import pandas as pd
 import shutil
@@ -34,6 +35,8 @@ def parse_input():
     parser.add_argument('--train_latent', help='Get train latent', action='store_true')
     parser.add_argument('--test_latent', help='Get test latent', action='store_true')
     parser.add_argument('--manifold', help='Get manifold', action='store_true')
+    parser.add_argument('--exp', help='Get all experiment data of selected', action='store_true')
+
 
     return parser.parse_args()
 
@@ -115,6 +118,8 @@ if __name__ == "__main__":
                 if args.manifold:
                     get_plot_rename(exp_dir, eval_root, uid, manifolddist_name,
                                     plot='manifold_Z_distcomp')
+                if args.exp:
+                    copy_tree(os.path.join(exp_dir, uid), os.path.join(eval_root, uid))
                 rank_count += 1
 
             df_selected.to_csv(
