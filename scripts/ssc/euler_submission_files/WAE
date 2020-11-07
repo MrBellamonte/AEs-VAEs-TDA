@@ -21,7 +21,7 @@ bsub -n 1 -W 24:00 -J "WCAE_mnist512_s1" -R "rusage[mem=15360,ngpus_excl_p=1]" -
 
 
 # eval selector euler/leonhard usage
-bsub -W 00:10 -J "WCAE_mnist1024_eval"  -oo /cluster/scratch/schsimo/output/mnist1024 'python -m scripts.ssc.evaluation.final_evaluators.selector_for_euler -dir '/cluster/scratch/schsimo/output/mnist1024''
+bsub -W 00:10 -J "WCAE_mnist1024_eval"  -oo /cluster/scratch/schsimo/output/mnist1024 'python -m scripts.ssc.evaluation.final_evaluators.selector_for_euler -dir '/cluster/scratch/schsimo/output/mnist1024' -trl False -mani False'
 
 # SYNC SELECTOR
 rsync schsimo@euler.ethz.ch:/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise2/eval_metrics_all.csv /Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2

@@ -4,7 +4,8 @@ import os
 import pandas as pd
 import shutil
 
-def get_plot_rename(exp_root, eval_root, uid, latent_name, plot = 'train_latent_visualization'):
+
+def get_plot_rename(exp_root, eval_root, uid, latent_name, plot='train_latent_visualization'):
     uid_rood = os.path.join(exp_root, uid)
 
     existing_file = open(os.path.join(uid_rood, '{}.pdf'.format(plot)), "r")
@@ -22,31 +23,18 @@ def get_plot_rename(exp_root, eval_root, uid, latent_name, plot = 'train_latent_
     os.chdir(dest_dir)
 
 
-
-
 def parse_input():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-dir', "--directory",
+    parser.add_argument('-dir', "--directory", help="Experiment directory", type=str)
+    parser.add_argument('-n', "--n", default=1, help="Numbber of topresults ", type=int)
+    parser.add_argument('--competitor', help='Model is a competitor', action='store_true')
+    parser.add_argument('--noseed',
+                        help='Indicate that seed column is not avail in eval_metrics_all.csv',
+                        action='store_true')
+    parser.add_argument('--train_latent', help='Get train latent', action='store_true')
+    parser.add_argument('--test_latent', help='Get test latent', action='store_true')
+    parser.add_argument('--manifold', help='Get manifold', action='store_true')
 
-                        help="Experiment directory", type=str)
-    parser.add_argument('-n', "--n",
-                        default = 1,
-                        help="Numbber of topresults ", type=int)
-    parser.add_argument('-c', "--competitor",
-                        default = False,
-                        help="Numbber of topresults ", type=bool)
-    parser.add_argument('-s', "--seedavail",
-                        default = True,
-                        help="Indicate if seed is available as column in eval_metrics_all.csv", type=bool)
-    parser.add_argument('-trl', "--train_latent",
-                        default = True,
-                        help="Get train latent", type=bool)
-    parser.add_argument('-tel', "--test_latent",
-                        default = True,
-                        help="Get test latent", type=bool)
-    parser.add_argument('-mani', "--manifold",
-                        default = True,
-                        help="Get manifold", type=bool)
     return parser.parse_args()
 
 
@@ -55,54 +43,52 @@ if __name__ == "__main__":
 
     # SET DF PATH
     exp_dir = args.directory
-    competitor = args.competitor
     N = args.n
 
     metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ']
 
     # LOAD DF
-    df = pd.read_csv(os.path.join(exp_dir,'eval_metrics_all.csv'))
-
-
+    df = pd.read_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'))
 
     for metric in metrics_to_select:
         df_selected = df[df.metric == metric]
         # get column with seed
-        if args.seedavail:
-            pass
-        else:
+        if args.noseed:
             df_selected['seed'] = 0
             for uuid in list(set(list(df_selected.uid))):
-                if competitor:
-                    df_selected.loc[(df_selected.uid == uuid), ['seed']] = int(uuid.split('-')[6][4:])
+                if args.competitor:
+                    df_selected.loc[(df_selected.uid == uuid), ['seed']] = int(
+                        uuid.split('-')[6][4:])
                 else:
-                    df_selected.loc[(df_selected.uid == uuid),['seed']] = int(uuid.split('-')[10][4:])
+                    df_selected.loc[(df_selected.uid == uuid), ['seed']] = int(
+                        uuid.split('-')[10][4:])
+        else:
+            pass
 
-        if competitor:
-            df_selected = df_selected[['uid','seed','value']]
+        if args.competitor:
+            df_selected = df_selected[['uid', 'seed', 'value']]
             df_selected = df_selected.sort_values('value', ascending=True).groupby(
                 ['seed']).head(N)
             bss = ['na']
         else:
-            df_selected = df_selected[['uid','seed','batch_size','value']]
+            df_selected = df_selected[['uid', 'seed', 'batch_size', 'value']]
             df_selected = df_selected.sort_values('value', ascending=True).groupby(
-                ['seed','batch_size']).head(N)
+                ['seed', 'batch_size']).head(N)
             bss = list(set(list(df_selected['batch_size'])))
-
-
 
         for bs in bss:
             # create directory for selection
-            eval_root = os.path.join(exp_dir,'selector{}'.format(N), 'bs{}_metric{}'.format(bs,metric))
+            eval_root = os.path.join(exp_dir, 'selector{}'.format(N),
+                                     'bs{}_metric{}'.format(bs, metric))
             try:
                 os.makedirs(eval_root)
             except:
                 pass
 
-            if competitor:
+            if args.competitor:
                 pass
             else:
-                df_selected_bs = df_selected[df_selected['batch_size']==bs]
+                df_selected_bs = df_selected[df_selected['batch_size'] == bs]
             uids = list(df_selected_bs.uid)
             uid_dict = dict()
             rank_count = 1
@@ -115,16 +101,14 @@ if __name__ == "__main__":
                 if args.train_latent:
                     get_plot_rename(exp_dir, eval_root, uid, train_latent_name)
                 if args.test_latent:
-                    get_plot_rename(exp_dir, eval_root, uid, test_latent_name,plot = 'test_latent_visualization')
+                    get_plot_rename(exp_dir, eval_root, uid, test_latent_name,
+                                    plot='test_latent_visualization')
                 if args.manifold:
-                    get_plot_rename(exp_dir, eval_root, uid, manifolddist_name,plot = 'manifold_Z_distcomp')
+                    get_plot_rename(exp_dir, eval_root, uid, manifolddist_name,
+                                    plot='manifold_Z_distcomp')
                 rank_count += 1
 
             df_selected.to_csv(
                 os.path.join(eval_root, 'metrics_selected.csv'))
 
-
-
-
-        #df_selected[['uid','batch_size','seed','value']].groupby(['batch_size','seed'], as_index=False).min()
-
+        # df_selected[['uid','batch_size','seed','value']].groupby(['batch_size','seed'], as_index=False).min()
