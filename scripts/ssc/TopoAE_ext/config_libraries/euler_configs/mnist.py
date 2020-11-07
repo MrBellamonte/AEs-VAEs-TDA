@@ -47,7 +47,7 @@ mnist_s838_64_fullk_fullnu = ConfigGrid_WCAE(
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125,1.25,1.375], online_wc=[True], wc_offline = [dict(path_to_data = wcpath_mnist_s838_64)]),
     experiment_dir='/cluster/scratch/schsimo/output/mnist64',
     seed=838,
-    device='cuda',
+    device='cpu',
     num_threads=1,
     verbose=False)
 
