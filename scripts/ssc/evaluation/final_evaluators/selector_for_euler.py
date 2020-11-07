@@ -38,6 +38,15 @@ def parse_input():
     parser.add_argument('-s', "--seedavail",
                         default = True,
                         help="Indicate if seed is available as column in eval_metrics_all.csv", type=bool)
+    parser.add_argument('-trl', "--train_latent",
+                        default = True,
+                        help="Get train latent", type=bool)
+    parser.add_argument('-tel', "--test_latent",
+                        default = True,
+                        help="Get test latent", type=bool)
+    parser.add_argument('-mani', "--manifold",
+                        default = True,
+                        help="Get manifold", type=bool)
     return parser.parse_args()
 
 
@@ -99,12 +108,16 @@ if __name__ == "__main__":
             rank_count = 1
             for uid in uids:
                 uid_dict.update({uid: '{}_{}'.format(rank_count, uid)})
-                latent_name = 'latents{}_{}'.format(rank_count, uid)
+                train_latent_name = 'train_latents{}_{}'.format(rank_count, uid)
+                test_latent_name = 'test_latents{}_{}'.format(rank_count, uid)
                 manifolddist_name = 'manifold_dist{}_{}'.format(rank_count, uid)
 
-
-                get_plot_rename(exp_dir, eval_root, uid, latent_name)
-                get_plot_rename(exp_dir, eval_root, uid, manifolddist_name,plot = 'manifold_Z_distcomp')
+                if args.train_latent:
+                    get_plot_rename(exp_dir, eval_root, uid, train_latent_name)
+                if args.test_latent:
+                    get_plot_rename(exp_dir, eval_root, uid, test_latent_name,plot = 'test_latent_visualization')
+                if args.manifold:
+                    get_plot_rename(exp_dir, eval_root, uid, manifolddist_name,plot = 'manifold_Z_distcomp')
                 rank_count += 1
 
             df_selected.to_csv(

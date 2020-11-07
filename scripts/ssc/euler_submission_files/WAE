@@ -2,8 +2,7 @@
 #EULER SWISSROLL
 bsub -n 47 -W 72:00 -J "WCAE_1" -oo /cluster/scratch/schsimo/output/WCAE_swissroll_nonoise_FINAL 'make run_simulator_main_parallel config_grid='euler_configs.swissroll.swissroll_h1122_list' model='topoae_ext' n_jobs='47''
 
-
-# EULER MNIST:
+# EULER MNIST: (DON'T USE!)
 bsub -n 2 -W 120:00 -J "WCAE_mnist1024_s1" -R "rusage[mem=6144]" -oo /cluster/scratch/schsimo/output/mnist1024 'make run_simulator_main config_grid='euler_configs.mnist.mnist_s838_1024_s1' model='topoae_ext''
 bsub -n 2 -W 120:00 -J "WCAE_mnist512_s1" -R "rusage[mem=6144]" -oo /cluster/scratch/schsimo/output/mnist512 'make run_simulator_main config_grid='euler_configs.mnist.mnist_s838_512_s1' model='topoae_ext''
 
@@ -14,8 +13,6 @@ bsub -n 10 -W 120:00 -R "rusage[mem=7680]" -J "WCAE_mnist256_s2" -w "done(WCAE_1
 bsub -n 45 -W 120:00 -R "rusage[mem=1536]" -J "WCAE_mnist_s838_1" -oo /cluster/scratch/schsimo/output/mnist_collect 'make run_simulator_main_parallel config_grid='euler_configs.mnist.mnist_s838_1' model='topoae_ext' n_jobs='45''
 
 
-
-
 # LEONHARD MNIST
 bsub -n 1 -W 24:00 -J "WCAE_mnist1024_s1" -R "rusage[mem=15360,ngpus_excl_p=1]" -oo /cluster/scratch/schsimo/output/mnist1024 'make run_simulator_main config_grid='euler_configs.mnist.mnist_s838_1024_1' model='topoae_ext''
 bsub -n 1 -W 24:00 -J "WCAE_mnist256_s1" -R "rusage[mem=15360,ngpus_excl_p=1]" -oo /cluster/scratch/schsimo/output/mnist256 'make run_simulator_main config_grid='euler_configs.mnist.mnist_s838_256_1' model='topoae_ext''
@@ -23,8 +20,9 @@ bsub -n 1 -W 24:00 -J "WCAE_mnist512_s1" -R "rusage[mem=15360,ngpus_excl_p=1]" -
 
 
 
+# eval selector euler/leonhard usage
+bsub -W 00:10 -J "WCAE_mnist1024_eval"  -oo /cluster/scratch/schsimo/output/mnist1024 'python -m scripts.ssc.evaluation.final_evaluators.selector_for_euler -dir '/cluster/scratch/schsimo/output/mnist1024''
 
 # SYNC SELECTOR
-
 rsync schsimo@euler.ethz.ch:/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise2/eval_metrics_all.csv /Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2
 rsync -a schsimo@euler.ethz.ch:/cluster/scratch/schsimo/output/WCAE_swissroll_nonoise2/SwissRoll-n_samples2560-seed2570-Autoencoder_MLP_topoae-32-32-lr1_10-bs128-nep1000-rlw1-tlw2048-mepush_active11_10-k4-rmax10-seed2570-398bdfa3 /Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2
