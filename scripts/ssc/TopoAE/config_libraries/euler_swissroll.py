@@ -253,7 +253,7 @@ swissroll_multiseed_vanillaAE = list(itertools.chain(*[config_grid.configs_from_
     early_stopping=[50],
     rec_loss_weight=[1],
     top_loss_weight=[0],
-    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    toposig_kwargs = [dict(match_edges = 'no')],
     model_class=[Autoencoder_MLP_topoae],
     model_kwargs={
         'input_dim'         : [3],
@@ -277,7 +277,7 @@ swissroll_multiseed_vanillaAE = list(itertools.chain(*[config_grid.configs_from_
     )],
     uid = [''],
     method_args = [None],
-    experiment_dir='/cluster/scratch/schsimo/output/vanillaAE_SwissRoll_final',
+    experiment_dir='/cluster/scratch/schsimo/output/vanillaAE_SwissRoll_FINAL',
     seed = seed,
     device = 'cpu',
     num_threads=1,

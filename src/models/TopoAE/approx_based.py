@@ -347,5 +347,10 @@ class TopologicalSignatureDistance(nn.Module):
             distance_components['metrics.distance2-1'] = distance2_1
 
             distance = distance1_2 + distance2_1
+        elif self.match_edges == 'no':
+            distance_components['metrics.distance1-2'] = 0
+            distance_components['metrics.distance2-1'] = 0
+
+            distance = 0
 
         return distance, distance_components

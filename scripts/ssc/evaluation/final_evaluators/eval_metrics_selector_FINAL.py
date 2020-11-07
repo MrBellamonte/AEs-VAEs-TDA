@@ -23,9 +23,9 @@ if __name__ == "__main__":
         df_path = os.path.join(exp_dir,'eval_metrics_all.csv')
         bss = [64, 128, 256, 512]
     elif SWISSROLL_WCAE:
-        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise'
-        root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise'
-        df_path = os.path.join(exp_dir,'metrics_selected_processed_new_new.csv')
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise_FINAL'
+        root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise_FINAL'
+        df_path = os.path.join(exp_dir,'eval_metrics_all.csv')
         bss = [64, 128, 256, 512]
     elif SWISSROLL_WCAE2:
         exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2'
