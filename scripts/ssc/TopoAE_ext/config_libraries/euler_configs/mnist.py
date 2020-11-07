@@ -159,7 +159,7 @@ mnist_s838_256_hinu = ConfigGrid_WCAE(
     verbose=False)
 
 
-mnist_s838_256_hinu_hik = ConfigGrid_WCAE(
+mnist_s838_256_hinu_mik = ConfigGrid_WCAE(
     learning_rate=[1/10,1/100,1/1000],
     batch_size=[256],
     n_epochs=[1000],
@@ -194,6 +194,76 @@ mnist_s838_256_hinu_hik = ConfigGrid_WCAE(
     num_threads=1,
     verbose=False)
 
+mnist_s838_256_hinu_hik = ConfigGrid_WCAE(
+    learning_rate=[1/10,1/100,1/1000],
+    batch_size=[256],
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[30],
+    rec_loss_weight=[1],
+    top_loss_weight=[int(i) for i in np.logspace(0, 4, num=5, base=2.0)],
+    match_edges=['push_active'],
+    k=[5,6],
+    r_max=[10],
+    model_class=[ConvAE_MNIST],
+    model_kwargs=[dict()],
+    dataset=[MNIST_offline()],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=False,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=False,
+        online_visualization=False,
+        k_min=5,
+        k_max=45,
+        k_step=5,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1.25,1.375], online_wc=[True], wc_offline = [dict(path_to_data = wcpath_mnist_s838_256)]),
+    experiment_dir='/cluster/scratch/schsimo/output/mnist256',
+    seed=838,
+    device='cuda',
+    num_threads=1,
+    verbose=False)
+
+
+mnist_s838_256_mik = ConfigGrid_WCAE(
+    learning_rate=[1/10,1/100,1/1000],
+    batch_size=[256],
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[30],
+    rec_loss_weight=[1],
+    top_loss_weight=[int(i) for i in np.logspace(0, 4, num=5, base=2.0)],
+    match_edges=['push_active'],
+    k=[3,4],
+    r_max=[10],
+    model_class=[ConvAE_MNIST],
+    model_kwargs=[dict()],
+    dataset=[MNIST_offline()],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=False,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=False,
+        online_visualization=False,
+        k_min=5,
+        k_max=45,
+        k_step=5,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125], online_wc=[True], wc_offline = [dict(path_to_data = wcpath_mnist_s838_256)]),
+    experiment_dir='/cluster/scratch/schsimo/output/mnist256',
+    seed=838,
+    device='cuda',
+    num_threads=1,
+    verbose=False)
 
 mnist_s838_256_hik = ConfigGrid_WCAE(
     learning_rate=[1/10,1/100,1/1000],
@@ -204,7 +274,7 @@ mnist_s838_256_hik = ConfigGrid_WCAE(
     rec_loss_weight=[1],
     top_loss_weight=[int(i) for i in np.logspace(0, 4, num=5, base=2.0)],
     match_edges=['push_active'],
-    k=[3,4,5,6],
+    k=[5,6],
     r_max=[10],
     model_class=[ConvAE_MNIST],
     model_kwargs=[dict()],
@@ -266,7 +336,7 @@ mnist_s838_512_1 = ConfigGrid_WCAE(
     num_threads=1,
     verbose=False,
 )
-mnist_s838_512_hik = ConfigGrid_WCAE(
+mnist_s838_512_mik = ConfigGrid_WCAE(
     learning_rate=[1/10,1/100,1/1000],
     batch_size=[512],
     n_epochs=[1000],
@@ -275,7 +345,7 @@ mnist_s838_512_hik = ConfigGrid_WCAE(
     rec_loss_weight=[1],
     top_loss_weight=[int(i) for i in np.logspace(0, 4, num=5, base=2.0)],
     match_edges=['push_active'],
-    k=[3,4,5,6],
+    k=[3,4],
     r_max=[10],
     model_class=[ConvAE_MNIST],
     model_kwargs=[dict()],
@@ -302,7 +372,7 @@ mnist_s838_512_hik = ConfigGrid_WCAE(
     verbose=False,
 )
 
-mnist_s838_512_hinu_hik = ConfigGrid_WCAE(
+mnist_s838_512_hik = ConfigGrid_WCAE(
     learning_rate=[1/10,1/100,1/1000],
     batch_size=[512],
     n_epochs=[1000],
@@ -311,7 +381,43 @@ mnist_s838_512_hinu_hik = ConfigGrid_WCAE(
     rec_loss_weight=[1],
     top_loss_weight=[int(i) for i in np.logspace(0, 4, num=5, base=2.0)],
     match_edges=['push_active'],
-    k=[3,4,5,6],
+    k=[5,6],
+    r_max=[10],
+    model_class=[ConvAE_MNIST],
+    model_kwargs=[dict()],
+    dataset=[MNIST_offline()],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=False,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=45,
+        k_step=5,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125], online_wc=[True], wc_offline = [dict(path_to_data = wcpath_mnist_s838_512)]),
+    experiment_dir='/cluster/scratch/schsimo/output/mnist512',
+    seed=838,
+    device='cuda',
+    num_threads=1,
+    verbose=False,
+)
+
+mnist_s838_512_hinu_mik = ConfigGrid_WCAE(
+    learning_rate=[1/10,1/100,1/1000],
+    batch_size=[512],
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[int(i) for i in np.logspace(0, 4, num=5, base=2.0)],
+    match_edges=['push_active'],
+    k=[3,4],
     r_max=[10],
     model_class=[ConvAE_MNIST],
     model_kwargs=[dict()],
@@ -338,7 +444,7 @@ mnist_s838_512_hinu_hik = ConfigGrid_WCAE(
     verbose=False,
 )
 
-mnist_s838_512_hinu = ConfigGrid_WCAE(
+mnist_s838_512_hinu_hik = ConfigGrid_WCAE(
     learning_rate=[1/10,1/100,1/1000],
     batch_size=[512],
     n_epochs=[1000],
@@ -347,7 +453,7 @@ mnist_s838_512_hinu = ConfigGrid_WCAE(
     rec_loss_weight=[1],
     top_loss_weight=[int(i) for i in np.logspace(0, 4, num=5, base=2.0)],
     match_edges=['push_active'],
-    k=[1,2],
+    k=[5,6],
     r_max=[10],
     model_class=[ConvAE_MNIST],
     model_kwargs=[dict()],
