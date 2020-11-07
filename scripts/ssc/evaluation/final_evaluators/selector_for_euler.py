@@ -45,8 +45,9 @@ if __name__ == "__main__":
     exp_dir = args.directory
     N = args.n
 
-    metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ']
+    metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ','training.metrics.notmatched_pairs_0D','training.loss.autoencoder','test_continuity']
 
+    max_metrics = ['test_continuity']
     # LOAD DF
     df = pd.read_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'))
 
@@ -67,12 +68,20 @@ if __name__ == "__main__":
 
         if args.competitor:
             df_selected = df_selected[['uid', 'seed', 'value']]
-            df_selected = df_selected.sort_values('value', ascending=True).groupby(
-                ['seed']).head(N)
+            if metric in max_metrics:
+                df_selected = df_selected.sort_values('value', ascending=False).groupby(
+                    ['seed']).head(N)
+            else:
+                df_selected = df_selected.sort_values('value', ascending=True).groupby(
+                    ['seed']).head(N)
             bss = ['na']
         else:
             df_selected = df_selected[['uid', 'seed', 'batch_size', 'value']]
-            df_selected = df_selected.sort_values('value', ascending=True).groupby(
+            if metric in max_metrics:
+                df_selected = df_selected.sort_values('value', ascending=False).groupby(
+                    ['seed', 'batch_size']).head(N)
+            else:
+                df_selected = df_selected.sort_values('value', ascending=True).groupby(
                 ['seed', 'batch_size']).head(N)
             bss = list(set(list(df_selected['batch_size'])))
 
