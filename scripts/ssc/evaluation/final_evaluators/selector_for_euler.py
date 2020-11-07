@@ -35,6 +35,9 @@ def parse_input():
     parser.add_argument('-c', "--competitor",
                         default = False,
                         help="Numbber of topresults ", type=bool)
+    parser.add_argument('-s', "--seedavail",
+                        default = True,
+                        help="Indicate if seed is available as column in eval_metrics_all.csv", type=bool)
     return parser.parse_args()
 
 
@@ -56,14 +59,15 @@ if __name__ == "__main__":
     for metric in metrics_to_select:
         df_selected = df[df.metric == metric]
         # get column with seed
-        df_selected['seed'] = 0
-
-        for uuid in list(set(list(df_selected.uid))):
-
-            if competitor:
-                df_selected.loc[(df_selected.uid == uuid), ['seed']] = int(uuid.split('-')[6][4:])
-            else:
-                df_selected.loc[(df_selected.uid == uuid),['seed']] = int(uuid.split('-')[10][4:])
+        if args.seedavail:
+            pass
+        else:
+            df_selected['seed'] = 0
+            for uuid in list(set(list(df_selected.uid))):
+                if competitor:
+                    df_selected.loc[(df_selected.uid == uuid), ['seed']] = int(uuid.split('-')[6][4:])
+                else:
+                    df_selected.loc[(df_selected.uid == uuid),['seed']] = int(uuid.split('-')[10][4:])
 
         if competitor:
             df_selected = df_selected[['uid','seed','value']]
