@@ -98,10 +98,10 @@ if __name__ == "__main__":
                 pass
 
             if args.competitor:
-                pass
+                uids = list(df_selected.uid)
             else:
                 df_selected_bs = df_selected[df_selected['batch_size'] == bs]
-            uids = list(df_selected_bs.uid)
+                uids = list(df_selected_bs.uid)
             uid_dict = dict()
             rank_count = 1
             for uid in uids:
