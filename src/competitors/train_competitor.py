@@ -14,7 +14,7 @@ from src.utils.dict_utils import avg_array_in_dict, default
 from src.utils.plots import plot_2Dscatter, plot_distcomp_Z_manifold
 
 
-def eval(result,X,Z,Y,rundir,config,train = True):
+def eval(result,Z_manifold,X,Z,Y,rundir,config,train = True):
 
     if train:
         name_prefix = 'train'
@@ -36,10 +36,6 @@ def eval(result,X,Z,Y,rundir,config,train = True):
 
     if config.eval.eval_manifold:
         try:
-            dataset = config.dataset
-            Z_manifold, X_transformed, labels = dataset.sample_manifold(
-                **config.sampling_kwargs, train=train)
-
             Z_manifold[:, 0] = (Z_manifold[:, 0]-Z_manifold[:, 0].min())/(
                     Z_manifold[:, 0].max()-Z_manifold[:, 0].min())
             Z_manifold[:, 1] = (Z_manifold[:, 1]-Z_manifold[:, 1].min())/(
@@ -48,8 +44,6 @@ def eval(result,X,Z,Y,rundir,config,train = True):
                     Z[:, 0].max()-Z[:, 0].min())
             Z[:, 1] = (Z[:, 1]-Z[:, 1].min())/(
                     Z[:, 1].max()-Z[:, 1].min())
-
-
             # compute RMSE
             pwd_Z = pairwise_distances(Z, Z, n_jobs=1)
             pwd_Ztrue = pairwise_distances(Z_manifold, Z_manifold, n_jobs=1)
@@ -62,7 +56,7 @@ def eval(result,X,Z,Y,rundir,config,train = True):
             # save comparison fig
             plot_distcomp_Z_manifold(Z_manifold=Z_manifold, Z_latent=Z,
                                      pwd_manifold=pairwise_distances_manifold,
-                                     pwd_Z=pairwise_distances_Z, labels=labels,
+                                     pwd_Z=pairwise_distances_Z, labels=Y,
                                      path_to_save=rundir, name='manifold_Z_distcomp',
                                      fontsize=24, show=False)
         except AttributeError as err:
@@ -106,7 +100,7 @@ def train_comp(model, data_train, data_test, config, quiet,val_size, _seed, _rnd
         pass
 
     # include split for fair comparison....
-    X_train, y_train = data_train[0], data_train[1]
+    X_train, y_train, Z_manifold_train = data_train[0], data_train[1], data_train[2]
     test_dataset = data_test
 
     if not quiet:
@@ -116,13 +110,14 @@ def train_comp(model, data_train, data_test, config, quiet,val_size, _seed, _rnd
     result = model.eval()
     if not quiet:
         print('Evaluate model on training data...')
-    result = eval(result, X_train, Z_train, y_train, rundir, config, train=True)
+    result = eval(result,Z_manifold_train, X_train, Z_train, y_train, rundir, config, train=True)
 
     if model.test_eval:
         if not quiet:
             print('Evaluate model on test data...')
+        Z_manifold_test = test_dataset[2]
         Z_test, y_test = model.get_latent_train(test_dataset[0],test_dataset[1])
-        result = eval(result, test_dataset[0], Z_test, y_test, rundir, config, train=False)
+        result = eval(result, Z_manifold_test, test_dataset[0], Z_test, y_test, rundir, config, train=False)
 
     return result
 

@@ -13,6 +13,7 @@ swissroll_test = ConfigGrid_Competitors(
     eval=[ConfigEval(
         active = True,
         evaluate_on = None,
+        eval_manifold=True,
         save_eval_latent = True,
         save_train_latent = True,
         online_visualization = False,
