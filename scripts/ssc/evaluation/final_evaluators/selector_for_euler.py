@@ -47,10 +47,15 @@ if __name__ == "__main__":
     # SET DF PATH
     exp_dir = args.directory
     N = args.n
+    if args.competitor:
+        metrics_to_select = ['rmse_manifold_Z', 'train_mean_Lipschitz_std_refZ','training.metrics.notmatched_pairs_0D','training.loss.autoencoder','train_continuity']
+        max_metrics = ['train_continuity']
+    else:
+        metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ',
+                             'training.metrics.notmatched_pairs_0D', 'training.loss.autoencoder',
+                             'test_continuity']
+        max_metrics = ['test_continuity']
 
-    metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ','training.metrics.notmatched_pairs_0D','training.loss.autoencoder','test_continuity']
-
-    max_metrics = ['test_continuity']
     # LOAD DF
     df = pd.read_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'))
 

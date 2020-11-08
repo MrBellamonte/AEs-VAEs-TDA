@@ -10,10 +10,10 @@ if __name__ == "__main__":
     bss = [64, 128, 256, 512]
 
     SWISSROLL_TOPOAE = False
-    SWISSROLL_WCAE = True
+    SWISSROLL_WCAE = False
     SWISSROLL_WCAE2 = False
     UMAP_final = False
-    tSNE_final = False
+    tSNE_final = True
 
 
 
@@ -27,16 +27,19 @@ if __name__ == "__main__":
         root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise_FINAL'
         df_path = os.path.join(exp_dir,'eval_metrics_all.csv')
         bss = [64, 128, 256, 512]
-    elif SWISSROLL_WCAE2:
-        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2'
-        root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCAE_swissroll_nonoise2'
+    elif UMAP_final:
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/umap_final_final'
+        root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/umap_final_final'
         df_path = os.path.join(exp_dir,'eval_metrics_all.csv')
-        bss = [64, 128, 256, 512]
+        bss = [0]
+    elif tSNE_final:
+        exp_dir = '/Users/simons/MT_data/sync/euler_sync_scratch/tsne_final_final'
+        root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/tsne_final_final'
+        df_path = os.path.join(exp_dir,'eval_metrics_all.csv')
+        bss = [0]
     else:
         ValueError
 
-    criterion = 'test_mean_Lipschitz_std_refZ'
-    max_metrics = ['test_mean_trustworthiness','test_mean_continuity']
 
 
 
@@ -47,25 +50,26 @@ if __name__ == "__main__":
     if UMAP_final or tSNE_final:
         metrics = [
             'rmse_manifold_Z',
-            'test_mean_Lipschitz_std_refZ',
-            'test_mean_Lipschitz_std_refX',
-            'test_mean_local_rmse_refX',
-            'test_mean_local_rmse_refZ',
-            'test_mean_trustworthiness',
-            'test_mean_continuity',
-            'test_density_kl_global_10',
-            'test_density_kl_global_1',
-            'test_density_kl_global_01',
-            'test_density_kl_global_001',
-            'test_density_kl_global_0001',
-            'test_density_kl_global_00001',
+            'train_mean_Lipschitz_std_refZ',
+            'train_mean_Lipschitz_std_refX',
+            'train_mean_local_rmse_refX',
+            'train_mean_local_rmse_refZ',
+            'train_mean_trustworthiness',
+            'train_mean_continuity',
+            'train_density_kl_global_10',
+            'train_density_kl_global_1',
+            'train_density_kl_global_01',
+            'train_density_kl_global_001',
+            'train_density_kl_global_0001',
+            'train_density_kl_global_00001',
         ]
-        cols_1 = ['uid', 'metric', 'value', 'seed']
-        cols_2 = ['seed']
-        cols_3 = ['uid', 'metric', 'value']
+        df['batch_size'] = 0
         cols_1 = ['uid','batch_size','metric','value','seed']
         cols_2 = ['seed','batch_size']
-        cols_3 = ['uid', 'batch_size', 'metric', 'value']
+        cols_3 = ['uid','batch_size', 'metric', 'value']
+
+        criterion = 'train_mean_Lipschitz_std_refZ'
+        max_metrics = ['train_mean_trustworthiness', 'train_mean_continuity']
     else:
         metrics = [
             'rmse_manifold_Z',
@@ -88,16 +92,33 @@ if __name__ == "__main__":
         cols_2 = ['seed','batch_size']
         cols_3 = ['uid', 'batch_size', 'metric', 'value']
 
+        criterion = 'test_mean_Lipschitz_std_refZ'
+        max_metrics = ['test_mean_trustworthiness', 'test_mean_continuity']
+
 
 
     df_criterion_metric = df[df.metric == criterion]
     df_criterion_metric['seed'] = 0
-    for uuid in list(set(list(df_criterion_metric.uid))):
-        df_criterion_metric.loc[(df_criterion_metric.uid == uuid), ['seed']] = int(uuid.split('-')[10][4:])
+
+
+    if tSNE_final or UMAP_final:
+        for uuid in list(set(list(df_criterion_metric.uid))):
+            df_criterion_metric.loc[(df_criterion_metric.uid == uuid), ['seed']] = int(
+            uuid.split('-')[6][4:])
+
+
+
+    else:
+        for uuid in list(set(list(df_criterion_metric.uid))):
+            df_criterion_metric.loc[(df_criterion_metric.uid == uuid), ['seed']] = int(uuid.split('-')[10][4:])
+
+
     df_criterion_metric = df_criterion_metric[cols_1]
     df_selected = df_criterion_metric.sort_values('value', ascending=True).groupby(cols_2).head(1)
+
+
     df_opt = df_criterion_metric.sort_values('value', ascending=True).groupby(
-        ['batch_size']).head(1)
+            ['batch_size']).head(1)
 
     uid_opt = list(df_opt.uid.values)
 
