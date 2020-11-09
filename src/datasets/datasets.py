@@ -360,3 +360,27 @@ class Unity_RotCorgi(DataSet):
 
     def sample_manifold(self):
         raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
+
+class Unity_RotOpenAI(DataSet):
+    __slots__ = []
+    fancy_name = "Unity rotating block"
+
+    def __init__(self):
+        pass
+
+    def sample(self, train = True,root_path=DEFAULT['unity_rotating_block']['root_path'], seed = None):
+
+        if train:
+            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/openai_rotating/full_dataset.pt'))
+
+        else:
+            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/openai_rotating/full_dataset.pt'))
+
+        position = data[:][:][1].numpy()
+        images = data[:][:][0].numpy()
+
+        return images, position
+
+
+    def sample_manifold(self):
+        raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))

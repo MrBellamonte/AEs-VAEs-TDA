@@ -155,24 +155,24 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
             s = json.dumps(result, default=default)
             open(os.path.join(run_dir, 'eval_metrics.json'), "w").write(s)
 
-        result_avg = avg_array_in_dict(result)
+            result_avg = avg_array_in_dict(result)
 
-        df = pd.DataFrame.from_dict(result_avg, orient='index').reset_index()
-        df.columns = ['metric', 'value']
+            df = pd.DataFrame.from_dict(result_avg, orient='index').reset_index()
+            df.columns = ['metric', 'value']
 
-        id_dict = dict(
-            uid = exp,
-            seed=config['dataset'],
-            batch_size = config['batch_size'],
-        )
-        for key, value in id_dict.items():
-            df[key] = value
-        df.set_index('uid')
+            id_dict = dict(
+                uid = exp,
+                seed=config['dataset'],
+                batch_size = config['batch_size'],
+            )
+            for key, value in id_dict.items():
+                df[key] = value
+            df.set_index('uid')
 
-        df = df[COLS_DF_RESULT]
-        print(COLS_DF_RESULT)
-        #
-        df.to_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'), mode='a', header=False)
+            df = df[COLS_DF_RESULT]
+            print(COLS_DF_RESULT)
+            #
+            df.to_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'), mode='a', header=False)
 
 
 
@@ -187,22 +187,18 @@ def parse_input():
 if __name__ == "__main__":
     args = parse_input()
     evalconfig = ConfigEval(
-        active=False,
+        active=True,
         evaluate_on='test',
         eval_manifold=False,
         save_eval_latent=True,
-        save_train_latent=False,
+        save_train_latent=True,
         online_visualization=False,
-        k_min=5,
-        k_max=45,
-        k_step=5)
+        k_min=2,
+        k_max=10,
+        k_step=2)
 
     exp_dir = args.directory
-
-
-    subfolders = [f.path for f in os.scandir(exp_dir) if (f.is_dir() and f and f.path.split('/')[-1].startswith('MNIST'))]
-
-
-    offline_eval_WAE(exp_dir,evalconfig,args.startswith)
+    stw = args.startswith
+    offline_eval_WAE(exp_dir,evalconfig,stw)
 
 

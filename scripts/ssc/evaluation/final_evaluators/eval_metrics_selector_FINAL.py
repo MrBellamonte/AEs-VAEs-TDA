@@ -6,14 +6,14 @@ import pandas as pd
 if __name__ == "__main__":
 
     N = 3
-
     bss = [64, 128, 256, 512]
 
     SWISSROLL_TOPOAE = False
     SWISSROLL_WCAE = False
     SWISSROLL_WCAE2 = False
     UMAP_final = False
-    tSNE_final = True
+    tSNE_final = False
+    vanillaAE = True
 
 
 
@@ -37,6 +37,11 @@ if __name__ == "__main__":
         root_save = '/Users/simons/MT_data/sync/euler_sync_scratch/tsne_final_final'
         df_path = os.path.join(exp_dir,'eval_metrics_all.csv')
         bss = [0]
+    elif vanillaAE:
+        exp_dir ='/Users/simons/MT_data/sync/euler_sync_scratch/vanillaAE_SwissRoll_FINAL'
+        root_save = exp_dir
+        df_path = os.path.join(exp_dir, 'eval_metrics_all.csv')
+        bss = [64, 128, 256, 512]
     else:
         ValueError
 

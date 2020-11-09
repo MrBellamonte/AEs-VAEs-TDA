@@ -85,9 +85,9 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
     elif X_train.shape[0]>4096:
         #todo fix somehow
         inds = random.sample(range(X_train.shape[0]), 2048)
-        norm_X = torch.cdist(dataset_train[inds][:][0],-dataset_train[inds][:][0]).max()
+        norm_X = torch.cdist(dataset_train[inds][:][0],dataset_train[inds][:][0]).max()
     else:
-        norm_X = torch.cdist(dataset_train[:][:][0], -dataset_train[:][:][0]).max()
+        norm_X = torch.cdist(dataset_train[:][:][0], dataset_train[:][:][0]).max()
 
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
