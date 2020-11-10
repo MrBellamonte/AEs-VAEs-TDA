@@ -47,11 +47,12 @@ def eval(result,Z_manifold,X,Z,Y,rundir,config,train = True):
             # compute RMSE
             pwd_Z = pairwise_distances(Z, Z, n_jobs=1)
             pwd_Ztrue = pairwise_distances(Z_manifold, Z_manifold, n_jobs=1)
+
+
             pairwise_distances_manifold = (pwd_Ztrue-pwd_Ztrue.min())/(
                         pwd_Ztrue.max()-pwd_Ztrue.min())
             pairwise_distances_Z = (pwd_Z-pwd_Z.min())/(pwd_Z.max()-pwd_Z.min())
-            rmse_manifold = np.sqrt(
-                (np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None))
+            rmse_manifold = (np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None)
             result.update(dict(rmse_manifold_Z=rmse_manifold))
             # save comparison fig
             plot_distcomp_Z_manifold(Z_manifold=Z_manifold, Z_latent=Z,

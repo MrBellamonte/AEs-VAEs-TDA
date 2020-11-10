@@ -15,6 +15,8 @@ if __name__ == "__main__":
     tSNE_final = False
     vanillaAE = True
 
+    fix_umap_tsne = False
+
 
 
     if SWISSROLL_TOPOAE:
@@ -75,6 +77,10 @@ if __name__ == "__main__":
 
         criterion = 'train_mean_Lipschitz_std_refZ'
         max_metrics = ['train_mean_trustworthiness', 'train_mean_continuity']
+        if fix_umap_tsne:
+            df.loc[(df.metric == 'rmse_manifold_Z'), ['value']] = df.loc[(df.metric == 'rmse_manifold_Z'), ['value']]**2
+            df.to_csv(os.path.join(root_save, 'eval_metrics_all_fixed.csv'))
+
     else:
         metrics = [
             'rmse_manifold_Z',
@@ -100,7 +106,8 @@ if __name__ == "__main__":
         criterion = 'test_mean_Lipschitz_std_refZ'
         max_metrics = ['test_mean_trustworthiness', 'test_mean_continuity']
 
-
+    if vanillaAE:
+        df['batch_size'] = 0
 
     df_criterion_metric = df[df.metric == criterion]
     df_criterion_metric['seed'] = 0
