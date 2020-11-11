@@ -48,7 +48,7 @@ def make_plot(data, pairings, color,name = 'noname', path_root = PATH_ROOT_SWISS
     ax.set_xlim(np.array([axis_min[0]-margin[0], axis_max[0]+ margin[0]]))
     ax.set_ylim(np.array([axis_min[1]-margin[1], axis_max[1]+ margin[1]]))
     ax.set_zlim(np.array([axis_min[2]-margin[2], axis_max[2]+ margin[2]]))
-    ax.axis('equal')
+    #ax.axis('equal')
     for line in ax.xaxis.get_ticklines():
         line.set_visible(False)
     for line in ax.yaxis.get_ticklines():
