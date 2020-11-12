@@ -20,6 +20,7 @@ def make_square_axes(ax):
 
 if __name__ == "__main__":
     df_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/eval/WCAE/metrics_selected_processed_new_new.csv'
+    df_path = '/Users/simons/MT_data/eval_data/SWISSROLL_FINAL/WCAE/eval_metrics_all_wkmu.csv'
     save_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/eval/WCAE/'
     # get df with cols: eval metrics (tbd), uid, k, bs, mu_push
     metrics = ['rmse_manifold_Z', 'training.loss.autoencoder', 'test_mean_Lipschitz_std_refZ',
