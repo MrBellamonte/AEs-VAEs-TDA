@@ -38,8 +38,8 @@ Please refer to scripts/config_library/sample.py, where sample configurations ca
 Currently the simulator supports:
 - TopoAE (command: -m 'topoae')
 - WCAE (command: -m 'WCAE')
-- COREL (not integrated, needs to be used manually at this point)
 - TSNE, UMAP (command: -m 'competitor')
+- COREL (not integrated, needs to be used manually at this point)
 
 For the competitors, the model is defined directly in the configuration file.
 
