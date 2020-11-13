@@ -12,7 +12,7 @@ pre-commit --version
 pre-commit install
 ```
 
-### torchph 
+### torchph (only needed for COREL)
 https://github.com/c-hofer/torchph
 
 Recommended to install it this way: (not with conda)
@@ -38,6 +38,7 @@ Please refer to scripts/config_library/sample.py, where sample configurations ca
 Currently the simulator supports:
 - TopoAE (command: -m 'topoae')
 - WCAE (command: -m 'WCAE')
+- COREL (not integrated, needs to be used manually at this point)
 - TSNE, UMAP (command: -m 'competitor')
 
 For the competitors, the model is defined directly in the configuration file.
