@@ -47,7 +47,7 @@ A configuration can be base to the simulator through for example:
 python main.py -m 'WCAE' -c 'sample.WCAE_sample_config'
 ```
 
-The number of parallel processes is adjuster through '-n xy'. Note that it defines how many models that are trained in parallel, it does not parallelize the model itself, this can be done in the configuration file if supported.
+The number of parallel processes can be adjusted by '-n xy'. Note that it defines how many models that are trained in parallel, it does not parallelize the model itself, this can be done in the configuration file if supported.
 
 ```bash
 python main.py -m 'WCAE' -c 'sample.WCAE_sample_config' -n 2
