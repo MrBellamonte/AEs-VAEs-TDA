@@ -33,20 +33,6 @@ def compute_wc(dataloader,  X_witnesses, config):
     return landmark_dist
 
 
-def compute_kNN(dataloader,  X_witnesses, config):
-    landmark_dist= torch.zeros(len(dataloader),config.batch_size, config.batch_size)
-
-    # save dataloader, landmarks distances for eval and train
-    for batch_i, (X_batch, label_batch) in enumerate(dataloader):
-        witness_complex = WitnessComplex(landmarks=X_batch, witnesses=X_witnesses,
-                                               n_jobs=config.n_jobs)
-        witness_complex.compute_metric_optimized(n_jobs=config.n_jobs)
-
-        landmarks_dist_batch = witness_complex.landmarks_dist
-        landmark_dist[batch_i,:, :] = landmarks_dist_batch
-    return landmark_dist
-
-
 def compute_wc_offline(config: ConfigWC):
     '''
     Utility to compute distances between landmarks "offline" and save dataloader/distance matrices for later training.
@@ -75,14 +61,14 @@ def compute_wc_offline(config: ConfigWC):
 
     # load batches
     dataloader_train = DataLoader(
-        train_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=False, shuffle=False
+        train_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=True, shuffle=False
     )
     dataloader_eval = DataLoader(
-        validation_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=False,
+        validation_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=True,
         shuffle=False
     )
     dataloader_test= DataLoader(
-        test_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=False,
+        test_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=True,
         shuffle=False
     )
 
@@ -150,22 +136,29 @@ def fetch_data(uid: str = None, path_global_register: str = None, path_to_data: 
         path_to_data = df_register[df_register['uid'] == uid].root_path.values[0]
     else:
         pass
-
     # fetch and return data.
     if (type == 'train') or  (type == 'training'):
         dl_name = NAME_DATALOADER_TRAIN
         dm_name = NAME_DISTANCES_TRAIN
+        dmx_name = NAME_DISTANCES_X_TRAIN
     elif (type == 'eval') or (type == 'validation'):
         dl_name = NAME_DATALOADER_EVAL
         dm_name = NAME_DISTANCES_EVAL
+        dmx_name = NAME_DISTANCES_X_EVAL
     else:
         dl_name = NAME_DATALOADER_TEST
         dm_name = NAME_DISTANCES_TEST
+        dmx_name = NAME_DISTANCES_X_TEST
 
     dataloader = torch.load(os.path.join(path_to_data,'{}.pt'.format(dl_name)))
     landmark_distances =  torch.load(os.path.join(path_to_data,'{}.pt'.format(dm_name)))
 
-    return dataloader, landmark_distances
+    if os.path.exists(os.path.join(path_to_data,'{}.pt'.format(dmx_name))):
+        data_distances =  torch.load(os.path.join(path_to_data,'{}.pt'.format(dmx_name)))
+    else:
+        data_distances = False
+
+    return dataloader, landmark_distances, data_distances
 
 
 def get_kNNmask(landmark_distances, num_batches, batch_size, k):

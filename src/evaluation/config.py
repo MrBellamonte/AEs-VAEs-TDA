@@ -3,15 +3,6 @@ from dataclasses import dataclass
 
 @dataclass
 class ConfigEval:
-    __slots__ = ['active',
-                 'evaluate_on',
-                 'save_eval_latent',
-                 'save_train_latent',
-                 'online_visualization',
-                 'k_min',
-                 'k_max',
-                 'k_step']
-
     active: bool
     evaluate_on: str
     save_eval_latent: bool
@@ -20,9 +11,12 @@ class ConfigEval:
     k_min: int
     k_max: int
     k_step: int
+    eval_manifold: bool = False
+    quant_eval: bool = True
 
     def __post_init__(self):
         self.check()
+
 
     def ks(self):
         return list(range(self.k_min, self.k_max + self.k_step, self.k_step))

@@ -5,6 +5,7 @@ modified version, tailored to our needs
 """
 import operator
 import os
+import random
 
 import pandas as pd
 import torch
@@ -14,6 +15,7 @@ from torch.utils.data import TensorDataset
 
 
 from scripts.ssc.TopoAE_ext.config_libraries.swissroll import swissroll_testing
+from src.datasets.datasets import Unity_Rotblock, Unity_RotCorgi, MNIST, MNIST_offline
 
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE, ConfigWCAE
 from src.models.WitnessComplexAE.wc_ae import WitnessComplexAutoencoder
@@ -42,7 +44,8 @@ def cfg():
 
 @ex.automain
 def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, experiment_root, device, num_threads, verbose):
-
+    if device == 'cpu' and num_threads is not None:
+        torch.set_num_threads(num_threads)
     try:
         os.makedirs(experiment_dir)
     except:
@@ -59,31 +62,37 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
         df = pd.DataFrame(columns=COLS_DF_RESULT)
         df.to_csv(os.path.join(experiment_root, 'eval_metrics_all.csv'))
 
-    # Set data sampling seed
-    if 'seed' in config.sampling_kwargs:
-        seed_sampling = config.sampling_kwargs['seed']
-    else:
-        seed_sampling = _seed
+
 
     # Sample data
     dataset = config.dataset
-    X_train, y_train = dataset.sample(**config.sampling_kwargs, seed=seed_sampling, train=True)
+    X_train, y_train = dataset.sample(**config.sampling_kwargs, train=True)
     dataset_train = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
 
-    X_test, y_test = dataset.sample(**config.sampling_kwargs, seed=seed_sampling, train=False)
+    X_test, y_test = dataset.sample(**config.sampling_kwargs, train=False)
     dataset_test = TensorDataset(torch.Tensor(X_test), torch.Tensor(y_test))
 
     torch.manual_seed(_seed)
-    if device == 'cpu' and num_threads is not None:
-        torch.set_num_threads(num_threads)
+
 
 
     # Initialize model
-    norm_X = torch.norm(dataset_train[:][:][0][:, None]-dataset_train[:][:][0], dim=2, p=2).max()
+    # save normalization constants somewhere
+    if isinstance(dataset,(MNIST,MNIST_offline)):
+        norm_X = 28**2/10 #-> dimension of images is 28x28, max delta per pixel is 1, since data is normalized.
+    elif isinstance(dataset,(Unity_Rotblock,Unity_RotCorgi)):
+        norm_X = 180
+    elif X_train.shape[0]>4096:
+        #todo fix somehow
+        inds = random.sample(range(X_train.shape[0]), 2048)
+        norm_X = torch.cdist(dataset_train[inds][:][0],dataset_train[inds][:][0]).max()
+    else:
+        norm_X = torch.cdist(dataset_train[:][:][0], dataset_train[:][:][0]).max()
+
     model_class = config.model_class
     autoencoder = model_class(**config.model_kwargs)
     model = WitnessComplexAutoencoder(autoencoder, lam_r=config.rec_loss_weight, lam_t=config.top_loss_weight,
-                                      toposig_kwargs=config.toposig_kwargs, norm_X = norm_X)
+                                      toposig_kwargs=config.toposig_kwargs, norm_X = norm_X, device=config.device)
     model.to(device)
 
     # Train and evaluate model
@@ -106,19 +115,24 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
 
 
 
-def simulator_TopoAE_ext(config_grid: ConfigGrid_WCAE):
+def simulator_TopoAE_ext(config):
+    id = config.creat_uuid()
+    try:
+        ex.observers[0] = SetID(id)
+        ex.observers[1] = FileStorageObserver(config.experiment_dir)
+    except:
+        ex.observers.append(SetID(id))
+        ex.observers.append(FileStorageObserver(config.experiment_dir))
 
-    ex.observers.append(FileStorageObserver(config_grid.experiment_dir))
-    ex.observers.append(SetID('myid'))
+    ex_dir_new = os.path.join(config.experiment_dir, id)
 
-    for config in config_grid.configs_from_grid():
-        id = config.creat_uuid()
-        ex_dir_new = os.path.join(config_grid.experiment_dir, id)
-        ex.observers[1] = SetID(id)
-        ex.run(config_updates={'config': config, 'experiment_dir' : ex_dir_new, 'experiment_root' : config_grid.experiment_dir,
-                               'seed' : config_grid.seed, 'device' : config_grid.device, 'num_threads' : config_grid.num_threads,
-                               'verbose' : config_grid.verbose
-                               })
+    ex.run(config_updates={'config'         : config, 'experiment_dir': ex_dir_new,
+                           'experiment_root': config.experiment_dir,
+                           'seed'           : config.seed, 'device': config.device,
+                           'num_threads'    : config.num_threads,
+                           'verbose'        : config.verbose
+                           })
+
 
 
 

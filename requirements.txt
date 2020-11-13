@@ -17,4 +17,7 @@ multicoretsne
 tqdm
 
 dataclasses
+dataclassy
 tadasets
+python-mnist
+dill

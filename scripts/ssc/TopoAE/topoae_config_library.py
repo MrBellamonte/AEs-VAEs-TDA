@@ -192,7 +192,11 @@ placeholder_config_topoae = ConfigTopoAE(
     )],
     uid = 'uid',
     method_args= None,
-    seed = 666666
+    seed = 666666,
+    experiment_dir = '',
+    device = 'cpu',
+    num_threads = 1,
+    verbose = True
 )
 
 

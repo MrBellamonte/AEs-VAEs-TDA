@@ -66,7 +66,7 @@ class Multi_Evaluation:
         results = self.get_multi_evals(data, latent, labels, K)
         return results
 
-    def get_multi_evals(self, data, latent, labels, ks):
+    def get_multi_evals(self, data, latent, labels, ks, ):
         '''
         Performs multiple evaluations for nonlinear dimensionality
         reduction.
@@ -84,10 +84,16 @@ class Multi_Evaluation:
             'mean_' + key: values.mean() for key, values in dep_measures.items()
         }
 
+        k_dep_measures = dict()
+        for i_k,k in enumerate(ks):
+            k_dep_measures.update({
+            'k{}_{}'.format(k,key): values[i_k] for key, values in dep_measures.items()})
+
+
         return {
             key: value for key, value in
             itertools.chain(indep_measures.items(), dep_measures.items(),
-                            mean_dep_measures.items())
+                            mean_dep_measures.items(),k_dep_measures.items())
         }
 
 

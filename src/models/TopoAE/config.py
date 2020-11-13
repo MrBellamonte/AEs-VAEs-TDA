@@ -34,7 +34,12 @@ class ConfigTopoAE:
                  'eval',
                  'uid',
                  'method_args',
-                 'seed']
+                 'seed',
+                 'experiment_dir',
+                 'device',
+                 'num_threads',
+                 'verbose',
+                 ]
     learning_rate: float
     batch_size: int
     n_epochs: int
@@ -50,6 +55,10 @@ class ConfigTopoAE:
     eval: ConfigEval
     uid: str
     seed: str
+    experiment_dir : str
+    device : str
+    num_threads : int
+    verbose : bool
     method_args: List
 
 
@@ -60,6 +69,9 @@ class ConfigTopoAE:
             pass
         else:
             self.method_args = dict()
+
+
+        add_default_to_dict(self.sampling_kwargs, 'seed', self.seed)
         add_default_to_dict(self.method_args, 'name', 'topoae')
         add_default_to_dict(self.method_args, 'LLE_pretrain', False)
 
@@ -191,7 +203,11 @@ class ConfigGrid_TopoAE:
 
         for v in itertools.product(*values):
 
-            ret_i = {'seed' : self.seed}
+            ret_i = {'seed'          : self.seed,
+                     'experiment_dir': self.experiment_dir,
+                     'device'        : self.device,
+                     'num_threads'   : self.num_threads,
+                     'verbose'       : self.verbose}
 
             for kc, kc_v in zip(key_chains, v):
                 tmp = ret_i

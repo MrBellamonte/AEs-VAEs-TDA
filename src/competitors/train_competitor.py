@@ -5,14 +5,16 @@ import os
 
 import numpy as np
 import pandas as pd
+from scipy.spatial.distance import squareform, pdist
+from sklearn.metrics import pairwise_distances
 from sklearn.model_selection import train_test_split
 
 from src.evaluation.measures_optimized import MeasureCalculator
 from src.utils.dict_utils import avg_array_in_dict, default
-from src.utils.plots import plot_2Dscatter
+from src.utils.plots import plot_2Dscatter, plot_distcomp_Z_manifold
 
 
-def eval(result,X,Z,Y,rundir,config,train = True):
+def eval(result,Z_manifold,X,Z,Y,rundir,config,train = True):
 
     if train:
         name_prefix = 'train'
@@ -31,6 +33,36 @@ def eval(result,X,Z,Y,rundir,config,train = True):
         )
         plot_2Dscatter(Z, Y, path_to_save=os.path.join(
             rundir, '{}_latent_visualization.pdf'.format(name_prefix)), title=None, show=False)
+
+    if config.eval.eval_manifold:
+        try:
+            Z_manifold[:, 0] = (Z_manifold[:, 0]-Z_manifold[:, 0].min())/(
+                    Z_manifold[:, 0].max()-Z_manifold[:, 0].min())
+            Z_manifold[:, 1] = (Z_manifold[:, 1]-Z_manifold[:, 1].min())/(
+                    Z_manifold[:, 1].max()-Z_manifold[:, 1].min())
+            Z[:, 0] = (Z[:, 0]-Z[:, 0].min())/(
+                    Z[:, 0].max()-Z[:, 0].min())
+            Z[:, 1] = (Z[:, 1]-Z[:, 1].min())/(
+                    Z[:, 1].max()-Z[:, 1].min())
+            # compute RMSE
+            pwd_Z = pairwise_distances(Z, Z, n_jobs=1)
+            pwd_Ztrue = pairwise_distances(Z_manifold, Z_manifold, n_jobs=1)
+
+
+            pairwise_distances_manifold = (pwd_Ztrue-pwd_Ztrue.min())/(
+                        pwd_Ztrue.max()-pwd_Ztrue.min())
+            pairwise_distances_Z = (pwd_Z-pwd_Z.min())/(pwd_Z.max()-pwd_Z.min())
+            rmse_manifold = (np.square(pairwise_distances_manifold-pairwise_distances_Z)).mean(axis=None)
+            result.update(dict(rmse_manifold_Z=rmse_manifold))
+            # save comparison fig
+            plot_distcomp_Z_manifold(Z_manifold=Z_manifold, Z_latent=Z,
+                                     pwd_manifold=pairwise_distances_manifold,
+                                     pwd_Z=pairwise_distances_Z, labels=Y,
+                                     path_to_save=rundir, name='manifold_Z_distcomp',
+                                     fontsize=24, show=False)
+        except AttributeError as err:
+            print(err)
+            print('Manifold not evaluated!')
 
     ks = list(range(config.eval.k_min, config.eval.k_max+config.eval.k_step, config.eval.k_step))
 
@@ -69,7 +101,7 @@ def train_comp(model, data_train, data_test, config, quiet,val_size, _seed, _rnd
         pass
 
     # include split for fair comparison....
-    X_train, X_val, y_train, y_val, = train_test_split(data_train[0], data_train[1], test_size = val_size, random_state = _seed)
+    X_train, y_train, Z_manifold_train = data_train[0], data_train[1], data_train[2]
     test_dataset = data_test
 
     if not quiet:
@@ -79,13 +111,14 @@ def train_comp(model, data_train, data_test, config, quiet,val_size, _seed, _rnd
     result = model.eval()
     if not quiet:
         print('Evaluate model on training data...')
-    result = eval(result, X_train, Z_train, y_train, rundir, config, train=True)
+    result = eval(result,Z_manifold_train, X_train, Z_train, y_train, rundir, config, train=True)
 
     if model.test_eval:
         if not quiet:
             print('Evaluate model on test data...')
+        Z_manifold_test = test_dataset[2]
         Z_test, y_test = model.get_latent_train(test_dataset[0],test_dataset[1])
-        result = eval(result, test_dataset[0], Z_test, y_test, rundir, config, train=False)
+        result = eval(result, Z_manifold_test, test_dataset[0], Z_test, y_test, rundir, config, train=False)
 
     return result
 

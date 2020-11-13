@@ -6,10 +6,11 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from dep.topo_ae_code.src_topoae.callbacks import Callback
+#from dep.topo_ae_code.src_topoae.callbacks import Callback
 from src.data_preprocessing.witness_complex_offline.wc_offline_utils import fetch_data, get_kNNmask
 from src.models.WitnessComplexAE.train_util import compute_wc_offline
 from src.topology.witness_complex import WitnessComplex
+from src.train_pipeline.callbacks.base import Callback
 
 
 def convert_to_base_type(value):
@@ -129,19 +130,34 @@ class LogDatasetLoss(Callback):
                                                                            name='{name} Dataset'.format(
                                                                                name=dataset_name))
             else:
-                self.data_loader, self.dist_X_all = fetch_data(uid=method_args['wc_offline']['uid'],
-                                                               path_global_register=
-                                                               method_args['wc_offline'][
-                                                                   'path_global_register'],
-                                                               type=dataset_name)
-                self.pair_mask_X_all = get_kNNmask(landmark_distances=self.dist_X_all,
+                if 'path_global_register' in method_args['wc_offline'] and 'uid' in method_args['wc_offline']:
+
+                    self.data_loader, self.land_dist_X_all, self.dist_X_all = fetch_data(uid=method_args['wc_offline']['uid'],
+                                                                   path_global_register=
+                                                                   method_args['wc_offline'][
+                                                                       'path_global_register'],
+                                                                   type=dataset_name)
+                else:
+                    self.data_loader, self.land_dist_X_all, self.dist_X_all = fetch_data(path_to_data=method_args['wc_offline'][
+                                                                       'path_to_data'],
+                                                                   type=dataset_name)
+                self.pair_mask_X_all = get_kNNmask(landmark_distances=self.land_dist_X_all,
                                                    num_batches=len(self.data_loader),
                                                    batch_size=batch_size, k=self.method_args['k'])
+            if self.dist_X_all is False:
+                if self.method_args['dist_x_land']:
+                    self.dist_X_all = self.land_dist_X_all
+                else:
+                    self.dist_X_all = torch.zeros(len(self.data_loader), batch_size, batch_size)
+                    for batch_i, (X_batch, label_batch) in enumerate(self.data_loader):
+                        self.dist_X_all[batch_i, :, :] = torch.cdist(X_batch, X_batch)
+            else:
+                pass
         else:
             self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
                                           drop_last=True, pin_memory=True, shuffle=False)
 
-    def _compute_average_losses(self, model):
+    def _compute_average_losses(self, model, epoch = None):
         losses = defaultdict(list)
         model.eval()
 
@@ -153,7 +169,20 @@ class LogDatasetLoss(Callback):
             if self.method_args['name'] == 'topoae_wc':
                 dist_X = self.dist_X_all[batch, :, :].to(self.device)
                 pair_mask_X = self.pair_mask_X_all[batch, :, :].to(self.device)
-                loss, loss_components = model(data, dist_X, pair_mask_X)
+
+
+                if self.method_args['lam_t_decay'] is None:
+
+                    loss, loss_components = model(data, dist_X, pair_mask_X)
+                else:
+                    key = max(
+                            [x for x in list(self.method_args['lam_t_decay'].keys()) if x <= epoch])
+
+                    loss, loss_components = model(data, dist_X, pair_mask_X,
+                                                           lam_t=self.method_args['lam_t_decay'][
+                                                               key])
+
+
                 loss = convert_to_base_type(loss)
             else:
                 loss, loss_components = model(data)
@@ -186,7 +215,7 @@ class LogDatasetLoss(Callback):
     def on_epoch_begin(self, model, epoch, **kwargs):
         """Store the loss on the dataset prior to training."""
         if epoch == 1:  # This should be prior to the first training step
-            losses = self._compute_average_losses(model)
+            losses = self._compute_average_losses(model, epoch)
             if self.print_progress:
                 print(self._progress_string(epoch-1, losses))
 
@@ -199,7 +228,7 @@ class LogDatasetLoss(Callback):
 
     def on_epoch_end(self, model, epoch, **kwargs):
         """Score evaluation metrics at end of epoch."""
-        losses = self._compute_average_losses(model)
+        losses = self._compute_average_losses(model, epoch = epoch)
         if self.print_progress:
             print(self._progress_string(epoch, losses))
         for key, value in losses.items():

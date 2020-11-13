@@ -32,7 +32,7 @@ class MeasureRegistrator():
 class MeasureCalculator():
     measures = MeasureRegistrator()
 
-    def __init__(self, X, Z, k_max):
+    def __init__(self, X, Z, k_max, Xhat=None):
         self.k_max = k_max
         self.pairwise_X = squareform(pdist(X))
         self.pairwise_Z = squareform(pdist(Z))
@@ -45,6 +45,25 @@ class MeasureCalculator():
         self.neighbours_Z, self.ranks_Z = \
             self._neighbours_and_ranks(self.pairwise_Z, k_max)
 
+        self.local_pairwise_X_refX = self.get_local_pairswise_distances(reference_space='X',
+                                                                        distance_space='X', k=k_max)
+        self.local_pairwise_X_refZ = self.get_local_pairswise_distances(reference_space='Z',
+                                                                        distance_space='X', k=k_max)
+        self.local_pairwise_Z_refX = self.get_local_pairswise_distances(reference_space='X',
+                                                                        distance_space='Z', k=k_max)
+        self.local_pairwise_Z_refZ = self.get_local_pairswise_distances(reference_space='Z',
+                                                                        distance_space='Z', k=k_max)
+
+        if Xhat is not None:
+            self.calc_Xhat = True
+            self.pairwise_Xhat = squareform(pdist(Xhat))
+            self.pairwise_Xhat_norm = self.pairwise_Xhat/self.pairwise_Xhat.max()
+            self.local_pairwise_Xhat_refZ = self.get_local_pairswise_distances(
+                reference_space='Xhat',
+                distance_space='Xhat',
+                k=k_max)
+        else:
+            self.calc_Xhat = False
 
     @staticmethod
     def _neighbours_and_ranks(distances, k):
@@ -74,6 +93,38 @@ class MeasureCalculator():
     def get_Z_neighbours_and_ranks(self, k):
         return self.neighbours_Z[:, :k], self.ranks_Z
 
+    def get_local_pairswise_distances(self, reference_space, distance_space, k, norm=True):
+
+        if reference_space == 'X':
+            cols = self.get_X_neighbours_and_ranks(k)[0].astype(int)
+        elif reference_space == 'Z':
+            cols = self.get_Z_neighbours_and_ranks(k)[0].astype(int)
+        elif reference_space == 'Xhat':
+            cols = self.get_Xhat_neighbours_and_ranks(k)[0].astype(int)
+        else:
+            ValueError
+
+        rows = np.ones(cols.shape)*np.array([range(cols.shape[0])]).T
+        rows = rows.astype(int)
+
+        if distance_space == 'X':
+            if norm:
+                return self.pairwise_X[rows, cols].copy()
+            else:
+                return self.pairwise_X_norm[rows, cols].copy()
+        elif distance_space == 'Z':
+            if norm:
+                return self.pairwise_Z[rows, cols].copy()
+            else:
+                return self.pairwise_Z_norm[rows, cols].copy()
+        elif distance_space == 'Xhat':
+            if norm:
+                return self.pairwise_Xhat[rows, cols].copy()
+            else:
+                return self.pairwise_Xhat_norm[rows, cols].copy()
+        else:
+            ValueError
+
     def compute_k_independent_measures(self):
         return {key: fn(self) for key, fn in
                 self.measures.get_k_independent_measures().items()}
@@ -102,6 +153,110 @@ class MeasureCalculator():
         sum_of_squared_differences = np.square(
             self.pairwise_X-self.pairwise_Z).sum()
         return np.sqrt(sum_of_squared_differences/n**2)
+
+    @measures.register(True)
+    def local_rmse_refX(self, k):
+        pairwise_X = self.local_pairwise_X_refX[:, :k]
+        pairwise_Z = self.local_pairwise_Z_refX[:, :k]
+        return np.sqrt((np.square(pairwise_X-pairwise_Z)).mean(axis=None))
+
+    @measures.register(True)
+    def local_rmse_refZ(self, k):
+        pairwise_X = self.local_pairwise_X_refZ[:, :k]
+        pairwise_Z = self.local_pairwise_Z_refZ[:, :k]
+        return np.sqrt((np.square(pairwise_X-pairwise_Z)).mean(axis=None))
+
+    @measures.register(True)
+    def Lipschitz_std_refX(self, k):
+        pairwise_X = self.local_pairwise_X_refX[:, :k]
+        pairwise_Z = self.local_pairwise_Z_refX[:, :k]
+
+        const_ = (pairwise_X/pairwise_Z).flatten()
+        const_ = const_/np.mean(const_)
+        return np.std(const_)
+
+    @measures.register(True)
+    def Lipschitz_std_refZ(self, k):
+        pairwise_X = self.local_pairwise_X_refZ[:, :k]
+        pairwise_Z = self.local_pairwise_Z_refZ[:, :k]
+
+        const_ = (pairwise_X/pairwise_Z).flatten()
+        const_ = const_/np.mean(const_)
+        return np.std(const_)
+
+    @measures.register(True)
+    def Lipschitz_max_refX(self, k):
+        pairwise_X = self.local_pairwise_X_refX[:, :k]
+        pairwise_Z = self.local_pairwise_Z_refX[:, :k]
+
+        const_ = (pairwise_X/pairwise_Z).flatten()
+        const_ = const_/np.mean(const_)
+        return max(const_)
+
+    @measures.register(True)
+    def Lipschitz_max_refZ(self, k):
+        pairwise_X = self.local_pairwise_X_refZ[:, :k]
+        pairwise_Z = self.local_pairwise_Z_refZ[:, :k]
+
+        const_ = (pairwise_X/pairwise_Z).flatten()
+        const_ = const_/np.mean(const_)
+        return max(const_)
+
+    @measures.register(True)
+    def Lipschitz_min_refX(self, k):
+        pairwise_X = self.local_pairwise_X_refX[:, :k]
+        pairwise_Z = self.local_pairwise_Z_refX[:, :k]
+
+        const_ = (pairwise_X/pairwise_Z).flatten()
+        const_ = const_/np.mean(const_)
+        return min(const_)
+
+    @measures.register(True)
+    def Lipschitz_min_refZ(self, k):
+        pairwise_X = self.local_pairwise_X_refZ[:, :k]
+        pairwise_Z = self.local_pairwise_Z_refZ[:, :k]
+
+        const_ = (pairwise_X/pairwise_Z).flatten()
+        const_ = const_/np.mean(const_)
+        return min(const_)
+
+
+    @measures.register(True)
+    def Lipschitz_std_Xhat(self, k):
+        if self.calc_Xhat:
+            pairwise_X = self.local_pairwise_Xhat_refZ[:, :k]
+            pairwise_Z = self.local_pairwise_Z_refZ[:, :k]
+
+            const_ = (pairwise_X/pairwise_Z).flatten()
+            const_ = const_/np.mean(const_)
+            return np.std(const_)
+        else:
+            return 0
+
+    @measures.register(True)
+    def Lipschitz_max_Xhat(self, k):
+        if self.calc_Xhat:
+            pairwise_X = self.local_pairwise_Xhat_refZ[:, :k]
+            pairwise_Z = self.local_pairwise_Z_refZ[:, :k]
+
+            const_ = (pairwise_X/pairwise_Z).flatten()
+            const_ = const_/np.mean(const_)
+            return max(const_)
+        else:
+            return 0
+
+    @measures.register(True)
+    def Lipschitz_max_Xhat(self, k):
+        if self.calc_Xhat:
+            pairwise_X = self.local_pairwise_Xhat_refZ[:, :k]
+            pairwise_Z = self.local_pairwise_Z_refZ[:, :k]
+
+            const_ = (pairwise_X/pairwise_Z).flatten()
+            const_ = const_/np.mean(const_)
+            return min(const_)
+        else:
+            return 0
+
 
     @staticmethod
     def _trustworthiness(X_neighbourhood, X_ranks, Z_neighbourhood,
@@ -246,85 +401,6 @@ class MeasureCalculator():
         # Normalisation constant
         C = n*sum([abs(2*j-n-1)/j for j in range(1, k+1)])
         return mrre_ZX/C, mrre_XZ/C
-
-    # Get Metric K-min and K-max
-    # def Lipschitz_old(self, k=5):
-    #     X_neighbourhood, _ = self.get_X_neighbours_and_ranks(k)
-    #     Z_neighbourhood, _ = self.get_Z_neighbours_and_ranks(k)
-    #
-    #     disX_kX = self.pairwise_X[:, X_neighbourhood][range(self.pairwise_X.shape[0]),
-    #            range(self.pairwise_X.shape[0]), :]
-    #     disZ_kX = self.pairwise_Z[:, X_neighbourhood][range(self.pairwise_Z.shape[0]),
-    #            range(self.pairwise_X.shape[0]), :]
-    #
-    #     disX_kZ = self.pairwise_X[:, Z_neighbourhood][range(self.pairwise_X.shape[0]),
-    #            range(self.pairwise_X.shape[0]), :]
-    #     disZ_kZ = self.pairwise_Z[:, Z_neighbourhood][range(self.pairwise_Z.shape[0]),
-    #            range(self.pairwise_X.shape[0]), :]
-    #
-    #     disX_kX_norm = self.pairwise_X_norm[:, X_neighbourhood][range(self.pairwise_X.shape[0]),
-    #               range(self.pairwise_X.shape[0]), :]
-    #     disZ_kX_norm = self.pairwise_Z_norm[:, X_neighbourhood][range(self.pairwise_Z.shape[0]),
-    #               range(self.pairwise_X.shape[0]), :]
-    #
-    #     disX_kZ_norm = self.pairwise_X_norm[:, Z_neighbourhood][range(self.pairwise_X.shape[0]),
-    #               range(self.pairwise_X.shape[0]), :]
-    #     disZ_kZ_norm = self.pairwise_Z_norm[:, Z_neighbourhood][range(self.pairwise_Z.shape[0]),
-    #               range(self.pairwise_X.shape[0]), :]
-    #
-    #
-    #     K_kX = np.maximum((disX_kX/disZ_kX), (disZ_kX/disX_kX))
-    #     K_kZ = np.maximum((disX_kZ/disZ_kZ), (disZ_kZ/disX_kZ))
-    #     K_kX_norm = np.maximum((disX_kX_norm/disZ_kX_norm), (disZ_kX_norm/disX_kX_norm))
-    #     K_kZ_norm = np.maximum((disX_kZ_norm/disZ_kZ_norm), (disZ_kZ_norm/disX_kZ_norm))
-    #
-    #
-    #     # calculation of local-rmse
-    #     nk = disX_kX.shape[0]*disX_kX.shape[1]
-    #     llrmse_X = np.sqrt(np.square(disX_kX-disZ_kX).sum()/nk)
-    #     llrmse_Z = np.sqrt(np.square(disX_kZ-disZ_kZ).sum()/nk)
-    #     llrmse_X_norm = np.sqrt(np.square(disX_kX_norm-disZ_kX_norm).sum()/nk)
-    #     llrmse_Z_norm = np.sqrt(np.square(disX_kZ_norm-disZ_kZ_norm).sum()/nk)
-    #
-    #
-    #
-    #     return K_kX, K_kZ, K_kX_norm , K_kZ_norm, llrmse_X, llrmse_Z, llrmse_X_norm, llrmse_Z_norm
-
-    def Lipschitz_prep(self, k):
-        X_neighbourhood, _ = self.get_X_neighbours_and_ranks(k)
-        Z_neighbourhood, _ = self.get_Z_neighbours_and_ranks(k)
-
-        disX_kX_norm = self.pairwise_X_norm[:, X_neighbourhood][range(self.pairwise_X.shape[0]),
-                  range(self.pairwise_X.shape[0]), :]
-        disZ_kX_norm = self.pairwise_Z_norm[:, X_neighbourhood][range(self.pairwise_Z.shape[0]),
-                  range(self.pairwise_X.shape[0]), :]
-
-        return disX_kX_norm, disZ_kX_norm
-
-
-    def calc_K(self,k):
-        disX_kX_norm, disZ_kX_norm = self.Lipschitz_prep(k)
-        return np.maximum((disX_kX_norm/disZ_kX_norm), (disZ_kX_norm/disX_kX_norm))
-
-    def llrmse(self,k):
-        disX_kX_norm, disZ_kX_norm = self.Lipschitz_prep(k)
-        nk = disX_kX_norm.shape[0]*disX_kX_norm.shape[1]
-        return np.sqrt(np.square(disX_kX_norm-disZ_kX_norm).sum()/nk)
-
-    #todo make more efficient! currently calculate the same thing 4 times per k....
-    @measures.register(True)
-    def K_min(self, k):
-        return self.calc_K(k).min()
-    @measures.register(True)
-    def K_max(self, k):
-        return self.calc_K(k).max()
-    @measures.register(True)
-    def K_avg(self, k):
-        return self.calc_K(k).mean()
-    @measures.register(True)
-    def llrme(self, k):
-        return self.llrmse(k)
-
 
     @measures.register(False)
     def density_global(self, sigma=0.1):

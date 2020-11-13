@@ -1,3 +1,4 @@
+import itertools
 import random
 
 import numpy as np
@@ -162,3 +163,123 @@ TopoAE_finalists = [ConfigGrid_TopoAE(
 ]
 
 
+
+
+swissroll_multiseed_final_final___ = [ConfigGrid_TopoAE(
+    learning_rate=[1/10,1/100,1/1000],
+    batch_size=random.sample([int(i) for i in [64,128,256,512]], 4),
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[int(i) for i in np.logspace(9, 13, num=5, base=2.0)],
+    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=True,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=15,
+        k_max=45,
+        k_step=15,
+    )],
+    uid = [''],
+    method_args = [None],
+    experiment_dir='/cluster/scratch/schsimo/output/TopoAE_SwissRoll_final',
+    seed = seed,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False
+) for seed in [36, 3851, 2570, 4304, 1935, 7954, 5095, 5310, 1577, 3288]]
+
+
+swissroll_multiseed_final_final = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in [ConfigGrid_TopoAE(
+    learning_rate=[1/10,1/100,1/1000],
+    batch_size=random.sample([int(i) for i in [64,128,256,512]], 4),
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[int(i) for i in np.logspace(9, 13, num=5, base=2.0)],
+    toposig_kwargs = [dict(match_edges = 'symmetric')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=True,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=15,
+        k_max=45,
+        k_step=15,
+    )],
+    uid = [''],
+    method_args = [None],
+    experiment_dir='/cluster/scratch/schsimo/output/TopoAE_SwissRoll_final',
+    seed = seed,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False
+) for seed in [36, 3851, 2570, 4304, 1935, 7954, 5095, 5310, 1577, 3288]]]))
+
+
+swissroll_multiseed_vanillaAE = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in [ConfigGrid_TopoAE(
+    learning_rate=[1/10,1/100,1/1000],
+    batch_size=random.sample([int(i) for i in [64,128,256,512]], 4),
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[0],
+    toposig_kwargs = [dict(match_edges = 'no')],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=True,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=15,
+        k_max=45,
+        k_step=15,
+    )],
+    uid = [''],
+    method_args = [None],
+    experiment_dir='/cluster/scratch/schsimo/output/vanillaAE_SwissRoll_FINAL',
+    seed = seed,
+    device = 'cpu',
+    num_threads=1,
+    verbose = False
+) for seed in [36, 3851, 2570, 4304, 1935, 7954, 5095, 5310, 1577, 3288]]]))

@@ -63,13 +63,25 @@ def train_competitor(_run, _seed, _rnd, config: Config_Competitors, experiment_d
 
     # Sample data
     dataset = config.dataset
-    X_train, y_train = dataset.sample(**config.sampling_kwargs, seed=seed_sampling, train=True)
+    if config.eval.eval_manifold:
+        Z_manifold, X_train, y_train = dataset.sample_manifold(
+                **config.sampling_kwargs, seed=seed_sampling, train=True)
+        Z_manifold_t, X_test, y_test = dataset.sample_manifold(
+                **config.sampling_kwargs, seed=seed_sampling, train=False)
+    else:
+        X_train, y_train = dataset.sample(
+                **config.sampling_kwargs, seed=seed_sampling, train=True)
+        X_test, y_test = dataset.sample(
+                **config.sampling_kwargs, seed=seed_sampling, train=False)
 
-    X_test, y_test = dataset.sample(**config.sampling_kwargs, seed=seed_sampling, train=False)
+        Z_manifold = 0
+        Z_manifold_t = 0
+
+
 
     model = config.model_class(**config.model_kwargs)
     # Train and evaluate model
-    result = train_comp(model = model, data_train = (X_train,y_train), data_test = (X_test,y_test), config = config, quiet = operator.not_(verbose), val_size = 0.2, _seed = _seed,
+    result = train_comp(model = model, data_train = (X_train,y_train,Z_manifold), data_test = (X_test,y_test,Z_manifold_t), config = config, quiet = operator.not_(verbose), val_size = 0.2, _seed = _seed,
           _rnd = _rnd, _run = _run, rundir = experiment_dir)
 
 

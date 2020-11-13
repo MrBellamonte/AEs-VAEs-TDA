@@ -12,7 +12,7 @@ from src.models.autoencoder.base import AutoencoderModel
 class WitnessComplexAutoencoder(AutoencoderModel):
     """Topologically regularized autoencoder."""
 
-    def __init__(self,autoencoder,lam_t=1.,lam_r=1., toposig_kwargs=dict(k=1,normalize = True,match_edges='symmetric',mu_push=1), norm_X=1):
+    def __init__(self,autoencoder,lam_t=1.,lam_r=1., toposig_kwargs=dict(k=1,normalize = True,match_edges='symmetric',mu_push=1), norm_X=1, device = 'cpu'):
         """Topologically Regularized Autoencoder.
 
         Args:
@@ -26,23 +26,22 @@ class WitnessComplexAutoencoder(AutoencoderModel):
         toposig_kwargs = toposig_kwargs if toposig_kwargs else {}
         self.k = toposig_kwargs['k']
         self.normalize = toposig_kwargs['normalize']
+
+        toposig_kwargs['device'] = device
+        print('DEVICE DICT:{}'.format(toposig_kwargs['device']))
         self.topo_sig = TopologicalSignatureDistanceWC(**toposig_kwargs)
         self.autoencoder = autoencoder
         self.norm_X = norm_X
+        self.device = device
 
         if self.normalize:
             self.latent_norm = torch.nn.Parameter(data=torch.ones(1),
-                                              requires_grad=True)
+                                              requires_grad=True).to(self.device)
         else:
-            self.latent_norm = 1
+            self.latent_norm = torch.from_numpy(np.array((1))).to(self.device)
 
-    @staticmethod
-    def _compute_distance_matrix(x, p=2):
-        x_flat = x.view(x.size(0), -1)
-        distances = torch.norm(x_flat[:, None] - x_flat, dim=2, p=p)
-        return distances
 
-    def forward(self, x, dist_X, pair_mask_X, labels = None):
+    def forward(self, x, dist_X, pair_mask_X,lam_t =None, labels = None):
         """Compute the loss of the Topologically regularized autoencoder.
 
         Args:
@@ -52,8 +51,6 @@ class WitnessComplexAutoencoder(AutoencoderModel):
             Tuple of final_loss, (...loss components...)
 
         """
-
-        dist_X = torch.norm(x[:, None]-x, dim=2, p=2)
 
         if self.normalize:
             dist_X = dist_X / self.norm_X
@@ -69,7 +66,11 @@ class WitnessComplexAutoencoder(AutoencoderModel):
         # normalize topo_error according to batch_size
         batch_size = x.size(0)
         topo_error = topo_error / (float(batch_size)*self.k)
-        loss = self.lam_r * ae_loss + self.lam_t * topo_error
+        if lam_t is None:
+            loss = self.lam_r * ae_loss + self.lam_t * topo_error
+        else:
+            loss = self.lam_r*ae_loss+lam_t*topo_error
+
         loss_components = {
             'loss.autoencoder': ae_loss,
             'loss.topo_error': topo_error
@@ -91,7 +92,7 @@ class WitnessComplexAutoencoder(AutoencoderModel):
 class TopologicalSignatureDistanceWC(nn.Module):
     """Topological signature."""
 
-    def __init__(self, k, match_edges, mu_push,normalize = True):
+    def __init__(self, k, match_edges, mu_push,device = 'cpu',normalize = True):
         """Topological signature computation.
 
         Args:
@@ -103,14 +104,16 @@ class TopologicalSignatureDistanceWC(nn.Module):
         self.k = k
         self.match_edges = match_edges
         self.mu_push = mu_push
+        self.device = device
 
 
     def _get_pairings_dist_Z(self, latent,latent_norm):
-        latent_distances = torch.norm(latent[:, None]-latent, dim=2, p=2)
+        latent_distances = torch.norm(latent[:, None]-latent, dim=2, p=2) #torch.cdist would be faster, but is numerically unstable for backpropagation
         latent_distances = latent_distances/latent_norm
+        latent_distances = latent_distances.to(self.device)
         sorted, indices = torch.sort(latent_distances)
-
-        kNN_mask = torch.zeros((latent.size(0), latent.size(0),)).scatter(1, indices[:, 1:(self.k+1)], 1)
+        kNN_mask = torch.zeros((latent.size(0), latent.size(0),)).to(self.device)
+        kNN_mask = kNN_mask.scatter(1, indices[:, 1:(self.k+1)], 1)
         return latent_distances, kNN_mask
 
     def _count_matching_pairs(self, mask_X, mask_Z):
@@ -288,8 +291,7 @@ class TopologicalSignatureDistanceWC(nn.Module):
                     plt.plot(lanten_np[pair, 0], lanten_np[pair, 1], color='blue',zorder = 3)
                 sns.scatterplot('x', 'y', hue='label', data=data, palette=sns.color_palette('Spectral', len(np.unique(labels))), zorder = 10, legend = None)
                 sns.despine(left=True, bottom=True)
-                plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False,
-                                left=False)
+                plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False,left=False)
 
                 plt.show()
                 plt.close()

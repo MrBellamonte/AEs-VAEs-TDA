@@ -4,9 +4,6 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 # from torchvision.utils import save_image
 
-from dep.topo_ae_code.src_topoae.evaluation.utils import get_space
-from dep.topo_ae_code.src_topoae.visualization import visualize_latents
-
 # Hush the linter, child callbacks will always have different parameters than
 # the overwritten method of the parent class. Further kwargs will mostly be an
 # unused parameter due to the way arguments are passed.

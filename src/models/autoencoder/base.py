@@ -8,7 +8,6 @@ import torch.nn as nn
 class AutoencoderModel(nn.Module, metaclass=abc.ABCMeta):
     """Abstract base class for autoencoders."""
 
-    # pylint: disable=W0221
     @abc.abstractmethod
     def forward(self, x) -> Tuple[float, Dict[str, float]]:
         """Compute loss for model.

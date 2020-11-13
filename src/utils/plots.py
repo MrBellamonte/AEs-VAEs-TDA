@@ -1,4 +1,8 @@
+import os
 from collections import defaultdict
+import random
+
+import pandas as pd
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -10,15 +14,13 @@ from matplotlib.ticker import MaxNLocator
 
 
 def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False):
-
-
     if len(np.unique(labels)) > 8:
         palette = "Spectral"
     else:
         palette  = "Dark2"
 
 
-    sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=sns.color_palette(palette, len(np.unique(labels))), marker=".",
+    sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=plt.cm.viridis, marker=".",
                     size=5, edgecolor="none", legend=False)
     sns.despine(left=True, bottom=True)
     plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False, left=False)
@@ -120,4 +122,61 @@ def plot_simplicial_complex_2D(simp_complex: list, points: np.ndarray, scale: fl
     plt.scatter(points[:, 0], points[:, 1], color='indigo', zorder=10)
 
 
+
+def plot_distcomp_Z_manifold(Z_manifold, Z_latent, pwd_manifold, pwd_Z, labels, path_to_save = None,name = None,fontsize=24, show = False):
+    Z_manifold[:, 0] = (Z_manifold[:,0]-Z_manifold[:,0].min())/(Z_manifold[:,0].max()-Z_manifold[:,0].min())
+    Z_manifold[:, 1] = (Z_manifold[:,1]-Z_manifold[:,1].min())/(Z_manifold[:,1].max()-Z_manifold[:,1].min())
+    Z_latent[:, 0] = (Z_latent[:,0]-Z_latent[:,0].min())/(Z_latent[:,0].max()-Z_latent[:,0].min())
+    Z_latent[:, 1] = (Z_latent[:,1]-Z_latent[:,1].min())/(Z_latent[:,1].max()-Z_latent[:,1].min())
+
+    latents = pd.DataFrame({'x': Z_latent[:, 0], 'y': Z_latent[:, 1],'label': labels})
+
+    pwd_Z = pwd_Z
+    pwd_Ztrue = pwd_manifold
+
+    pwd_Ztrue = (pwd_Ztrue-pwd_Ztrue.min())/(pwd_Ztrue.max()-pwd_Ztrue.min())
+    pwd_Z = (pwd_Z-pwd_Z.min())/(pwd_Z.max()-pwd_Z.min())
+
+    #flatten
+    pwd_Ztrue = pwd_Ztrue.flatten()
+    pwd_Z = pwd_Z.flatten()
+
+    if 2**12 <=len(pwd_Z):
+        ind = random.sample(range(len(pwd_Z)), 2**12)
+        pwd_Ztrue = pwd_Ztrue[ind]
+        pwd_Z = pwd_Z[ind]
+
+    distances = pd.DataFrame({'Distances on $\mathcal{M}$': pwd_Ztrue, 'Distances in $\mathcal{Z}$': pwd_Z})
+
+    fig, ax = plt.subplots(2,1, figsize=(10, 20))
+
+    sns.scatterplot(x = 'Distances on $\mathcal{M}$', y = 'Distances in $\mathcal{Z}$',data = distances, ax = ax[1], edgecolor = None,alpha=0.3)
+    ax[1].xaxis.label.set_size(max(fontsize-2,12))
+    ax[1].yaxis.label.set_size(max(fontsize-2,12))
+    ax[1].set_title('Comparison of pairwise distances',fontsize=fontsize,pad=20)
+
+    lims = [max(0, 0), min(1, 1)]
+    ax[1].plot(lims, lims, '--',linewidth=5, color = 'black')
+
+    sns.scatterplot(x = 'x', y = 'y',hue='label', data = latents,ax = ax[0],palette=plt.cm.viridis, marker=".", s=80,
+                            edgecolor="none", legend=False)
+    ax[0].set_title('Latent space ($\mathcal{Z}$)',fontsize=fontsize,pad=20)
+    ax[0].set(xlabel="", ylabel="")
+    ax[0].set_yticks([])
+    ax[0].set_xticks([])
+    fig.tight_layout(pad=5)
+    if path_to_save != None and name != None:
+        print('save plot')
+        fig.savefig(os.path.join(path_to_save,'{}.pdf'.format(name)),dpi = 100)
+    if show:
+        plt.show()
+    plt.close()
+
+
+def visualize_latents(latents, labels, save_file=None):
+    plt.scatter(latents[:, 0], latents[:, 1], c=labels,
+                cmap=plt.cm.Spectral, s=2., alpha=0.5)
+    if save_file:
+        plt.savefig(save_file, dpi=200)
+        plt.close()
 

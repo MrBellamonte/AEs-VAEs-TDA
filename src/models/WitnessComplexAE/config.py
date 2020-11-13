@@ -8,13 +8,13 @@ import torch
 
 from src.datasets.datasets import DataSet
 from src.evaluation.config import ConfigEval
-from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
+from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae, ConvAE_MNIST
 from src.models.loss_collection import Loss
 from src.utils.config_utils import (
     get_keychain_value, fraction_to_string, get_kwargs,
     dictionary_to_string, add_default_to_dict)
 
-admissible_model_classes_TopoAE = [Autoencoder_MLP_topoae.__name__]
+admissible_model_classes_TopoAE = [Autoencoder_MLP_topoae.__name__, ConvAE_MNIST.__name__]
 
 
 @dataclass
@@ -37,7 +37,12 @@ class ConfigWCAE:
                  'sampling_kwargs',
                  'eval',
                  'uid',
-                 'seed']
+                 'seed',
+                 'experiment_dir',
+                 'device',
+                 'num_threads',
+                 'verbose',
+                 ]
     learning_rate: float
     batch_size: int
     n_epochs: int
@@ -57,6 +62,10 @@ class ConfigWCAE:
     eval: ConfigEval
     uid: str
     seed: int
+    experiment_dir : str
+    device : str
+    num_threads : int
+    verbose : bool
 
 
     def __post_init__(self):
@@ -66,11 +75,15 @@ class ConfigWCAE:
             self.method_args = dict()
         self.method_args.update(dict(name = 'topoae_wc',r_max = self.r_max,k = self.k, match_edges = self.match_edges))
 
+        add_default_to_dict(self.sampling_kwargs, 'seed', self.seed)
         add_default_to_dict(self.method_args, 'n_jobs', 1)
         add_default_to_dict(self.method_args, 'verification', False)
-        add_default_to_dict(self.method_args, 'online_wc', False)
+        add_default_to_dict(self.method_args, 'wc_offline', None)
         add_default_to_dict(self.method_args, 'normalize', True)
         add_default_to_dict(self.method_args, 'mu_push', 1.05)
+        add_default_to_dict(self.method_args, 'dist_x_land', False)
+        add_default_to_dict(self.method_args, 'lam_t_bi', None)
+        add_default_to_dict(self.method_args, 'lam_t_decay', None)
 
         self.toposig_kwargs = dict(k=self.k, match_edges=self.match_edges, normalize = self.method_args['normalize'],mu_push = self.method_args['mu_push'])
 
@@ -82,9 +95,14 @@ class ConfigWCAE:
 
             unique_id = str(uuid.uuid4())[:8]
 
+            if 'size_hidden_layers' in self.model_kwargs:
+                hidden_layers = '-'.join(str(x) for x in self.model_kwargs['size_hidden_layers'])
+            else:
+                hidden_layers = 'default'
+
             uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}-me{match_edges}{mu_push}-k{k}-rmax{r_max}-seed{seed}'.format(
                 model=self.model_class.__name__,
-                hidden_layers='-'.join(str(x) for x in self.model_kwargs['size_hidden_layers']),
+                hidden_layers=hidden_layers,
                 learning_rate=fraction_to_string(self.learning_rate),
                 batch_size=self.batch_size,
                 n_epochs=self.n_epochs,
@@ -97,10 +115,15 @@ class ConfigWCAE:
                 seed = str(self.seed))
 
 
+            if 'root_path' in self.sampling_kwargs:
+                sampling_kwargs2 = self.sampling_kwargs.copy()
+                sampling_kwargs2.pop('root_path')
+            else:
+                sampling_kwargs2 = self.sampling_kwargs.copy()
             uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
                 dataset=self.dataset.__class__.__name__,
                 object_kwargs=get_kwargs(self.dataset),
-                sampling_kwargs=dictionary_to_string(self.sampling_kwargs),
+                sampling_kwargs=dictionary_to_string(sampling_kwargs2),
 
             )
 
@@ -127,7 +150,7 @@ class ConfigWCAE:
         assert 0 < self.batch_size
         assert 0 < self.n_epochs
 
-        assert self.model_class.__name__ in admissible_model_classes_TopoAE
+        #assert self.model_class.__name__ in admissible_model_classes_TopoAE
         s = inspect.getfullargspec(self.model_class.__init__)
         for a in s.kwonlyargs:
             assert a in self.model_kwargs
@@ -139,13 +162,8 @@ class ConfigWCAE:
 
         return dict(
             uid = self.uid,
-            learning_rate = self.learning_rate,
+            seed=self.seed,
             batch_size = self.batch_size,
-            n_epochs = self.n_epochs,
-            weight_decay = self.weight_decay,
-            early_stopping = self.early_stopping,
-            rec_loss_weight = self.rec_loss_weight,
-            top_loss_weight = self.top_loss_weight,
         )
 
 
@@ -173,8 +191,7 @@ class ConfigGrid_WCAE:
                  'num_threads',
                  'verbose',
                  'toposig_kwargs',
-                 'method_args'
-                 ]
+                 'method_args']
 
     learning_rate: List[float]
     batch_size: List[int]
@@ -214,7 +231,11 @@ class ConfigGrid_WCAE:
         ret = []
 
         for v in itertools.product(*values):
-            ret_i = {'seed': self.seed}
+            ret_i = {'seed': self.seed,
+                     'experiment_dir': self.experiment_dir,
+                     'device': self.device,
+                     'num_threads': self.num_threads,
+                     'verbose': self.verbose}
 
             for kc, kc_v in zip(key_chains, v):
                 tmp = ret_i

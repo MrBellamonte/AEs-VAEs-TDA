@@ -85,17 +85,37 @@ class TrainingLoop():
                                                                  name='Training Dataset',
                                                                  verfication=True)
             else:
-                train_loader, dist_X_all = fetch_data(uid=self.method_args['wc_offline']['uid'],
-                                                               path_global_register=
-                                                               self.method_args['wc_offline'][
-                                                                   'path_global_register'],
-                                                               type='train')
-                pair_mask_X_all = get_kNNmask(landmark_distances=dist_X_all,
+
+                if 'path_global_register' in self.method_args['wc_offline'] and 'uid' in self.method_args['wc_offline']:
+
+                    train_loader, land_dist_X_all, dist_X_all = fetch_data(uid=self.method_args['wc_offline']['uid'],
+                                                                   path_global_register=
+                                                                   self.method_args['wc_offline'][
+                                                                       'path_global_register'],
+                                                                   type='train')
+                else:
+                    train_loader, land_dist_X_all, dist_X_all = fetch_data(path_to_data=self.method_args['wc_offline'][
+                                                                       'path_to_data'],
+                                                                   type='train')
+                pair_mask_X_all = get_kNNmask(landmark_distances=land_dist_X_all,
                                                    num_batches=len(train_loader),
                                                    batch_size=batch_size, k=self.method_args['k'])
+            # compute pairwise distances in data space
+            if dist_X_all is False:
+                if self.method_args['dist_x_land']:
+                    dist_X_all = land_dist_X_all
+                else:
+                    dist_X_all = torch.zeros(len(train_loader), batch_size, batch_size)
+                    for batch_i, (X_batch, label_batch) in enumerate(train_loader):
+                        dist_X_all[batch_i, :, :] = torch.cdist(X_batch, X_batch)
+            else:
+                pass
+
         else:
             train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
                                       pin_memory=True, drop_last=False)
+
+
         n_batches = len(train_loader)
 
         optimizer = torch.optim.Adam(
@@ -118,11 +138,33 @@ class TrainingLoop():
                     x = img.to(self.device)
                     dist_X = dist_X_all[batch, :, :].to(self.device)
                     pair_mask_X = pair_mask_X_all[batch, :, :].to(self.device)
+
                     if (batch == 1) and (epoch in [5,10,15,20,25,30,35,40]):
                         l = label
                     else:
                         l = None
-                    loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
+
+                    if self.method_args['lam_t_bi'] is None:
+                        if self.method_args['lam_t_decay'] is None:
+
+                            loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
+                        else:
+                            key = max([x for x in list(self.method_args['lam_t_decay'].keys()) if x <= epoch])
+
+                            loss, loss_components = self.model(x, dist_X, pair_mask_X ,lam_t = self.method_args['lam_t_decay'][key], labels=l)
+                    else:
+                        if batch in self.method_args['lam_t_bi']:
+                            if self.method_args['lam_t_decay'] is None:
+                                loss, loss_components = self.model(x, dist_X, pair_mask_X, labels=l)
+                            else:
+                                key = max(
+                                    [x for x in list(self.method_args['lam_t_decay'].keys()) if
+                                     x <= epoch])
+                                loss, loss_components = self.model(x, dist_X, pair_mask_X, lam_t=
+                                self.method_args['lam_t_decay'][key], labels=l)
+                        else:
+                            loss, loss_components = self.model(x, dist_X, pair_mask_X,lam_t = 0, labels=l)
+
                 else:
                     x = img.to(self.device)
                     loss, loss_components = self.model(x.float())

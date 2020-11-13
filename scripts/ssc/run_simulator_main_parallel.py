@@ -1,12 +1,15 @@
 import argparse
 
 import importlib
+import random
 
 from joblib import Parallel, delayed
 
 from src.competitors.train_engine import simulator_competitor
+from src.models.TopoAE.config import ConfigGrid_TopoAE
 
 from src.models.TopoAE.train_engine import simulator_TopoAE
+from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
 
 
@@ -33,6 +36,11 @@ if __name__ == "__main__":
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
 
+        if isinstance(configs, ConfigGrid_TopoAE):
+            configs = configs.configs_from_grid()
+        else:
+            configs = configs
+
         Parallel(n_jobs=args.n_jobs)(delayed(simulator_TopoAE)(config) for config in configs)
     elif args.model == 'topoae_ext':
         conifg_srt = 'scripts.ssc.TopoAE_ext.config_libraries.'+args.configs
@@ -40,6 +48,11 @@ if __name__ == "__main__":
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
 
+        if isinstance(configs, ConfigGrid_WCAE):
+            configs = configs.configs_from_grid()
+        else:
+            configs = configs
+        random.shuffle(configs)
         Parallel(n_jobs=args.n_jobs)(delayed(simulator_TopoAE_ext)(config) for config in configs)
 
     elif args.model == 'competitor':

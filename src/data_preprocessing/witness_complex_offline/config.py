@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Type, List
 
 from src.datasets.datasets import DataSet, SwissRoll
-from src.utils.config_utils import get_keychain_value
+from src.utils.config_utils import get_keychain_value, fraction_to_string
 
 
 @dataclass
@@ -34,10 +34,17 @@ class ConfigWC:
     verbose: bool
 
     def __post_init__(self):
-        self.uid = '{dataset}-bs{batch_size}-seed{seed}-{uid}'.format(
+
+        if'noise' in self.sampling_kwargs:
+            noise_ = fraction_to_string(self.sampling_kwargs['noise'])
+        else:
+            noise_ = None
+
+        self.uid = '{dataset}-bs{batch_size}-seed{seed}-noise{noise}-{uid}'.format(
             dataset=self.dataset.__class__.__name__,
             batch_size = self.batch_size,
             seed=self.seed,
+            noise=noise_,
             uid=str(uuid.uuid4())[:8]
         )
         self.check()
@@ -82,15 +89,15 @@ class ConfigWC_Grid:
     wc_kwargs: List[dict]
     n_jobs: List[int]
     seed: List[str]
-    global_register: List[str]
-    root_path: List[str]
-    verbose: List[bool]
+    global_register: str
+    root_path: str
+    verbose: bool
 
     def configs_from_grid(self):
 
         grid = dict()
 
-        for slot in (set(self.__slots__)):
+        for slot in (set(self.__slots__)-set(['root_path','global_register', 'verbose'])):
             grid.update({slot: getattr(self, slot)})
         tmp = list(get_keychain_value(grid))
         values = [x[1] for x in tmp]
@@ -100,7 +107,7 @@ class ConfigWC_Grid:
 
         for v in itertools.product(*values):
 
-            ret_i = dict()
+            ret_i = dict(root_path = self.root_path, global_register = self.global_register, verbose = self.verbose)
             for kc, kc_v in zip(key_chains, v):
                 tmp = ret_i
                 for k in kc[:-1]:
