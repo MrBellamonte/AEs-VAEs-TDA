@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
         for config in configs:
             simulator_TopoAE_ext(config)
-        print('MAX USED GPU MEMORY: {}'.format(torch.cuda.max_memory_allocated()/10**6))
+
     elif args.model == 'competitor':
         conifg_srt = 'scripts.ssc.Competitors.config_libraries.'+args.configs
         mod_name, config_name = conifg_srt.rsplit('.', 1)

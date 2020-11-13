@@ -33,20 +33,6 @@ def compute_wc(dataloader,  X_witnesses, config):
     return landmark_dist
 
 
-def compute_kNN(dataloader,  X_witnesses, config):
-    landmark_dist= torch.zeros(len(dataloader),config.batch_size, config.batch_size)
-
-    # save dataloader, landmarks distances for eval and train
-    for batch_i, (X_batch, label_batch) in enumerate(dataloader):
-        witness_complex = WitnessComplex(landmarks=X_batch, witnesses=X_witnesses,
-                                               n_jobs=config.n_jobs)
-        witness_complex.compute_metric_optimized(n_jobs=config.n_jobs)
-
-        landmarks_dist_batch = witness_complex.landmarks_dist
-        landmark_dist[batch_i,:, :] = landmarks_dist_batch
-    return landmark_dist
-
-
 def compute_wc_offline(config: ConfigWC):
     '''
     Utility to compute distances between landmarks "offline" and save dataloader/distance matrices for later training.

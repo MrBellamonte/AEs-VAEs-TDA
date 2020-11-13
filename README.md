@@ -1,6 +1,6 @@
-# AEs-VAEs-TDA
+# AEs-VAEs-TDA (WIP)
 
-## Installation (WIP)
+## Installation 
 
 
 ### pre-commit
@@ -21,3 +21,9 @@ git clone https://github.com/c-hofer/torchph.git
 cd torchph
 python setup.py develop
 ```
+
+### dependencies
+```bash
+pip3 install -r requirements.txt
+```
+## Usage
