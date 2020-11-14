@@ -51,6 +51,42 @@ mnist_s838_64_fullk_fullnu = ConfigGrid_WCAE(
     num_threads=1,
     verbose=False)
 
+mnist_s838_64_hihik_fullnu = ConfigGrid_WCAE(
+    learning_rate=[1/10, 1/100, 1/1000],
+    batch_size=[64],
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[30],
+    rec_loss_weight=[1],
+    top_loss_weight=[int(i) for i in np.logspace(0, 4, num=5, base=2.0)],
+    match_edges=['push_active'],
+    k=[8,10,12,14],
+    r_max=[10],
+    model_class=[ConvAE_MNIST],
+    model_kwargs=[dict()],
+    dataset=[MNIST_offline()],
+    sampling_kwargs=[dict(root_path='/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=False,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=False,
+        online_visualization=False,
+        k_min=5,
+        k_max=45,
+        k_step=5,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1, 1.125, 1.25, 1.375],
+                     online_wc=[True], wc_offline=[dict(path_to_data=wcpath_mnist_s838_64)]),
+    experiment_dir='/cluster/scratch/schsimo/output/mnist64',
+    seed=838,
+    device='cpu',
+    num_threads=1,
+    verbose=False)
+
 mnist_s838_64_fullk_fullnu_hldb = ConfigGrid_WCAE(
     learning_rate=[1/10, 1/100, 1/1000],
     batch_size=[64],
