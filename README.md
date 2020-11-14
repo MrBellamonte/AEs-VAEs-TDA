@@ -22,10 +22,12 @@ cd torchph
 python setup.py develop
 ```
 
-### dependencies
+### Requirements
 ```bash
 pip3 install -r requirements.txt
 ```
+
+
 ## Usage
 
 The simulator can be used with:
