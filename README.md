@@ -11,6 +11,10 @@ pip install pre-commit
 pre-commit --version
 pre-commit install
 ```
+### Requirements
+```bash
+pip3 install -r requirements.txt
+```
 
 ### torchph (only needed for COREL)
 https://github.com/c-hofer/torchph
@@ -22,10 +26,6 @@ cd torchph
 python setup.py develop
 ```
 
-### Requirements
-```bash
-pip3 install -r requirements.txt
-```
 
 
 ## Usage
