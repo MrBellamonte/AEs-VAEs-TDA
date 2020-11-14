@@ -43,16 +43,22 @@ Currently the simulator supports:
 
 For the competitors, the model is defined directly in the configuration file.
 
-A configuration can be base to the simulator through for example:
+A configuration can be passed to the simulator with '-c #name', e.g.
 ```bash
 python main.py -m 'WCAE' -c 'sample.WCAE_sample_config'
 ```
 
-The number of parallel processes can be adjusted by '-n xy'. Note that it defines how many models that are trained in parallel, it does not parallelize the model itself, this can be done in the configuration file if supported.
+The simulator has "access" to new configurations stored in scripts/config_library. 
+
+The number of parallel processes can be adjusted by '-n xy', e.g.
 
 ```bash
 python main.py -m 'WCAE' -c 'sample.WCAE_sample_config' -n 2
 ```
+
+Note that it defines how many models that are trained in parallel, it does not parallelize the model itself, this can be done in the configuration file if supported.
+
+
 
 
 ## References
