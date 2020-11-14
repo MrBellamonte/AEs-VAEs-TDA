@@ -57,9 +57,9 @@ python main.py -m 'WCAE' -c 'sample.WCAE_sample_config' -n 2
 
 ## References
 <a id="1">[1]</a> 
-M.~Moor, M.~Horn, B.~Rieck, and K.~Borgwardt. Topological Autoencoders. ICML 2020.
+M. Moor, M. Horn, B. Rieck, and K. Borgwardt. Topological Autoencoders. ICML 2020.
 
 <a id="2">[2]</a> 
-C.~Hofer, R.~Kwitt, M.~Dixit, and M.~Niethammer.
+C. Hofer, R. Kwitt, M. Dixit, and M. Niethammer.
 Connectivity-Optimized Representation Learning via Persistent Homology. ICML 2019.
 
