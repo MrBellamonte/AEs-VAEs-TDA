@@ -158,8 +158,7 @@ corgi_60_decay_semi = ConfigGrid_WCAE(
         seed=1,
         device='cpu',
         num_threads=2,
-        verbose=False,
-    )
+        verbose=False)
 
 
 
