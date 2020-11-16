@@ -1,7 +1,9 @@
 # AEs-VAEs-TDA (WIP)
 
-## Installation 
+This repository provides a simulation framework for different representation learning algorithms such as Witness Autoencoder, Topological Autoencoder, Connectivity optimized representation learning, UMAP and t-SNE. It is easily extensible, and allows for reproducible and efficient experimenting with the different algorithms.
 
+
+## Installation 
 
 ### pre-commit
 Pre-commit is used to protect the master branch from (accidental) commits. 
