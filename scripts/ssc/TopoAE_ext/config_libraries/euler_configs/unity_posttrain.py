@@ -128,7 +128,7 @@ rotopenai_g1_cluster= ConfigGrid_WCAE(
                      pre_trained_model = ['/cluster/scratch/schsimo/output/rotating_decay/Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_100-bs180-nep12000-rlw1-tlw1-mepush_active9_8-k2-rmax10-seed1-cc1e83ee']),
     experiment_dir='/cluster/scratch/schsimo/output/rotating_retrain',
     seed=1,
-    device='cpu',
+    device='cuda',
     num_threads=1,
     verbose=True,
 )
