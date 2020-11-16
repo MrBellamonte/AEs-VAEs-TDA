@@ -23,6 +23,15 @@ if __name__ == "__main__":
     root_path = '/Users/simons/MT_data/sync/selection/unity_box/other'
     exp = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_100-bs180-nep12000-rlw1-tlw1-mepush_active9_8-k2-rmax10-seed1-cc1e83ee'
 
+    root_path_notopo = '/Users/simons/MT_data/sync/leonhard_sync_scratch/rotating_notopo'
+    exo_notopo = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_100-bs180-nep24000-rlw1-tlw0-mepush_active1-k1-rmax10-seed1-90d0c819'
+
+    root_path_retrain = '/Users/simons/MT_data/sync/leonhard_sync_scratch/rotating_retrain'
+    exp_retrain1 = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_1000-bs180-nep20000-rlw1-tlw1-mepush_active9_8-k2-rmax10-seed1-becee7e8'
+
+    root_path = root_path_retrain
+    exp = exp_retrain1
+
     path_source = os.path.join(root_path,exp)
 
 
