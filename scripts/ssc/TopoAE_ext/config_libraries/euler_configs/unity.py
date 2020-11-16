@@ -146,11 +146,11 @@ leo_rotopenai_decay1 = ConfigGrid_WCAE(
 
 
 leo_rotopenai_notopo = ConfigGrid_WCAE(
-    learning_rate=[1/1000, 1/100],
+    learning_rate=[1/100],
     batch_size=[180],
-    n_epochs=[12000],
+    n_epochs=[24000],
     weight_decay=[0],
-    early_stopping=[150],
+    early_stopping=[250],
     rec_loss_weight=[1],
     top_loss_weight=[0],
     match_edges=['push_active'],
@@ -178,7 +178,7 @@ leo_rotopenai_notopo = ConfigGrid_WCAE(
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True],
                      dist_x_land=[True],
                      wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/AEs-VAEs-TDA/src/datasets/simulated/openai_rotating')]),
-    experiment_dir='/cluster/scratch/schsimo/output/rotating_decay',
+    experiment_dir='/cluster/scratch/schsimo/output/rotating_notopo',
     seed=1,
     device='cuda',
     num_threads=1,
