@@ -16,11 +16,20 @@ def split_validation(dataset, val_fraction, _rnd):
     """
     assert val_fraction < 1.
     indices = _rnd.permutation(len(dataset))
-    last_train_index = int(floor((1-val_fraction)*len(dataset)))
-    return (
-        Subset(dataset, indices[:last_train_index]),  # train split
-        Subset(dataset, indices[last_train_index:])  # validation split
-    )
+
+
+    if val_fraction == 0:
+        return (
+            dataset,  # train split
+            dataset  # validation split
+        )
+
+    else:
+        last_train_index = int(floor((1-val_fraction)*len(dataset)))
+        return (
+            Subset(dataset, indices[:last_train_index]),  # train split
+            Subset(dataset, indices[last_train_index:])  # validation split
+        )
 
 
 '''

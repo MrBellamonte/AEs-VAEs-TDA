@@ -84,6 +84,8 @@ class ConfigWCAE:
         add_default_to_dict(self.method_args, 'dist_x_land', False)
         add_default_to_dict(self.method_args, 'lam_t_bi', None)
         add_default_to_dict(self.method_args, 'lam_t_decay', None)
+        add_default_to_dict(self.method_args, 'pre_trained_model', None)
+        add_default_to_dict(self.method_args, 'val_size', 0.2)
 
         self.toposig_kwargs = dict(k=self.k, match_edges=self.match_edges, normalize = self.method_args['normalize'],mu_push = self.method_args['mu_push'])
 
