@@ -121,7 +121,7 @@ rotopenai_g1_cluster= ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1.125], online_wc=[True],
-                     dist_x_land=[True],
+                     dist_x_land=[True],val_size = [0],
                      lam_t_decay=[dict([(i*150,1/2**ii) for i,ii in enumerate([0,1,2,3,4,5])])],
                      wc_offline=[dict(
                          path_to_data='/cluster/home/schsimo/MT/AEs-VAEs-TDA/src/datasets/simulated/openai_rotating')],
