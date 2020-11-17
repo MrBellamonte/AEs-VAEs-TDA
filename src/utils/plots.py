@@ -26,7 +26,7 @@ def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False,
 
     else:
         sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=palette, marker=".",
-                                   size=5, edgecolor="none", legend=True)
+                                   size=5, edgecolor="none")
     sns.despine(left=True, bottom=True)
 
     plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False, left=False)
