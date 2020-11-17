@@ -61,17 +61,8 @@ def get_latentspace_representation(model, dl: DataLoader, device = 'cuda'):
     for x, y in dl:
         x = x.to(device)
 
-        #x_hat, z = model(x.float())
-
         z = model.encode(x.float())
         x_hat = model.decode(z)
-
-        #x_hat, z = model(x.float())
-        # x_hat = model.decoder(z.float())
-        # print(x_hat)
-        #
-        # z = model.encode(x)
-        # x_hat = model.decode(z)
 
 
         X.append(x_hat)

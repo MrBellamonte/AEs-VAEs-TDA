@@ -28,6 +28,11 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
     for run_dir in subfolders:
         exp = run_dir.split('/')[-1]
 
+        try:
+            os.remove(os.path.join(run_dir,"metrics.json"))
+        except:
+            print('File does not exist')
+
         with open(os.path.join(run_dir,'config.json'), 'r') as f:
             json_file = json.load(f)
 
@@ -53,7 +58,10 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
 
         autoencoder = autoencoder(**config['model_kwargs'])
         model = WitnessComplexAutoencoder(autoencoder)
-        state_dict = torch.load(os.path.join(run_dir, 'model_state.pth'))
+        state_dict = torch.load(os.path.join(run_dir, 'model_state.pth'),map_location=torch.device('cpu'))
+        if 'latent' not in state_dict:
+            state_dict['latent_norm'] = torch.Tensor([1.0]).float()
+
         model.load_state_dict(state_dict)
         model.eval()
 
@@ -119,7 +127,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
                 latents=Y_eval, labels=Z_eval
             )
             plot_2Dscatter(Z_eval, Y_eval, path_to_save=os.path.join(
-                run_dir, 'test_latent_visualization.pdf'), title=None, show=False)
+                run_dir, 'test_latent_visualization.png'),dpi=100, title=None, show=False)
 
         if run_dir and evalconfig.save_train_latent:
             dataloader_train = torch.utils.data.DataLoader(
@@ -138,7 +146,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
             )
             # Visualize latent space
             plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
-                run_dir, 'train_latent_visualization.pdf'), title=None, show=False)
+                run_dir, 'train_latent_visualization.png'),dpi=100, title=None, show=False)
         if evalconfig.quant_eval:
             ks = list(
                 range(evalconfig.k_min, evalconfig.k_max+evalconfig.k_step, evalconfig.k_step))
@@ -162,7 +170,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
 
             id_dict = dict(
                 uid = exp,
-                seed=config['dataset'],
+                seed=config['seed'],
                 batch_size = config['batch_size'],
             )
             for key, value in id_dict.items():
@@ -179,7 +187,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
 
 def parse_input():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-dir', "--directory", help="Experiment directory", type=str, default = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed_2')
+    parser.add_argument('-dir', "--directory", help="Experiment directory", type=str, default = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/mnist_test')
     parser.add_argument('-stw', "--startswith", help="dataset_prettyname_start", type=str, default = 'MNIST')
 
     return parser.parse_args()
@@ -191,11 +199,11 @@ if __name__ == "__main__":
         evaluate_on='test',
         eval_manifold=False,
         save_eval_latent=True,
-        save_train_latent=True,
+        save_train_latent=False,
         online_visualization=False,
-        k_min=2,
-        k_max=10,
-        k_step=2)
+        k_min=4,
+        k_max=16,
+        k_step=4)
 
     exp_dir = args.directory
     stw = args.startswith

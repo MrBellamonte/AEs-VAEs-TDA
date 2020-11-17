@@ -14,7 +14,7 @@ from src.utils.plots import plot_2Dscatter
 
 if __name__ == "__main__":
     os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
-    root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/openai/retrain_examples/1_'
+    root_path = '/output/WAE/openai/retrain_examples/1_'
     # get model
     exp1 = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_100-bs180-nep1000-rlw1-tlw1-mepush_active9_8-k2-rmax10-seed1-42e61867'
     exp2 = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_100-bs180-nep1000-rlw1-tlw1-mepush_active9_8-k2-rmax10-seed1-5a3ddf79'
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     path_source = os.path.join(root_path_1,exp_1)
 
 
-    dataloarder_train = torch.load(os.path.join('/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/openai_rotating','dataloader_train.pt'))
+    dataloarder_train = torch.load(os.path.join('/src/datasets/simulated/openai_rotating', 'dataloader_train.pt'))
 
 
 

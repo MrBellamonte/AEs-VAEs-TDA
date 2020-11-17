@@ -13,16 +13,22 @@ from matplotlib.collections import PatchCollection
 from matplotlib.ticker import MaxNLocator
 
 
-def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False):
-    if len(np.unique(labels)) > 8:
-        palette = "Spectral"
+def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False, palette = plt.cm.viridis, dpi = 200):
+    #fig, ax = plt.subplots()
+    # sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=palette, marker=".",
+    #     #                 size=5, edgecolor="none", legend=True)
+    if palette is 'hsv':
+        sns_plot = plt.scatter(data[:, 0], data[:, 1],
+                         c=labels, s=5, cmap="hsv")
+        cbar = plt.colorbar(sns_plot)
+        cbar.set_ticks([0,90,180,270,360])
+        cbar.set_ticklabels(['0°','90°','180°','270°','360°'])
+
     else:
-        palette  = "Dark2"
-
-
-    sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=plt.cm.viridis, marker=".",
-                    size=5, edgecolor="none", legend=False)
+        sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=palette, marker=".",
+                                   size=5, edgecolor="none", legend=True)
     sns.despine(left=True, bottom=True)
+
     plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False, left=False)
 
     plt.title(title)
@@ -32,7 +38,7 @@ def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False)
 
     if path_to_save != None:
         fig = sns_plot.get_figure()
-        fig.savefig(path_to_save)
+        fig.savefig(path_to_save, dpi=dpi)
 
     plt.close()
 
