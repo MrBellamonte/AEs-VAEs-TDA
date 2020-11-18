@@ -1,6 +1,7 @@
 # Simulator for (Topology-Aware) Representation Learning Methods
 
-*dad*
+**IMPORTANT: Work in progress.**
+
 This repository provides a simulation framework for different representation learning algorithms such as Witness Autoencoder, Topological Autoencoder, Connectivity optimized representation learning, UMAP and t-SNE. It is easily extensible, and allows for reproducible and efficient experimenting with the different algorithms on different datasets.
 
 
