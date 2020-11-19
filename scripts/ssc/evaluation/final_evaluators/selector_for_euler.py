@@ -54,8 +54,9 @@ if __name__ == "__main__":
     else:
         metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ',
                              'training.metrics.notmatched_pairs_0D', 'training.loss.autoencoder',
-                             'test_continuity','test_density_kl_global_01','test_density_kl_global_001','test_density_kl_global_1']
-        max_metrics = ['test_continuity']
+                             'test_continuity','test_density_kl_global_1','test_density_kl_global_01','test_density_kl_global_001','test_density_kl_global_0001',
+                             'training.metrics.distance2-1','test_trustworthiness','test_mean_local_rmse_refX','test_mean_local_rmse_refZ']
+        max_metrics = ['test_continuity','test_trustworthiness']
 
     # LOAD DF
     df = pd.read_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'))
