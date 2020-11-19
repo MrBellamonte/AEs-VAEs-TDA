@@ -2,6 +2,7 @@ import argparse
 import importlib
 import json
 import os
+import shutil
 import statistics
 
 import pandas as pd
@@ -21,6 +22,8 @@ from src.utils.plots import plot_distcomp_Z_manifold, plot_2Dscatter
 
 
 def offline_eval_WAE(exp_dir,evalconfig,startwith):
+
+
 
     subfolders = [f.path for f in os.scandir(exp_dir) if
                   (f.is_dir() and f and f.path.split('/')[-1].startswith(startwith))]
@@ -65,6 +68,12 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
         except:
             print('WARNING: model {} not complete'.format(exp))
 
+        try:
+            state_dict = torch.load(os.path.join(run_dir, 'model_state.pth'),map_location=torch.device('cpu'))
+            continue_ = True
+        except:
+            print('WARNING: model {} not complete'.format(exp))
+
         if continue_:
             if 'latent' not in state_dict:
                 state_dict['latent_norm'] = torch.Tensor([1.0]).float()
@@ -79,7 +88,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
 
             X_eval, Y_eval, Z_eval = get_latentspace_representation(model, dataloader_eval,
                                                                     device='cpu')
-
+            
             result = dict()
             if evalconfig.eval_manifold:
                 # sample true manifold
@@ -154,7 +163,8 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
                 # Visualize latent space
                 plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
                     run_dir, 'train_latent_visualization.png'),dpi=100, title=None, show=False)
-            if evalconfig.quant_eval:
+            if evalconfig.quant_eval and (os.path.exists(os.path.join(run_dir,'test_latent_visualization.png')) == False):
+                print('QUANT EVAL....')
                 ks = list(
                     range(evalconfig.k_min, evalconfig.k_max+evalconfig.k_step, evalconfig.k_step))
 
@@ -185,9 +195,10 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
                 df.set_index('uid')
 
                 df = df[COLS_DF_RESULT]
-                print(COLS_DF_RESULT)
                 #
                 df.to_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'), mode='a', header=False)
+        else:
+            shutil.move(run_dir, os.path.join(exp_dir,'not_evaluated'))
 
 
 
@@ -213,6 +224,12 @@ if __name__ == "__main__":
         k_step=4)
 
     exp_dir = args.directory
+
+    try:
+        os.mkdir(os.path.join(exp_dir,'not_evaluated'))
+    except:
+        pass
+
     stw = args.startswith
     offline_eval_WAE(exp_dir,evalconfig,stw)
 
