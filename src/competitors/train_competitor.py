@@ -5,9 +5,8 @@ import os
 
 import numpy as np
 import pandas as pd
-from scipy.spatial.distance import squareform, pdist
+import seaborn as sns
 from sklearn.metrics import pairwise_distances
-from sklearn.model_selection import train_test_split
 
 from src.evaluation.measures_optimized import MeasureCalculator
 from src.utils.dict_utils import avg_array_in_dict, default
@@ -32,7 +31,7 @@ def eval(result,Z_manifold,X,Z,Y,rundir,config,train = True):
             latents=Z, labels=Y
         )
         plot_2Dscatter(Z, Y, path_to_save=os.path.join(
-            rundir, '{}_latent_visualization.pdf'.format(name_prefix)), title=None, show=False)
+            rundir, '{}_latent_visualization.pdf'.format(name_prefix)), title=None, show=False,palette=sns.color_palette("muted"))
 
     if config.eval.eval_manifold:
         try:

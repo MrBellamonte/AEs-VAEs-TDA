@@ -195,7 +195,6 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
                 df.set_index('uid')
 
                 df = df[COLS_DF_RESULT]
-                #
                 df.to_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'), mode='a', header=False)
         else:
             shutil.move(run_dir, os.path.join(exp_dir,'not_evaluated'))

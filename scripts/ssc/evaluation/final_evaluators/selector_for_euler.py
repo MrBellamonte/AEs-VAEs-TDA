@@ -54,7 +54,7 @@ if __name__ == "__main__":
     else:
         metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ',
                              'training.metrics.notmatched_pairs_0D', 'training.loss.autoencoder',
-                             'test_continuity']
+                             'test_continuity','test_density_kl_global_01','test_density_kl_global_001','test_density_kl_global_1']
         max_metrics = ['test_continuity']
 
     # LOAD DF

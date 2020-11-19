@@ -7,7 +7,7 @@ import statistics
 import torch
 import numpy as np
 import pandas as pd
-from scipy.spatial.distance import squareform, pdist
+import seaborn as sns
 from sklearn.metrics import pairwise_distances
 from torch.utils.data import TensorDataset
 
