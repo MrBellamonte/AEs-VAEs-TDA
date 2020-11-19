@@ -37,7 +37,7 @@ def parse_input():
     parser.add_argument('--manifold', help='Get manifold', action='store_true')
     parser.add_argument('--exp', help='Get all experiment data of selected', action='store_true')
 
-    parser.add_argument('--fsu', help='file suffix (either png or pdf)', default='pdf', type = str)
+    parser.add_argument('-fsu', "--filesuffix", help='file suffix (either png or pdf)', default='pdf', type = str)
 
     return parser.parse_args()
 
@@ -117,13 +117,13 @@ if __name__ == "__main__":
                 manifolddist_name = 'manifold_dist{}_{}'.format(rank_count, uid)
 
                 if args.train_latent:
-                    get_plot_rename(exp_dir, eval_root, uid, train_latent_name, suffix = args.fsu)
+                    get_plot_rename(exp_dir, eval_root, uid, train_latent_name, suffix = args.filesuffix)
                 if args.test_latent:
                     get_plot_rename(exp_dir, eval_root, uid, test_latent_name,
-                                    plot='test_latent_visualization', suffix = args.fsu)
+                                    plot='test_latent_visualization', suffix = args.filesuffix)
                 if args.manifold:
                     get_plot_rename(exp_dir, eval_root, uid, manifolddist_name,
-                                    plot='manifold_Z_distcomp', suffix = args.fsu)
+                                    plot='manifold_Z_distcomp', suffix = args.filesuffix)
                 if args.exp:
                     copy_tree(os.path.join(exp_dir, uid), os.path.join(eval_root, uid))
                 rank_count += 1
