@@ -30,9 +30,12 @@ if __name__ == "__main__":
     path_symmetric1 = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/WCTopoAE_swissroll_symmetric'
     path_to_save_symmetric1 = '/Users/simons/MT_data/plots/WCTopoAE/swissroll_symmetric1_latents'
 
+    path_unity_box_rotating_decay = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/rotating_decay'
+    path_to_save_unity_box_rotating_decay = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/rotating_decay_plots'
 
-    path = path_topoaewc_vernorm
-    path_to_save = path_to_save_vernorm
+
+    path = path_unity_box_rotating_decay
+    path_to_save = path_to_save_unity_box_rotating_decay
     print('START!')
     i = 0
     for dirpath, dirnames, filenames in os.walk(path):

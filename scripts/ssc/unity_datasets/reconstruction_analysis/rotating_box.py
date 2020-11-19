@@ -32,10 +32,11 @@ if __name__ == "__main__":
     exp_retrain1 = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_1000-bs180-nep20000-rlw1-tlw1-mepush_active9_8-k2-rmax10-seed1-becee7e8'
     exp_retrain2 = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_1000-bs180-nep20000-rlw1-tlw1-mepush_active9_8-k2-rmax10-seed1-1c9a4a34'
     exp_retrain3 = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_10000-bs180-nep20000-rlw1-tlw1-mepush_active9_8-k2-rmax10-seed1-a1266ff7'
-
+    exp_retrain4 = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_20000-bs180-nep20000-rlw1-tlw1-mepush_active17_16-k2-rmax10-seed1-9322fa19'
+    exp_retrain5 = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_100000-bs180-nep20000-rlw1-tlw1-mepush_active17_16-k2-rmax10-seed1-76c8b024'
 
     root_path = root_path_retrain
-    exp = exp_retrain3
+    exp = exp_retrain4
 
     path_source = os.path.join(root_path,exp)
 

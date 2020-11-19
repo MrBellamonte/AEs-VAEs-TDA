@@ -48,6 +48,52 @@ rotopenai_1_local= ConfigGrid_WCAE(
 )
 
 
+
+id_localretrain = 'Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_10-bs180-nep1000-rlw1-tlw1-mepush_active9_8-k5-rmax10-seed1-02407ac6'
+
+rotopenai_2_local= ConfigGrid_WCAE(
+    learning_rate=[1/100],
+    batch_size=[180],
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[120],
+    rec_loss_weight=[1],
+    top_loss_weight=[1],
+    match_edges=['push_active'],
+    k=[2],
+    r_max=[10],
+    model_class=[ConvAE_Unity480320],
+    model_kwargs=[dict()],
+    dataset=[Unity_RotOpenAI()],
+    sampling_kwargs=[dict()],
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=False,
+        save_train_latent=True,
+        online_visualization=True,
+        k_min=5,
+        k_max=10,
+        k_step=5,
+        quant_eval=False
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1.0625], online_wc=[True],
+                     dist_x_land=[True],val_size = [0],
+                     lam_t_decay=[dict([(i*100,1/2**ii) for i,ii in enumerate([0,1,2,4,8,10,12])])],
+                     wc_offline=[dict(path_to_data='/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/openai_rotating')],
+                     pre_trained_model = ['/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/openai/retrain_examples/2_/post/Unity_RotOpenAI-seed1-ConvAE_Unity480320-default-lr1_10-bs180-nep1000-rlw1-tlw1-mepush_active9_8-k5-rmax10-seed1-02407ac6']),
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/openai/retrain_examples/2_',
+    seed=1,
+    device='cpu',
+    num_threads=1,
+    verbose=True,
+)
+
+
+
 rotopenai_1_local2= ConfigGrid_WCAE(
     learning_rate=[1/1000],
     batch_size=[180],
