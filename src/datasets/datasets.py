@@ -40,7 +40,8 @@ DEFAULT = {
     "mnist_offline": dict(n_samples=1000000, seed=None,normalization=True,
                           root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
     "unity_rotating_block": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
-    "unity_rotating_corgi": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA')
+    "unity_rotating_corgi": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
+    "unity_xytrans": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
 }
 
 
@@ -375,6 +376,30 @@ class Unity_RotOpenAI(DataSet):
 
         else:
             data = torch.load(os.path.join(root_path, 'src/datasets/simulated/openai_rotating/full_dataset.pt'))
+
+        position = data[:][:][1].numpy()
+        images = data[:][:][0].numpy()
+
+        return images, position
+
+
+    def sample_manifold(self):
+        raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
+
+class Unity_XYTransOpenAI(DataSet):
+    __slots__ = []
+    fancy_name = "Unity rotating block"
+
+    def __init__(self):
+        pass
+
+    def sample(self, train = True,root_path=DEFAULT['unity_xytrans']['root_path'], seed = None):
+
+        if train:
+            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/xy_trans/full_dataset.pt'))
+
+        else:
+            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/xy_trans/full_dataset.pt'))
 
         position = data[:][:][1].numpy()
         images = data[:][:][0].numpy()
