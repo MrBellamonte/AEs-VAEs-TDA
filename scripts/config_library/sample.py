@@ -6,6 +6,8 @@ from src.models.TopoAE.config import ConfigGrid_TopoAE
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
+
+
 WCAE_sample_config = ConfigGrid_WCAE(
     learning_rate=[1/1000],
     batch_size=[64],
