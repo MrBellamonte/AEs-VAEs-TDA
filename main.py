@@ -23,7 +23,7 @@ def parse_input():
                         default=1,
                         help="number of parallel processes", type=int)
     parser.add_argument('-c', "--configs",
-                        default="WCAE_sample_config",
+                        default="sample.WCAE_sample_config",
                         help="configgrid to run simulation", type=str)
     return parser.parse_args()
 
