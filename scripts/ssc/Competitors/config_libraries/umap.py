@@ -1,6 +1,6 @@
 from src.competitors.competitor_models import UMAP
 from src.competitors.config import ConfigGrid_Competitors
-from src.datasets.datasets import SwissRoll
+from src.datasets.datasets import SwissRoll, MNIST_offline
 from src.evaluation.config import ConfigEval
 
 swissroll_test = ConfigGrid_Competitors(
@@ -99,3 +99,31 @@ swissroll_euler_final = [ConfigGrid_Competitors(
     seed = seed,
     verbose = True
 ) for seed in [36, 3851, 2570, 4304, 1935, 7954, 5095, 5310, 1577, 3288]]
+
+
+
+
+mnist_test = ConfigGrid_Competitors(
+    model_class = [UMAP],
+    model_kwargs=[dict()],
+    dataset=[MNIST_offline()],
+    sampling_kwargs={
+        'n_samples': [2560]
+    },
+    eval=[ConfigEval(
+        active=False,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=45,
+        k_step=5,
+    )],
+    uid = [''],
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/competitors/mnist_testing',
+    seed = 1,
+    verbose = True
+)
+

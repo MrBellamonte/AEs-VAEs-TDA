@@ -32,7 +32,7 @@ if __name__ == "__main__":
     args = parse_input()
 
     if args.model == 'topoae':
-        conifg_srt = 'scripts.config_library.sample.'+args.configs
+        conifg_srt = 'scripts.config_library.'+args.configs
         mod_name, config_name = conifg_srt.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
@@ -49,7 +49,8 @@ if __name__ == "__main__":
                 simulator_TopoAE(config)
 
     elif args.model == 'WCAE':
-        conifg_srt = 'scripts.config_library.sample.'+args.configs
+        conifg_srt = 'scripts.config_library.'+args.configs
+        print(conifg_srt)
         mod_name, config_name = conifg_srt.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
@@ -65,7 +66,7 @@ if __name__ == "__main__":
                 simulator_TopoAE_ext(config)
 
     elif args.model == 'competitor':
-        conifg_srt = 'scripts.config_library.sample.'+args.configs
+        conifg_srt = 'scripts.config_library.'+args.configs
         mod_name, config_name = conifg_srt.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)

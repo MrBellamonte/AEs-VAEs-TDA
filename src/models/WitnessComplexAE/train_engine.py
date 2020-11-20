@@ -93,10 +93,15 @@ def train_TopoAE_ext(_run, _seed, _rnd, config: ConfigWCAE, experiment_dir, expe
     autoencoder = model_class(**config.model_kwargs)
     model = WitnessComplexAutoencoder(autoencoder, lam_r=config.rec_loss_weight, lam_t=config.top_loss_weight,
                                       toposig_kwargs=config.toposig_kwargs, norm_X = norm_X, device=config.device)
+
+
+    if config.method_args['pre_trained_model'] is not None:
+        state_dict = torch.load(os.path.join(config.method_args['pre_trained_model'], 'model_state.pth'))
+        model.load_state_dict(state_dict)
     model.to(device)
 
     # Train and evaluate model
-    result = train(model = model, data_train = dataset_train, data_test = dataset_test, config = config, device = device, quiet = operator.not_(verbose), val_size = 0.2, _seed = _seed,
+    result = train(model = model, data_train = dataset_train, data_test = dataset_test, config = config, device = device, quiet = operator.not_(verbose), val_size = config.method_args['val_size'], _seed = _seed,
           _rnd = _rnd, _run = _run, rundir = experiment_dir)
 
 

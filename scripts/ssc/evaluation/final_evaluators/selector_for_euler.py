@@ -6,19 +6,19 @@ import pandas as pd
 import shutil
 
 
-def get_plot_rename(exp_root, eval_root, uid, latent_name, plot='train_latent_visualization'):
+def get_plot_rename(exp_root, eval_root, uid, latent_name, plot='train_latent_visualization', suffix = 'pdf'):
     uid_rood = os.path.join(exp_root, uid)
 
-    existing_file = open(os.path.join(uid_rood, '{}.pdf'.format(plot)), "r")
-    new_file = open(os.path.join(eval_root, latent_name+'.pdf'), "w")
+    existing_file = open(os.path.join(uid_rood, '{}.{}'.format(plot,suffix)), "r")
+    new_file = open(os.path.join(eval_root, latent_name+'.{}'.format(suffix)), "w")
 
-    src_file = os.path.join(uid_rood, '{}.pdf'.format(plot))
+    src_file = os.path.join(uid_rood, '{}.{}'.format(plot,suffix))
     dest_dir = eval_root
 
     shutil.copy(src_file, dest_dir)  # copy the file to destination dir
 
-    dst_file = os.path.join(eval_root, '{}.pdf'.format(plot))
-    new_dst_file_name = os.path.join(eval_root, latent_name+'.pdf')
+    dst_file = os.path.join(eval_root, '{}.{}'.format(plot,suffix))
+    new_dst_file_name = os.path.join(eval_root, latent_name+'.{}'.format(suffix))
 
     os.rename(dst_file, new_dst_file_name)  # rename
     os.chdir(dest_dir)
@@ -37,6 +37,7 @@ def parse_input():
     parser.add_argument('--manifold', help='Get manifold', action='store_true')
     parser.add_argument('--exp', help='Get all experiment data of selected', action='store_true')
 
+    parser.add_argument('-fsu', "--filesuffix", help='file suffix (either png or pdf)', default='pdf', type = str)
 
     return parser.parse_args()
 
@@ -53,8 +54,9 @@ if __name__ == "__main__":
     else:
         metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ',
                              'training.metrics.notmatched_pairs_0D', 'training.loss.autoencoder',
-                             'test_continuity']
-        max_metrics = ['test_continuity']
+                             'test_continuity','test_density_kl_global_1','test_density_kl_global_01','test_density_kl_global_001','test_density_kl_global_0001',
+                             'training.metrics.distance2-1','test_trustworthiness','test_mean_local_rmse_refX','test_mean_local_rmse_refZ','test_mrre']
+        max_metrics = ['test_continuity','test_trustworthiness']
 
     # LOAD DF
     df = pd.read_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'))
@@ -116,13 +118,13 @@ if __name__ == "__main__":
                 manifolddist_name = 'manifold_dist{}_{}'.format(rank_count, uid)
 
                 if args.train_latent:
-                    get_plot_rename(exp_dir, eval_root, uid, train_latent_name)
+                    get_plot_rename(exp_dir, eval_root, uid, train_latent_name, suffix = args.filesuffix)
                 if args.test_latent:
                     get_plot_rename(exp_dir, eval_root, uid, test_latent_name,
-                                    plot='test_latent_visualization')
+                                    plot='test_latent_visualization', suffix = args.filesuffix)
                 if args.manifold:
                     get_plot_rename(exp_dir, eval_root, uid, manifolddist_name,
-                                    plot='manifold_Z_distcomp')
+                                    plot='manifold_Z_distcomp', suffix = args.filesuffix)
                 if args.exp:
                     copy_tree(os.path.join(exp_dir, uid), os.path.join(eval_root, uid))
                 rank_count += 1
