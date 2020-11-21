@@ -287,7 +287,7 @@ leo_transxy_openai = ConfigGrid_WCAE(
     r_max=[10],
     model_class=[ConvAE_Unity480320],
     model_kwargs=[dict()],
-    dataset=[Unity_RotOpenAI()],
+    dataset=[Unity_XYTransOpenAI()],
     sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     eval=[ConfigEval(
         active=True,
@@ -327,7 +327,7 @@ leo_transxy_openai_notopo = ConfigGrid_WCAE(
     r_max=[10],
     model_class=[ConvAE_Unity480320],
     model_kwargs=[dict()],
-    dataset=[Unity_RotOpenAI()],
+    dataset=[Unity_XYTransOpenAI()],
     sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     eval=[ConfigEval(
         active=True,
