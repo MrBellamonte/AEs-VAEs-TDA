@@ -1,6 +1,6 @@
 import itertools
 
-from src.datasets.datasets import Unity_RotOpenAI
+from src.datasets.datasets import Unity_RotOpenAI, Unity_XYTransOpenAI
 from src.evaluation.config import ConfigEval
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.autoencoder.autoencoders import ConvAE_Unity480320
@@ -368,7 +368,7 @@ leo_transxy_l_openai_1 = ConfigGrid_WCAE(
     r_max=[10],
     model_class=[ConvAE_Unity480320],
     model_kwargs=[dict()],
-    dataset=[Unity_RotOpenAI(large = True)],
+    dataset=[Unity_XYTransOpenAI(large = True)],
     sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     eval=[ConfigEval(
         active=True,
