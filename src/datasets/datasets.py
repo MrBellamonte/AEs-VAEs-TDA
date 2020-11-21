@@ -387,19 +387,28 @@ class Unity_RotOpenAI(DataSet):
         raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
 
 class Unity_XYTransOpenAI(DataSet):
-    __slots__ = []
+    __slots__ = ['large']
     fancy_name = "Unity rotating block"
 
-    def __init__(self):
-        pass
+    def __init__(self, large = False):
+        self.large = large
 
     def sample(self, train = True,root_path=DEFAULT['unity_xytrans']['root_path'], seed = None):
 
         if train:
-            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/xy_trans/full_dataset.pt'))
+            if self.large:
+                data = torch.load(
+                    os.path.join(root_path, 'src/datasets/simulated/xy_trans_l/full_dataset.pt'))
+            else:
+                data = torch.load(os.path.join(root_path, 'src/datasets/simulated/xy_trans/full_dataset.pt'))
 
         else:
-            data = torch.load(os.path.join(root_path, 'src/datasets/simulated/xy_trans/full_dataset.pt'))
+            if self.large:
+                data = torch.load(
+                    os.path.join(root_path, 'src/datasets/simulated/xy_trans_l/full_dataset.pt'))
+            else:
+                data = torch.load(
+                    os.path.join(root_path, 'src/datasets/simulated/xy_trans/full_dataset.pt'))
 
         position = data[:][:][1].numpy()
         images = data[:][:][0].numpy()

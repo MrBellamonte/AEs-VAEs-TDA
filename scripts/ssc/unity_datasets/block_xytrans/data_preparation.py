@@ -18,8 +18,8 @@ def angular_metric(ang1, ang2):
         return (180-diff%180)
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
-root_path_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans'
-root_path = '/Users/simons/MT_data/datasets/Unity_simulation/xy_trans'
+root_path_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans_l'
+root_path = '/Users/simons/MT_data/datasets/Unity_simulation/xy_trans_l'
 
 print(os.listdir(root_path))
 transform_to_tensor = transforms.ToTensor()
