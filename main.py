@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     elif args.model == 'competitor':
         configs = get_configs(configs,Config_Competitors,ConfigGrid_Competitors)
-        
+
         if args.n_jobs != 1:
             Parallel(n_jobs=args.n_jobs)(delayed(simulator_competitor)(config) for config in configs)
         else:
