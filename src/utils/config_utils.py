@@ -70,3 +70,13 @@ def add_default_to_dict(dict, key, default = False):
         pass
     else:
         dict[key] = default
+
+
+
+def get_configs(configs, class_config, class_configgrid):
+    if isinstance(configs, class_configgrid):
+        return configs.configs_from_grid()
+    elif isinstance(configs, class_config):
+        return [configs]
+    else:
+        return configs
