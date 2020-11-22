@@ -5,15 +5,19 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 k = 4
-
-root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans_l_newpers'
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans_l_newpers/wc_pl'
 
 positions = torch.load(os.path.join(root_path,'position.pt'))
 labels = torch.load(os.path.join(root_path,'labels.pt'))
+images = torch.load(os.path.join(root_path,'images.pt'))
 distances = torch.load(os.path.join(root_path,'landmark_dist_train.pt'))
 
+distances = torch.cdist(images.view(images.shape[0], 3*480*320),
+                        images.view(images.shape[0], 3*480*320))
 
-sorted, indices = torch.sort(distances[0,:,:])
+
+sorted, indices = torch.sort(distances[:,:])
 kNN_mask = torch.zeros((distances.shape[1], distances.shape[1]), device='cpu').scatter(1, indices[:, 1:(k+1)], 1)
 
 positions = positions.numpy()

@@ -398,7 +398,7 @@ leo_transxy_l_openai_1 = ConfigGrid_WCAE(
 
 xy_trans_l_newpers_1 = ConfigGrid_WCAE(
     learning_rate=[1/100,1/1000],
-    batch_size=[400],
+    batch_size=[200],
     n_epochs=[5000],
     weight_decay=[0],
     early_stopping=[250],
@@ -428,11 +428,11 @@ xy_trans_l_newpers_1 = ConfigGrid_WCAE(
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125], online_wc=[True],
                      dist_x_land=[True],val_size = [0],
-                     wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/AEs-VAEs-TDA/src/datasets/simulated/xy_trans_l_newpers')]),
+                     wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/output/WitnessComplexes/unity/Unity_XYTransOpenAI-bs200-seed1-noiseNone-e9e1dc6e')]),
     experiment_dir='/cluster/scratch/schsimo/output/xy_trans_l_newpers_1',
     seed=2,
     device='cuda',
-    num_threads=1,
+    num_threads=2,
     verbose=False,
 )
 

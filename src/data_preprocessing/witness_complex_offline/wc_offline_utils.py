@@ -1,4 +1,5 @@
 import os
+from functools import reduce
 from typing import Tuple
 
 import pandas as pd
@@ -21,9 +22,16 @@ def select_witnesses(X):
 
 def compute_wc(dataloader,  X_witnesses, config):
     landmark_dist= torch.zeros(len(dataloader),config.batch_size, config.batch_size)
-
+    if len(X_witnesses.shape) > 2:
+        X_witnesses = torch.Tensor(X_witnesses).view(X_witnesses.shape[0],
+                                   reduce((lambda x, y: x*y), X_witnesses.shape[1:]))
     # save dataloader, landmarks distances for eval and train
     for batch_i, (X_batch, label_batch) in enumerate(dataloader):
+
+        if len(X_batch.shape)>2:
+            X_batch = X_batch.view(X_batch.shape[0], reduce((lambda x, y: x*y), X_batch.shape[1:]))
+
+
         witness_complex = WitnessComplex(landmarks=X_batch, witnesses=X_witnesses,
                                                n_jobs=config.n_jobs)
         witness_complex.compute_metric_optimized(n_jobs=config.n_jobs)
@@ -53,10 +61,15 @@ def compute_wc_offline(config: ConfigWC):
     # split datasets into train and eval
     dataset_tensor_train = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
 
-    eval_size = int(config.eval_size*y_train.size)
-    train_size = int(y_train.size-eval_size)
+    if config.eval_size == 0:
+        train_dataset = dataset_tensor_train
+        validation_dataset = TensorDataset(torch.Tensor(X_train), torch.Tensor(y_train))
+    else:
+        eval_size = int(config.eval_size*y_train.size)
+        train_size = int(y_train.size-eval_size)
+        train_dataset, validation_dataset = random_split(dataset_tensor_train, (train_size, eval_size))
 
-    train_dataset, validation_dataset = random_split(dataset_tensor_train, (train_size, eval_size))
+
     test_dataset = TensorDataset(torch.Tensor(X_test), torch.Tensor(y_test))
 
     # load batches
