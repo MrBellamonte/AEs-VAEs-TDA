@@ -387,7 +387,7 @@ class Unity_RotOpenAI(DataSet):
         raise AttributeError('{} cannot sample from manifold.'.format(self.fancy_name))
 
 class Unity_XYTransOpenAI(DataSet):
-    __slots__ = ['large']
+    __slots__ = ['version']
     fancy_name = "Unity rotating block"
 
     def __init__(self, version = DEFAULT['unity_xytrans']['version']):
