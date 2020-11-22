@@ -18,8 +18,8 @@ def angular_metric(ang1, ang2):
         return (180-diff%180)
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
-root_path_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans_l'
-root_path = '/Users/simons/MT_data/datasets/Unity_simulation/xy_trans_l'
+root_path_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans_l_newpers'
+root_path = '/Users/simons/MT_data/datasets/Unity_simulation/xy_trans_l_newpers'
 
 print(os.listdir(root_path))
 transform_to_tensor = transforms.ToTensor()
@@ -48,8 +48,8 @@ for file in os.listdir(root_path):
 
 images = torch.stack(images)
 positions = torch.stack(positions)
-labels = torch.square(positions[:,:2] - torch.zeros_like(positions[:,:2])).sum(1) # simply the distance from the center.
-
+#labels = torch.square(positions[:,:2] - torch.zeros_like(positions[:,:2])).sum(1) # simply the distance from the center.
+labels = positions[:,0]
 distances = torch.cdist(images.view(images.shape[0], 3*480*320),
                         images.view(images.shape[0], 3*480*320))
 

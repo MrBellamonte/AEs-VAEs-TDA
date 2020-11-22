@@ -30,53 +30,44 @@ def parse_input():
 
 if __name__ == "__main__":
     args = parse_input()
+    conifg_srt = 'scripts.config_library.'+args.configs
+    mod_name, config_name = conifg_srt.rsplit('.', 1)
+    mod = importlib.import_module(mod_name)
+    configs = getattr(mod, config_name)
 
     if args.model == 'topoae':
-        conifg_srt = 'scripts.config_library.'+args.configs
-        mod_name, config_name = conifg_srt.rsplit('.', 1)
-        mod = importlib.import_module(mod_name)
-        configs = getattr(mod, config_name)
 
         if isinstance(configs, ConfigGrid_TopoAE):
             configs = configs.configs_from_grid()
         else:
             configs = configs
 
-        if args.n_jobs > 1:
+        if args.n_jobs != 1:
             Parallel(n_jobs=args.n_jobs)(delayed(simulator_TopoAE)(config) for config in configs)
         else:
             for config in configs:
                 simulator_TopoAE(config)
 
     elif args.model == 'WCAE':
-        conifg_srt = 'scripts.config_library.'+args.configs
-        print(conifg_srt)
-        mod_name, config_name = conifg_srt.rsplit('.', 1)
-        mod = importlib.import_module(mod_name)
-        configs = getattr(mod, config_name)
 
         if isinstance(configs, ConfigGrid_WCAE):
             configs = configs.configs_from_grid()
         else:
             configs = configs
-        if args.n_jobs > 1:
+        if args.n_jobs != 1:
             Parallel(n_jobs=args.n_jobs)(delayed(simulator_TopoAE_ext)(config) for config in configs)
         else:
             for config in configs:
                 simulator_TopoAE_ext(config)
 
     elif args.model == 'competitor':
-        conifg_srt = 'scripts.config_library.'+args.configs
-        mod_name, config_name = conifg_srt.rsplit('.', 1)
-        mod = importlib.import_module(mod_name)
-        configs = getattr(mod, config_name)
 
         if isinstance(configs, ConfigGrid_Competitors):
             configs = configs.configs_from_grid()
         else:
             configs = configs
 
-        if args.n_jobs > 1:
+        if args.n_jobs != 1:
             Parallel(n_jobs=args.n_jobs)(delayed(simulator_competitor)(config) for config in configs)
         else:
             for config in configs:

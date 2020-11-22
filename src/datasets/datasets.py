@@ -41,7 +41,7 @@ DEFAULT = {
                           root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
     "unity_rotating_block": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
     "unity_rotating_corgi": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
-    "unity_xytrans": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA'),
+    "unity_xytrans": dict(root_path='/Users/simons/PycharmProjects/MT-VAEs-TDA', version = 'xy_trans'),
 }
 
 
@@ -390,25 +390,21 @@ class Unity_XYTransOpenAI(DataSet):
     __slots__ = ['large']
     fancy_name = "Unity rotating block"
 
-    def __init__(self, large = False):
-        self.large = large
+    def __init__(self, version = DEFAULT['unity_xytrans']['version']):
+
+        assert version in ['xy_trans', 'xy_trans_l', 'xy_trans_l_newpers']
+
+        self.version = version
 
     def sample(self, train = True,root_path=DEFAULT['unity_xytrans']['root_path'], seed = None):
 
         if train:
-            if self.large:
-                data = torch.load(
-                    os.path.join(root_path, 'src/datasets/simulated/xy_trans_l/full_dataset.pt'))
-            else:
-                data = torch.load(os.path.join(root_path, 'src/datasets/simulated/xy_trans/full_dataset.pt'))
+            data = torch.load(
+                os.path.join(root_path, 'src/datasets/simulated/{}/full_dataset.pt'.format(self.version)))
 
         else:
-            if self.large:
-                data = torch.load(
-                    os.path.join(root_path, 'src/datasets/simulated/xy_trans_l/full_dataset.pt'))
-            else:
-                data = torch.load(
-                    os.path.join(root_path, 'src/datasets/simulated/xy_trans/full_dataset.pt'))
+            data = torch.load(
+                os.path.join(root_path, 'src/datasets/simulated/{}/full_dataset.pt'.format(self.version)))
 
         position = data[:][:][1].numpy()
         images = data[:][:][0].numpy()
