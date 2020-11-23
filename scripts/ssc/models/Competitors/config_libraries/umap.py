@@ -22,7 +22,7 @@ swissroll_test = ConfigGrid_Competitors(
         k_step=5,
     )],
     uid = [''],
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/competitors/testing',
+    experiment_dir='/output/competitors/testing',
     seed = 1,
     verbose = True
 )
@@ -45,7 +45,7 @@ swissroll_umap_grid = [ConfigGrid_Competitors(
         k_step=5,
     )],
     uid = [''],
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/competitors/swissroll_umap',
+    experiment_dir='/output/competitors/swissroll_umap',
     seed = 100,
     verbose = True
 ) for mdist in [0.05,0.1,0.15,0.2, 0.25, 0.3]]
@@ -122,7 +122,7 @@ mnist_test = ConfigGrid_Competitors(
         k_step=5,
     )],
     uid = [''],
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/competitors/mnist_testing',
+    experiment_dir='/output/competitors/mnist_testing',
     seed = 1,
     verbose = True
 )

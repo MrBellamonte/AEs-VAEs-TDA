@@ -1,12 +1,9 @@
-import numpy as np
-
-from scripts.ssc.TopoAE_ext.config_libraries.euler_configs.euler_wc_offline_configs.mnist import *
-from src.datasets.datasets import SwissRoll, MNIST_offline
+from src.datasets.datasets import MNIST_offline
 from src.evaluation.config import ConfigEval
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.autoencoder.autoencoders import (
-    Autoencoder_MLP_topoae, ConvAE_MNIST,
-    ConvAE_MNIST_NEW, ConvAE_MNIST_SMALL)
+    ConvAE_MNIST,
+    ConvAE_MNIST_SMALL)
 
 mnist_test = ConfigGrid_WCAE(
     learning_rate=[1/100],
@@ -37,7 +34,7 @@ mnist_test = ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1.05], online_wc=[True], wc_offline = [dict(path_to_data = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs1024-seed838-noiseNone-6f31dea2')]),
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed',
+    experiment_dir='/output/WAE/mnist_precomputed',
     seed=838,
     device='cpu',
     num_threads=1,
@@ -74,7 +71,7 @@ mnist_test2 = ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict(path_to_data = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs1024-seed838-noiseNone-6f31dea2')]),
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed',
+    experiment_dir='/output/WAE/mnist_precomputed',
     seed=838,
     device='cpu',
     num_threads=2,
@@ -111,7 +108,7 @@ mnist_test2 = ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict(path_to_data = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs1024-seed838-noiseNone-6f31dea2')]),
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed',
+    experiment_dir='/output/WAE/mnist_precomputed',
     seed=838,
     device='cpu',
     num_threads=4,
@@ -148,7 +145,7 @@ mnist_test3 = ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict(path_to_data = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs1024-seed838-noiseNone-6f31dea2')]),
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomp_newid',
+    experiment_dir='/output/WAE/mnist_precomp_newid',
     seed=838,
     device='cpu',
     num_threads=1,
@@ -185,7 +182,7 @@ mnist_test256 = ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict(path_to_data = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs512-seed838-noiseNone-ced06774')]),
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed_2',
+    experiment_dir='/output/WAE/mnist_precomputed_2',
     seed=838,
     device='cpu',
     num_threads=1,
@@ -221,7 +218,7 @@ mnist_test256_1024_leonhard = ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict(path_to_data = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs1024-seed838-noiseNone-6f31dea2')]),
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed_2',
+    experiment_dir='/output/WAE/mnist_precomputed_2',
     seed=838,
     device='cpu',
     num_threads=2,

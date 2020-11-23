@@ -1,5 +1,5 @@
 from scripts.ssc.TopoAE_ext.config_libraries.colab_configs.mnist import mnist_test512_cuda
-from scripts.ssc.TopoAE_ext.config_libraries.euler_configs.unity_posttrain import rotopenai_1_local
+from scripts.ssc.models.TopoAE_ext.config_libraries.euler_configs.unity_posttrain import rotopenai_1_local
 from scripts.ssc.TopoAE_ext.config_libraries.local_configs.mnist import (
     mnist_test2, mnist_test3,
     mnist_test256_1024_leonhard, mnist_test256)

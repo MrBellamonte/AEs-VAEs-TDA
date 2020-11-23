@@ -32,7 +32,7 @@ mnist_test512_cuda = ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict(path_to_data = '/content/gdrive/My Drive/MT_projectfolder/MT/AEs-VAEs-TDA/src/datasets/WitnessComplexes/mnist/MNIST_offline-bs512-seed838-noiseNone-ced06774')]),
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed_2',
+    experiment_dir='/output/WAE/mnist_precomputed_2',
     seed=838,
     device='cuda',
     num_threads=1,

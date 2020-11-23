@@ -22,7 +22,7 @@ swissroll_test = ConfigGrid_Competitors(
         k_step=5,
     )],
     uid = [''],
-    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/competitors/testing',
+    experiment_dir='/output/competitors/testing',
     seed = 1,
     verbose = True
 )
