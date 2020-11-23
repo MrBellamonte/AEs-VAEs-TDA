@@ -49,7 +49,7 @@ mnist_s838_1024_lw = ConfigGrid_WCAE(
 )
 
 
-mnist_s838_512_hinu_hik = ConfigGrid_WCAE(
+mnist_s838_512_lw = ConfigGrid_WCAE(
     learning_rate=[1/10, 1/100, 1/1000],
     batch_size=[512],
     n_epochs=[1000],
@@ -79,7 +79,7 @@ mnist_s838_512_hinu_hik = ConfigGrid_WCAE(
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1, 1.125], online_wc=[True],
                      wc_offline=[dict(path_to_data=wcpath_mnist_s838_512)]),
-    experiment_dir='/cluster/scratch/schsimo/output/mnist512',
+    experiment_dir='/cluster/scratch/schsimo/output/mnist512_2',
     seed=838,
     device='cuda',
     num_threads=4,
@@ -88,7 +88,7 @@ mnist_s838_512_hinu_hik = ConfigGrid_WCAE(
 
 
 
-mnist_s838_256_mik = ConfigGrid_WCAE(
+mnist_s838_256_lw = ConfigGrid_WCAE(
     learning_rate=[1/10, 1/100, 1/1000],
     batch_size=[256],
     n_epochs=[1000],
@@ -118,7 +118,7 @@ mnist_s838_256_mik = ConfigGrid_WCAE(
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1, 1.125], online_wc=[True],
                      wc_offline=[dict(path_to_data=wcpath_mnist_s838_256)]),
-    experiment_dir='/cluster/scratch/schsimo/output/mnist256',
+    experiment_dir='/cluster/scratch/schsimo/output/mnist256_2',
     seed=838,
     device='cuda',
     num_threads=4,
