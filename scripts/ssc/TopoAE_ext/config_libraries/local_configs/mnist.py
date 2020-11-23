@@ -11,7 +11,7 @@ from src.models.autoencoder.autoencoders import (
 mnist_test = ConfigGrid_WCAE(
     learning_rate=[1/100],
     batch_size=[1024],
-    n_epochs=[2],
+    n_epochs=[3],
     weight_decay=[1e-6],
     early_stopping=[50],
     rec_loss_weight=[1],
@@ -40,7 +40,7 @@ mnist_test = ConfigGrid_WCAE(
     experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/mnist_precomputed',
     seed=838,
     device='cpu',
-    num_threads=4,
+    num_threads=1,
     verbose=True,
 )
 

@@ -72,7 +72,7 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
 
     training_loop = TrainingLoop(
         model, train_dataset, config.n_epochs, config.batch_size, config.learning_rate,
-        config.method_args, config.weight_decay, device, callbacks, verbose=operator.not_(quiet))
+        config.method_args, config.weight_decay, device, callbacks, verbose=operator.not_(quiet), num_threads = config.num_threads)
 
     # Run training
     epoch, run_times_epoch = training_loop()

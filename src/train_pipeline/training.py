@@ -12,7 +12,7 @@ class TrainingLoop():
     """Training a model using a dataset."""
 
     def __init__(self, model, dataset, n_epochs, batch_size, learning_rate, method_args = None,
-                 weight_decay=1e-5, device='cuda', callbacks=None, verbose = False):
+                 weight_decay=1e-5, device='cuda', callbacks=None, verbose = False, num_threads = 1):
         """Training of a model using a dataset and the defined callbacks.
 
         Args:
@@ -32,6 +32,7 @@ class TrainingLoop():
         self.device = device
         self.callbacks = callbacks if callbacks else []
         self.verbose = verbose
+        self.num_threads = num_threads
 
         if method_args == None:
             self.method_args = dict(name = None)
@@ -115,6 +116,7 @@ class TrainingLoop():
             train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
                                       pin_memory=True, drop_last=False)
 
+        train_loader.num_workers = self.num_threads
 
         n_batches = len(train_loader)
 

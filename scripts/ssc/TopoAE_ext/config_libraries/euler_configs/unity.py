@@ -1,6 +1,6 @@
 import itertools
 
-from src.datasets.datasets import Unity_RotOpenAI
+from src.datasets.datasets import Unity_RotOpenAI, Unity_XYTransOpenAI
 from src.evaluation.config import ConfigEval
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.autoencoder.autoencoders import ConvAE_Unity480320
@@ -272,3 +272,248 @@ leo_rotopenai_decay3 = ConfigGrid_WCAE(
 )
 
 leo_rotopenai_1 = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in [leo_rotopenai_decay1,leo_rotopenai_notopo]]))
+
+
+leo_transxy_openai = ConfigGrid_WCAE(
+    learning_rate=[1/100],
+    batch_size=[121],
+    n_epochs=[5000],
+    weight_decay=[0],
+    early_stopping=[125],
+    rec_loss_weight=[1],
+    top_loss_weight=[1,4,16],
+    match_edges=['push_active'],
+    k=[1,2,4],
+    r_max=[10],
+    model_class=[ConvAE_Unity480320],
+    model_kwargs=[dict()],
+    dataset=[Unity_XYTransOpenAI()],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=10,
+        k_step=5,
+        quant_eval=False
+
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1, 1.125], online_wc=[True],
+                     dist_x_land=[True],val_size = [0],
+                     wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/AEs-VAEs-TDA/src/datasets/simulated/xy_trans')]),
+    experiment_dir='/cluster/scratch/schsimo/output/xy_trans1',
+    seed=2,
+    device='cuda',
+    num_threads=1,
+    verbose=False,
+)
+
+leo_transxy_openai_notopo = ConfigGrid_WCAE(
+    learning_rate=[1/100,1/1000],
+    batch_size=[121],
+    n_epochs=[5000],
+    weight_decay=[0],
+    early_stopping=[125],
+    rec_loss_weight=[1],
+    top_loss_weight=[0],
+    match_edges=['push_active'],
+    k=[1],
+    r_max=[10],
+    model_class=[ConvAE_Unity480320],
+    model_kwargs=[dict()],
+    dataset=[Unity_XYTransOpenAI()],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=10,
+        k_step=5,
+        quant_eval=False
+
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True],
+                     dist_x_land=[True],val_size = [0],
+                     wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/AEs-VAEs-TDA/src/datasets/simulated/xy_trans')]),
+    experiment_dir='/cluster/scratch/schsimo/output/xy_trans_notopo',
+    seed=2,
+    device='cuda',
+    num_threads=1,
+    verbose=False,
+)
+
+
+leo_transxy_l_openai_1 = ConfigGrid_WCAE(
+    learning_rate=[1/100,1/1000],
+    batch_size=[400],
+    n_epochs=[5000],
+    weight_decay=[0],
+    early_stopping=[125],
+    rec_loss_weight=[1],
+    top_loss_weight=[2,4,8],
+    match_edges=['push_active'],
+    k=[2,4],
+    r_max=[10],
+    model_class=[ConvAE_Unity480320],
+    model_kwargs=[dict()],
+    dataset=[Unity_XYTransOpenAI(version = 'xy_trans_l')],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=10,
+        k_step=5,
+        quant_eval=False
+
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125], online_wc=[True],
+                     dist_x_land=[True],val_size = [0],
+                     wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/AEs-VAEs-TDA/src/datasets/simulated/xy_trans_l')]),
+    experiment_dir='/cluster/scratch/schsimo/output/xy_trans_l_1',
+    seed=2,
+    device='cuda',
+    num_threads=1,
+    verbose=False,
+)
+
+
+xy_trans_l_newpers_1 = ConfigGrid_WCAE(
+    learning_rate=[1/100,1/1000],
+    batch_size=[200],
+    n_epochs=[5000],
+    weight_decay=[0],
+    early_stopping=[250],
+    rec_loss_weight=[1],
+    top_loss_weight=[2,8,32],
+    match_edges=['push_active'],
+    k=[4],
+    r_max=[10],
+    model_class=[ConvAE_Unity480320],
+    model_kwargs=[dict()],
+    dataset=[Unity_XYTransOpenAI(version = 'xy_trans_l_newpers')],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=10,
+        k_step=5,
+        quant_eval=False
+
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125], online_wc=[True],
+                     dist_x_land=[True],val_size = [0],
+                     wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/output/WitnessComplexes/unity/Unity_XYTransOpenAI-bs200-seed1-noiseNone-e9e1dc6e')]),
+    experiment_dir='/cluster/scratch/schsimo/output/xy_trans_l_newpers_1',
+    seed=2,
+    device='cuda',
+    num_threads=2,
+    verbose=False,
+)
+
+
+xy_trans_l_newpers_s2 = ConfigGrid_WCAE(
+    learning_rate=[1/100],
+    batch_size=[200],
+    n_epochs=[5000],
+    weight_decay=[0],
+    early_stopping=[250],
+    rec_loss_weight=[1],
+    top_loss_weight=[8],
+    match_edges=['push_active'],
+    k=[4],
+    r_max=[10],
+    model_class=[ConvAE_Unity480320],
+    model_kwargs=[dict()],
+    dataset=[Unity_XYTransOpenAI(version = 'xy_trans_l_newpers')],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=10,
+        k_step=5,
+        quant_eval=False
+
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1.125], online_wc=[True],
+                     dist_x_land=[True],val_size = [0],
+                     wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/output/WitnessComplexes/unity/Unity_XYTransOpenAI-bs200-seed1-noiseNone-e9e1dc6e')]),
+    experiment_dir='/cluster/scratch/schsimo/output/xy_trans_l_newpers_1',
+    seed=2,
+    device='cuda',
+    num_threads=2,
+    verbose=False,
+)
+
+
+xy_trans_l_newpers_notopo = ConfigGrid_WCAE(
+    learning_rate=[1/100,1/1000],
+    batch_size=[200],
+    n_epochs=[15000],
+    weight_decay=[0],
+    early_stopping=[750],
+    rec_loss_weight=[1],
+    top_loss_weight=[0],
+    match_edges=['push_active'],
+    k=[1],
+    r_max=[10],
+    model_class=[ConvAE_Unity480320],
+    model_kwargs=[dict()],
+    dataset=[Unity_XYTransOpenAI(version = 'xy_trans_l_newpers')],
+    sampling_kwargs=[dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=10,
+        k_step=5,
+        quant_eval=False
+
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True],
+                     dist_x_land=[True],val_size = [0],
+                     wc_offline=[dict(path_to_data='/cluster/home/schsimo/MT/output/WitnessComplexes/unity/Unity_XYTransOpenAI-bs200-seed1-noiseNone-e9e1dc6e')]),
+    experiment_dir='/cluster/scratch/schsimo/output/xy_trans_l_newpers_notopo',
+    seed=2,
+    device='cuda',
+    num_threads=1,
+    verbose=False,
+)
