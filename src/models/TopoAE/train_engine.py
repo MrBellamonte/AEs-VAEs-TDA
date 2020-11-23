@@ -13,7 +13,7 @@ from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from torch.utils.data import TensorDataset
 
-from scripts.ssc.models.TopoAE import placeholder_config_topoae
+from scripts.ssc.models.TopoAE.topoae_config_library import placeholder_config_topoae
 from src.models.TopoAE.approx_based import TopologicallyRegularizedAutoencoder
 from src.models.TopoAE.config import ConfigTopoAE
 from src.train_pipeline.sacred_observer import SetID
