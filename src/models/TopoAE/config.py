@@ -14,7 +14,7 @@ from src.utils.config_utils import (
     get_keychain_value, fraction_to_string, get_kwargs,
     dictionary_to_string, add_default_to_dict)
 
-admissible_model_classes_TopoAE = [Autoencoder_MLP_topoae.__name__]
+
 
 
 @dataclass
@@ -123,7 +123,6 @@ class ConfigTopoAE:
         assert 0 < self.batch_size
         assert 0 < self.n_epochs
 
-        assert self.model_class.__name__ in admissible_model_classes_TopoAE
         s = inspect.getfullargspec(self.model_class.__init__)
         for a in s.kwonlyargs:
             assert a in self.model_kwargs
