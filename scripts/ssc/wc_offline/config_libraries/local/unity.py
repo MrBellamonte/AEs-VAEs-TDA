@@ -14,3 +14,17 @@ unity_xytrans1 = ConfigWC_Grid(
     root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/unity',
     verbose = True
 )
+
+
+unity_xytrans_rot = ConfigWC_Grid(
+    dataset = [Unity_XYTransOpenAI(version = 'xy_trans_rot')],
+    sampling_kwargs = [dict()],
+    batch_size=[300],
+    wc_kwargs=[dict()],
+    eval_size=[0], # eval set same as train
+    n_jobs = [2],
+    seed = [1],
+    global_register = PATH_GR_UNITY_LOCAL,
+    root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/unity',
+    verbose = True
+)
