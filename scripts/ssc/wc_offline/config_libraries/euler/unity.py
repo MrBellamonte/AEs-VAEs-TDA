@@ -4,7 +4,7 @@ from src.datasets.datasets import Unity_XYTransOpenAI
 
 unity_xytrans_rot = ConfigWC_Grid(
     dataset = [Unity_XYTransOpenAI(version = 'xy_trans_rot')],
-    sampling_kwargs = [dict()],
+    sampling_kwargs = [dict(root_path = '/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     batch_size=[300],
     wc_kwargs=[dict()],
     eval_size=[0], # eval set same as train
