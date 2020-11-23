@@ -479,11 +479,11 @@ xy_trans_l_newpers_s2 = ConfigGrid_WCAE(
 
 
 xy_trans_l_newpers_notopo = ConfigGrid_WCAE(
-    learning_rate=[1/10,1/100,1/1000],
+    learning_rate=[1/100,1/1000],
     batch_size=[400],
     n_epochs=[15000],
     weight_decay=[0],
-    early_stopping=[250],
+    early_stopping=[750],
     rec_loss_weight=[1],
     top_loss_weight=[0],
     match_edges=['push_active'],
