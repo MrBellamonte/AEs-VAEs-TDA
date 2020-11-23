@@ -83,9 +83,14 @@ class ConfigTopoAE:
 
             unique_id = str(uuid.uuid4())[:8]
 
+            if 'size_hidden_layers' in self.model_kwargs:
+                hidden_layers = '-'.join(str(x) for x in self.model_kwargs['size_hidden_layers'])
+            else:
+                hidden_layers = 'default'
+
             uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}-seed{seed}'.format(
                 model=self.model_class.__name__,
-                hidden_layers='-'.join(str(x) for x in self.model_kwargs['size_hidden_layers']),
+                hidden_layers=hidden_layers,
                 learning_rate=fraction_to_string(self.learning_rate),
                 batch_size=self.batch_size,
                 n_epochs=self.n_epochs,
