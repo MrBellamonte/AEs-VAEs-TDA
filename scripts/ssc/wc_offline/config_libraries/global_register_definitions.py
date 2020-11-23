@@ -7,6 +7,8 @@ PATH_GR_SWISSROLL_NOISE_EULER= '/cluster/home/schsimo/MT/output/WitnessComplexes
 
 PATH_GR_MNIST_EULER= '/cluster/home/schsimo/MT/output/WitnessComplexes/mnist/wc_global_register_mnist.csv'
 
+PATH_GR_UNITY_EULER = '/cluster/home/schsimo/MT/output/WitnessComplexes/unity/wc_global_register_unity.csv'
+
 # LOCAL
 PATH_GR_SWISSROLL_LOCAL='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/SwissRoll/wc_global_register_swissroll_local.csv'
 
