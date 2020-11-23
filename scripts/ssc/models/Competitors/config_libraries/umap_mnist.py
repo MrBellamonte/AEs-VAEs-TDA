@@ -19,7 +19,7 @@ umap_mnist_euler_1 = ConfigGrid_Competitors(
         k_max=16,
         k_step=4)],
     uid = [''],
-    experiment_dir='/cluster/scratch/schsimo/output/umap_final_final',
+    experiment_dir='/cluster/scratch/schsimo/output/umap_mnist',
     seed = 1,
     verbose = True
 )

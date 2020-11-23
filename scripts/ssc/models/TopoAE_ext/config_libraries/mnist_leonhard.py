@@ -1,6 +1,6 @@
 import numpy as np
 
-from scripts.ssc.TopoAE_ext.config_libraries.euler_configs.mnist import (
+from scripts.ssc.models.TopoAE_ext.config_libraries.euler_configs.mnist import (
     wcpath_mnist_s838_1024,
     wcpath_mnist_s838_512, wcpath_mnist_s838_256)
 from src.datasets.datasets import MNIST_offline

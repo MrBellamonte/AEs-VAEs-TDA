@@ -43,11 +43,16 @@ class Config_Competitors:
                 model=self.model_class.__name__,
                 model_kwargs=dictionary_to_string(self.model_kwargs),
                 seed = str(self.seed))
+            if 'root_path' in self.sampling_kwargs:
+                sampling_kwargs2 = self.sampling_kwargs.copy()
+                sampling_kwargs2.pop('root_path')
+            else:
+                sampling_kwargs2 = self.sampling_kwargs.copy()
 
             uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
                 dataset=self.dataset.__class__.__name__,
                 object_kwargs=get_kwargs(self.dataset),
-                sampling_kwargs=dictionary_to_string(self.sampling_kwargs),
+                sampling_kwargs=dictionary_to_string(self.sampling_kwargs2),
 
             )
             return uuid_data+uuid_model+'-'+ unique_id
