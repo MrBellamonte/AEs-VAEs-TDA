@@ -44,7 +44,7 @@ mnist_s838_1024_lw = ConfigGrid_WCAE(
     experiment_dir='/cluster/scratch/schsimo/output/mnist1024_2',
     seed=838,
     device='cuda',
-    num_threads=4,
+    num_threads=2,
     verbose=False,
 )
 
