@@ -163,7 +163,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
                 # Visualize latent space
                 plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
                     run_dir, 'train_latent_visualization.png'),dpi=100, title=None, show=False)
-            if evalconfig.quant_eval and (os.path.exists(os.path.join(run_dir,'test_latent_visualization.png')) == False):
+            if evalconfig.quant_eval:
                 print('QUANT EVAL....')
                 ks = list(
                     range(evalconfig.k_min, evalconfig.k_max+evalconfig.k_step, evalconfig.k_step))
@@ -218,6 +218,7 @@ if __name__ == "__main__":
         save_eval_latent=True,
         save_train_latent=False,
         online_visualization=False,
+        quant_eval = True,
         k_min=4,
         k_max=16,
         k_step=4)
