@@ -82,7 +82,7 @@ mnist_s838_512_lw = ConfigGrid_WCAE(
     experiment_dir='/cluster/scratch/schsimo/output/mnist512_2',
     seed=838,
     device='cuda',
-    num_threads=4,
+    num_threads=2,
     verbose=False,
 )
 
@@ -121,5 +121,5 @@ mnist_s838_256_lw = ConfigGrid_WCAE(
     experiment_dir='/cluster/scratch/schsimo/output/mnist256_2',
     seed=838,
     device='cuda',
-    num_threads=4,
+    num_threads=2,
     verbose=False)
