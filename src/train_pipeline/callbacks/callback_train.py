@@ -240,7 +240,7 @@ class LogDatasetLoss(Callback):
         if self.print_progress:
             print(losses)
         if self.early_stopping is not None:
-            if losses['loss'] < self.best_loss:
+            if (losses['loss'] < self.best_loss) or (epoch == 1):
                 self.best_loss = losses['loss']
                 if self.save_path is not None:
                     save_path = os.path.join(self.save_path, 'model_state.pth')
