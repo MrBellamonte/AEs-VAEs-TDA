@@ -5,7 +5,7 @@ import torch
 if __name__ == "__main__":
     os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
-    path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans_l_newpers'
+    path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans_rot'
 
     dataset = torch.load(os.path.join(path, 'full_dataset.pt'))
     posititon = torch.load(os.path.join(path, 'position.pt'))
@@ -30,4 +30,7 @@ if __name__ == "__main__":
     dist_90 = torch.cdist(images[ind0,:,:,:].view(1, 3*480*320),images[ind_90,:,:,:].view(1, 3*480*320))
     dist_180 = torch.cdist(images[ind0,:,:,:].view(1, 3*480*320),images[ind_180,:,:,:].view(1, 3*480*320))
     dist_270 = torch.cdist(images[ind0,:,:,:].view(1, 3*480*320),images[ind_270,:,:,:].view(1, 3*480*320))
+
+    print([float(dist_xp), float(dist_xm), float(dist_yp), float(dist_ym), float(dist_90), float(dist_180), float(dist_270)])
+
 

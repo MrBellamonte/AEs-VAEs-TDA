@@ -57,10 +57,10 @@ labels = positions[:,0]
 #
 #
 #
-# torch.save(images,
-#            os.path.join(root_path_save, '{}.pt'.format('images')))
-# torch.save(positions,
-#            os.path.join(root_path_save, '{}.pt'.format('position')))
+torch.save(images,
+           os.path.join(root_path_save, '{}.pt'.format('images')))
+torch.save(positions,
+           os.path.join(root_path_save, '{}.pt'.format('position')))
 # torch.save(labels,
 #            os.path.join(root_path_save, '{}.pt'.format('labels')))
 #
