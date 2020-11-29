@@ -225,3 +225,42 @@ mnist_test256_1024_leonhard = ConfigGrid_WCAE(
     verbose=True,
 )
 
+
+
+
+mnist_test_hd = ConfigGrid_WCAE(
+    learning_rate=[1/100],
+    batch_size=[1024],
+    n_epochs=[3],
+    weight_decay=[1e-6],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[1],
+    match_edges=['push_active'],
+    k=[1],
+    r_max=[10],
+    model_class=[ConvAE_MNIST],
+    model_kwargs=[dict()],
+    dataset=[MNIST_offline()],
+    sampling_kwargs=[dict()],
+    eval=[ConfigEval(
+        active=False,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=4,
+        k_max=5,
+        k_step=1,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1.05], online_wc=[True], wc_offline = [dict(path_to_data = '/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs1024-seed838-noiseNone-6f31dea2')]),
+    experiment_dir='/output/WAE/mnist_precomputed',
+    seed=838,
+    device='cpu',
+    num_threads=1,
+    verbose=True,
+)
+

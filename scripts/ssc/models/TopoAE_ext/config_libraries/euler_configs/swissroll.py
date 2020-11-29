@@ -2,7 +2,7 @@ import itertools
 
 import numpy as np
 
-from scripts.ssc.TopoAE_ext.config_libraries.euler_configs.euler_wc_offline_configs.swissroll_nonoise import \
+from scripts.ssc.models.TopoAE_ext.config_libraries.euler_configs.euler_wc_offline_configs.swissroll_nonoise import \
     (
     SWISSROLL_NONOISE3288, SWISSROLL_NONOISE_all, SWISSROLL_NONOISE_h1, SWISSROLL_NONOISE_h2)
 from src.datasets.datasets import SwissRoll

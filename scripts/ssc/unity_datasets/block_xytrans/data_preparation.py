@@ -18,8 +18,8 @@ def angular_metric(ang1, ang2):
         return (180-diff%180)
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
-root_path_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans_rot'
-root_path = '/Users/simons/MT_data/datasets/Unity_simulation/xy_trans_rot'
+root_path_save = '/Users/simons/PycharmProjects/MT-VAEs-TDA/src/datasets/simulated/xy_trans_rl'
+root_path = '/Users/simons/MT_data/datasets/Unity_simulation/xy_trans_rl'
 
 print(os.listdir(root_path))
 transform_to_tensor = transforms.ToTensor()
@@ -91,12 +91,12 @@ torch.save(full_dataset, os.path.join(root_path_save, '{}.pt'.format('full_datas
 # # torch.save(train_dataset, os.path.join(root_path_save,'{}.pt'.format('train_dataset')))
 # # torch.save(test_dataset, os.path.join(root_path_save,'{}.pt'.format('test_dataset')))
 # #
-# dataloader = DataLoader(full_dataset, batch_size=images.shape[0], pin_memory=True, drop_last=True,
-#                         shuffle=False)
+dataloader = DataLoader(full_dataset, batch_size=images.shape[0], pin_memory=True, drop_last=True,
+                         shuffle=False)
 # # dataloader_eval = DataLoader(train_dataset, batch_size=120, pin_memory=True, drop_last=True,shuffle=False)
 # # dataloader_test = DataLoader(test_dataset, batch_size=120, pin_memory=True, drop_last=True,shuffle=False)
 # #
-# torch.save(dataloader, os.path.join(root_path_save, '{}.pt'.format(NAME_DATALOADER_TRAIN)))
+torch.save(dataloader, os.path.join(root_path_save, '{}.pt'.format(NAME_DATALOADER_TRAIN)))
 # torch.save(dataloader, os.path.join(root_path_save, '{}.pt'.format(NAME_DATALOADER_EVAL)))
 # torch.save(dataloader, os.path.join(root_path_save, '{}.pt'.format(NAME_DATALOADER_TEST)))
 # #
