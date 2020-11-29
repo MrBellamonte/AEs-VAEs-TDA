@@ -73,6 +73,7 @@ class ConfigTopoAE:
 
         add_default_to_dict(self.sampling_kwargs, 'seed', self.seed)
         add_default_to_dict(self.method_args, 'name', 'topoae')
+        add_default_to_dict(self.method_args, 'shuffle', False)
         add_default_to_dict(self.method_args, 'LLE_pretrain', False)
 
 

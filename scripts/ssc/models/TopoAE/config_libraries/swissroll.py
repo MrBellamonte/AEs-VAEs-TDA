@@ -660,11 +660,11 @@ swissroll_testing = ConfigGrid_TopoAE(
     )],
     uid = [''],
     method_args=[None],
-    experiment_dir='/output/TopoAE/verification',
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/TopoAE/verification',
     seed = 1,
     device = 'cpu',
     num_threads=1,
-    verbose = True
+    verbose = False
 )
 
 
@@ -742,8 +742,8 @@ euler_swissroll_testing_parallel = [ConfigGrid_TopoAE(
     seed = 1,
     device = 'cpu',
     num_threads=1,
-    verbose = False
-) for bs in np.logspace(3,9,num=2,base = 2.0)]
+    verbose = True
+) for bs in [32]]
 
 euler_swissroll_testing = ConfigGrid_TopoAE(
     learning_rate=[1/1000],

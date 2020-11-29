@@ -9,7 +9,7 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae, ConvAE_M
 
 mnist_test = ConfigGrid_TopoAE(
     learning_rate=[1/1000],
-    batch_size=[1024],
+    batch_size=[64],
     n_epochs=[1000],
     weight_decay=[0],
     early_stopping=[10],
@@ -21,7 +21,7 @@ mnist_test = ConfigGrid_TopoAE(
     dataset=[MNIST_offline()],
     sampling_kwargs=[dict(root_path='/cluster/home/schsimo/MT/AEs-VAEs-TDA')],
     eval=[ConfigEval(
-        active = True,
+        active = False,
         evaluate_on = 'test',
         save_eval_latent = True,
         save_train_latent = False,
@@ -32,7 +32,7 @@ mnist_test = ConfigGrid_TopoAE(
     )],
     uid = [''],
     method_args = [None],
-    experiment_dir='/cluster/scratch/schsimo/output/topoae_1',
+    experiment_dir='/cluster/scratch/schsimo/output/mnist_topoae_test',
     seed = 838,
     device = 'cpu',
     num_threads=1,

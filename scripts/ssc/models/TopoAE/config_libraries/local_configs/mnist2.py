@@ -9,8 +9,8 @@ from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae, ConvAE_M
 
 mnist_test_loc = ConfigGrid_TopoAE(
     learning_rate=[1/1000],
-    batch_size=[64],
-    n_epochs=[2],
+    batch_size=[64,],
+    n_epochs=[1],
     weight_decay=[0],
     early_stopping=[10],
     rec_loss_weight=[1],
@@ -36,7 +36,7 @@ mnist_test_loc = ConfigGrid_TopoAE(
     seed = 838,
     device = 'cpu',
     num_threads=1,
-    verbose = False
+    verbose = True
 )
 
 

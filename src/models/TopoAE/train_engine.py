@@ -10,6 +10,7 @@ import pandas as pd
 
 import torch
 from sacred import Experiment
+from sacred import SETTINGS
 from sacred.observers import FileStorageObserver
 from torch.utils.data import TensorDataset
 
@@ -20,6 +21,7 @@ from src.train_pipeline.sacred_observer import SetID
 
 from src.train_pipeline.train_model import train
 
+SETTINGS['CAPTURE_MODE'] = 'sys'
 ex = Experiment()
 COLS_DF_RESULT = list(placeholder_config_topoae.create_id_dict().keys())+['metric', 'value']
 

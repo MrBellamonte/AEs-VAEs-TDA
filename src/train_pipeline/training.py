@@ -113,8 +113,17 @@ class TrainingLoop():
                 pass
 
         else:
-            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
-                                      pin_memory=True, drop_last=False)
+            if self.method_args['name'] == 'topoae':
+                train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=self.method_args['shuffle'],
+                                          pin_memory=True, drop_last=True)
+
+                if self.method_args['shuffle'] is False:
+                    dist_X_all = torch.zeros(len(train_loader), batch_size, batch_size)
+                    for batch_i, (X_batch, label_batch) in enumerate(train_loader):
+                        dist_X_all[batch_i, :, :] = torch.cdist(X_batch, X_batch)
+            else:
+                train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
+                                      pin_memory=True, drop_last=True)
 
         train_loader.num_workers = self.num_threads
 
@@ -166,7 +175,14 @@ class TrainingLoop():
                                 self.method_args['lam_t_decay'][key], labels=l)
                         else:
                             loss, loss_components = self.model(x, dist_X, pair_mask_X,lam_t = 0, labels=l)
+                elif self.method_args['name'] == 'topoae':
+                    if self.method_args['shuffle'] is False:
+                        x_distances = dist_X_all[batch_i, :, :]
+                    else:
+                        x_distances = None
 
+                    x = img.to(self.device)
+                    loss, loss_components = self.model(x.float(),x_distances = x_distances)
                 else:
                     x = img.to(self.device)
                     loss, loss_components = self.model(x.float())

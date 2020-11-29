@@ -147,7 +147,7 @@ mnist_test3 = ConfigGrid_WCAE(
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline=[dict(
         path_to_data='/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/mnist/MNIST_offline-bs1024-seed838-noiseNone-6f31dea2')]),
-    experiment_dir='/output/WAE/mnist_precomp_newid',
+    experiment_dir='output/WAE/mnist_precomp_newid',
     seed=838,
     device='cpu',
     num_threads=1,
