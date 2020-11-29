@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
         configs = get_configs(configs, ConfigTopoAE, ConfigGrid_TopoAE)
         for config in configs:
-            simulator_TopoAE(configs)
+            simulator_TopoAE(config)
     elif args.model == 'topoae_ext':
         conifg_srt = 'scripts.ssc.models.TopoAE_ext.config_libraries.'+args.configs
         mod_name, config_name = conifg_srt.rsplit('.', 1)
