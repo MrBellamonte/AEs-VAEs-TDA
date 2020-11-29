@@ -1,11 +1,11 @@
 import itertools
 import random
 
-from scripts.ssc.TopoAE_ext.config_libraries.euler_configs.mnist import (
+from scripts.ssc.models.TopoAE_ext.config_libraries.euler_configs.mnist import (
     mnist_s838_256_1,
     mnist_s838_512_1, mnist_s838_1024_1)
-from scripts.ssc.TopoAE_ext.config_libraries.local_configs.mnist import mnist_test2, mnist_test256
-from scripts.ssc.TopoAE_ext.config_libraries.swissroll import debug
+from scripts.ssc.models.TopoAE_ext.config_libraries.local_configs.mnist import mnist_test2, mnist_test256
+from scripts.ssc.models.TopoAE_ext.config_libraries.swissroll import debug
 from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
 
 if __name__ == "__main__":
