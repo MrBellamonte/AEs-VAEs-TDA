@@ -7,9 +7,11 @@ import torch
 
 from src.competitors.train_engine import simulator_competitor
 from src.data_preprocessing.witness_complex_offline.compute_wc import compute_wc_multiple
+from src.models.TopoAE.config import ConfigTopoAE, ConfigGrid_TopoAE
 from src.models.TopoAE.train_engine import simulator_TopoAE
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE, ConfigWCAE
 from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
+from src.utils.config_utils import get_configs
 
 
 def parse_input():
@@ -32,22 +34,16 @@ if __name__ == "__main__":
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
 
-        simulator_TopoAE(configs)
+        configs = get_configs(configs, ConfigTopoAE, ConfigGrid_TopoAE)
+        for config in configs:
+            simulator_TopoAE(configs)
     elif args.model == 'topoae_ext':
         conifg_srt = 'scripts.ssc.models.TopoAE_ext.config_libraries.'+args.configs
         mod_name, config_name = conifg_srt.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
 
-        if isinstance(configs, ConfigGrid_WCAE):
-            configs = configs.configs_from_grid()
-        elif isinstance(configs, ConfigWCAE):
-            configs = [configs]
-        elif isinstance(configs, List):
-            configs = configs
-        else:
-            raise ValueError
-
+        configs = get_configs(configs, ConfigWCAE, ConfigGrid_WCAE)
         for config in configs:
             simulator_TopoAE_ext(config)
 
