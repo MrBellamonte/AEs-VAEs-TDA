@@ -71,6 +71,6 @@ mnist_1 = [ConfigGrid_TopoAE(
     device='cpu',
     num_threads=1,
     verbose=False
-) for seed in [838,579,1988,1474]]
+) for seed in [838,579,1988]]
 
 mnist_1_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in mnist_1]))
