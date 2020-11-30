@@ -244,6 +244,6 @@ if __name__ == "__main__":
         pass
 
     stw = args.startswith
-    offline_eval_WAE(exp_dir,evalconfig,stw, model = args.model)
+    offline_eval_WAE(exp_dir,evalconfig,stw, model_name2 = args.model)
 
 
