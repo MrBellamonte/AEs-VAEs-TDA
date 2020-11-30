@@ -1,6 +1,6 @@
 from scripts.ssc.models.vanillaAE.config_libraries.debug import ae_test
+from scripts.ssc.models.vanillaAE.config_libraries.leonhard.mnist2 import mnist_2_deepae
 from src.models.vanillaAE.train_engine import simulator_VanillaAE
 
-ae_test
+mnist_2_deepae
 
-simulator_VanillaAE(ae_test.configs_from_grid()[0])

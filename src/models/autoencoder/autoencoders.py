@@ -271,7 +271,6 @@ class ConvAE_MNIST_4D(AutoencoderModel):
         reconst_error = self.reconst_error(x, x_reconst)
         return reconst_error, {'reconstruction_error': reconst_error}
 
-
 class ConvAE_MNIST_8D(AutoencoderModel):
     """Convolutional Autoencoder for MNIST"""
 
@@ -312,6 +311,67 @@ class ConvAE_MNIST_8D(AutoencoderModel):
     def decode(self, z):
         """Compute reconstruction using convolutional autoencoder."""
         return self.decoder(z).reshape(z.shape[0],28*28)
+
+    def forward(self, x):
+        """Apply autoencoder to batch of input images.
+
+        Args:
+            x: Batch of images with shape [bs x channels x n_row x n_col]
+
+        Returns:
+            tuple(reconstruction_error, dict(other errors))
+
+        """
+        latent = self.encode(x)
+        x_reconst = self.decode(latent)
+        reconst_error = self.reconst_error(x, x_reconst)
+        return reconst_error, {'reconstruction_error': reconst_error}
+
+
+class DeepAE_MNIST(AutoencoderModel):
+    """Convolutional Autoencoder for MNIST"""
+
+    def __init__(self):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(784, 128),
+            nn.ReLU(True),
+            nn.BatchNorm1d(128),
+            nn.Linear(128, 32),
+            nn.ReLU(True),
+            nn.BatchNorm1d(32),
+            nn.Linear(32, 16),
+            nn.ReLU(True),
+            nn.BatchNorm1d(16),
+            nn.Linear(16, 2),
+            nn.ReLU(True),
+            nn.BatchNorm1d(16),
+            nn.Linear(16, 2),
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(2, 16),
+            nn.ReLU(True),
+            nn.BatchNorm1d(16),
+            nn.Linear(16, 32),
+            nn.ReLU(True),
+            nn.BatchNorm1d(32),
+            nn.Linear(32, 128),
+            nn.ReLU(True),
+            nn.BatchNorm1d(128),
+            nn.Linear(128, 784),
+            nn.ReLU(True),
+            nn.BatchNorm1d(784),
+            nn.Tanh()
+        )
+        self.reconst_error = nn.MSELoss()
+
+    def encode(self, x):
+        """Compute latent representation using convolutional autoencoder."""
+        return self.encoder(x)
+
+    def decode(self, z):
+        """Compute reconstruction using convolutional autoencoder."""
+        return self.decoder(z)
 
     def forward(self, x):
         """Apply autoencoder to batch of input images.

@@ -122,7 +122,7 @@ class TrainingLoop():
                     for batch_i, (X_batch, label_batch) in enumerate(train_loader):
                         dist_X_all[batch_i, :, :] = torch.cdist(X_batch, X_batch)
             else:
-                train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
+                train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
                                       pin_memory=True, drop_last=True)
 
         train_loader.num_workers = self.num_threads
