@@ -33,7 +33,7 @@ mnist_2_deepae = ConfigGrid_VanillaAE(
     verbose=False)
 
 
-mnist_3_deepae = ConfigGrid_VanillaAE(
+mnist_3_deepae = [ConfigGrid_VanillaAE(
     learning_rate=[1/10,1/100,1/1000],
     batch_size=[64,128,256,512],
     n_epochs=[1000],
@@ -60,7 +60,11 @@ mnist_3_deepae = ConfigGrid_VanillaAE(
     seed=838,
     device='cuda',
     num_threads=2,
-    verbose=False)
+    verbose=False) for seed in [838,579,1988,1958,124]]
+
+
+
+
 
 
 mnist_4_deepae = ConfigGrid_VanillaAE(

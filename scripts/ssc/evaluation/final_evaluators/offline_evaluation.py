@@ -21,7 +21,7 @@ from src.utils.plots import plot_distcomp_Z_manifold, plot_2Dscatter
 
 
 
-def offline_eval_WAE(exp_dir,evalconfig,startwith):
+def offline_eval_WAE(exp_dir,evalconfig,startwith, model):
 
 
 
@@ -60,7 +60,17 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
 
 
         autoencoder = autoencoder(**config['model_kwargs'])
-        model = WitnessComplexAutoencoder(autoencoder)
+
+
+        if model is 'topoae_ext':
+            model = WitnessComplexAutoencoder(autoencoder)
+        elif model is 'vanilla_ae':
+            model = autoencoder
+        else:
+            raise ValueError("Model {} not defined.".format(model))
+
+
+
         continue_ = False
         try:
             state_dict = torch.load(os.path.join(run_dir, 'model_state.pth'),map_location=torch.device('cpu'))
@@ -207,6 +217,8 @@ def parse_input():
     parser.add_argument('-dir', "--directory", help="Experiment directory", type=str, default = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/mnist_test')
     parser.add_argument('-stw', "--startswith", help="dataset_prettyname_start", type=str, default = 'MNIST')
     parser.add_argument('--latent', help='latent representation', action='store_true')
+    parser.add_argument('--model', help='model', type=str,default = 'topoae_ext')
+
 
     return parser.parse_args()
 
@@ -232,6 +244,6 @@ if __name__ == "__main__":
         pass
 
     stw = args.startswith
-    offline_eval_WAE(exp_dir,evalconfig,stw)
+    offline_eval_WAE(exp_dir,evalconfig,stw, model = args.model)
 
 
