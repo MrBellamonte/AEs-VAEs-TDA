@@ -1,3 +1,5 @@
+import itertools
+
 from src.datasets.datasets import MNIST_offline
 from src.evaluation.config import ConfigEval
 from src.models.autoencoder.autoencoders import (
@@ -37,6 +39,7 @@ mnist_2_deepae_2 = [ConfigGrid_VanillaAE(
     num_threads=2,
     verbose=False) for seed in [838,579,1988,1958,124]]
 
+mnist_2_deepae_2_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in mnist_2_deepae_2]))
 
 mnist_3_deepae = [ConfigGrid_VanillaAE(
     learning_rate=[1/10,1/100,1/1000],
@@ -67,6 +70,7 @@ mnist_3_deepae = [ConfigGrid_VanillaAE(
     num_threads=2,
     verbose=False) for seed in [838,579,1988,1958,124]]
 
+mnist_3_deepae_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in mnist_3_deepae]))
 
 mnist_4_deepae = [ConfigGrid_VanillaAE(
     learning_rate=[1/10,1/100,1/1000],
@@ -97,6 +101,9 @@ mnist_4_deepae = [ConfigGrid_VanillaAE(
     num_threads=2,
     verbose=False) for seed in [838,579,1988,1958,124]]
 
+
+mnist_4_deepae_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in mnist_4_deepae]))
+
 mnist_8_deepae = [ConfigGrid_VanillaAE(
     learning_rate=[1/10,1/100,1/1000],
     batch_size=[16,32,64,128,256,512],
@@ -126,3 +133,4 @@ mnist_8_deepae = [ConfigGrid_VanillaAE(
     num_threads=2,
     verbose=False) for seed in [838,579,1988,1958,124]]
 
+mnist_8_deepae_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in mnist_8_deepae]))
