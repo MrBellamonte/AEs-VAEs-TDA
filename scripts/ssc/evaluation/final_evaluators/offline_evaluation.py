@@ -85,7 +85,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2):
             print('WARNING: model {} not complete'.format(exp))
 
         if continue_:
-            if 'latent' not in state_dict:
+            if 'latent' not in state_dict and model_name2 == 'topoae_ext':
                 state_dict['latent_norm'] = torch.Tensor([1.0]).float()
 
             model.load_state_dict(state_dict)
