@@ -206,6 +206,7 @@ def parse_input():
     parser = argparse.ArgumentParser()
     parser.add_argument('-dir', "--directory", help="Experiment directory", type=str, default = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/mnist_test')
     parser.add_argument('-stw', "--startswith", help="dataset_prettyname_start", type=str, default = 'MNIST')
+    parser.add_argument('--latent', help='latent representation', action='store_true')
 
     return parser.parse_args()
 
@@ -215,7 +216,7 @@ if __name__ == "__main__":
         active=True,
         evaluate_on='test',
         eval_manifold=False,
-        save_eval_latent=True,
+        save_eval_latent=args.latent,
         save_train_latent=False,
         online_visualization=False,
         quant_eval = True,
