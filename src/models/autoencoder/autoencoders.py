@@ -391,6 +391,133 @@ class DeepAE_MNIST(AutoencoderModel):
         reconst_error = self.reconst_error(x, x_reconst)
         return reconst_error, {'reconstruction_error': reconst_error}
 
+class DeepAE_MNIST_3D(AutoencoderModel):
+    """Convolutional Autoencoder for MNIST"""
+
+    def __init__(self):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(784, 256),
+            nn.ReLU(True),
+            nn.BatchNorm1d(256),
+            nn.Linear(256, 64),
+            nn.ReLU(True),
+            nn.BatchNorm1d(64),
+            nn.Linear(64, 16),
+            nn.ReLU(True),
+            nn.BatchNorm1d(16),
+            nn.Linear(16, 8),
+            nn.ReLU(True),
+            nn.BatchNorm1d(8),
+            nn.Linear(8, 3),
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(3, 8),
+            nn.ReLU(True),
+            nn.BatchNorm1d(8),
+            nn.Linear(8, 16),
+            nn.ReLU(True),
+            nn.BatchNorm1d(16),
+            nn.Linear(16, 64),
+            nn.ReLU(True),
+            nn.BatchNorm1d(64),
+            nn.Linear(64, 256),
+            nn.ReLU(True),
+            nn.BatchNorm1d(256),
+            nn.Linear(256, 784),
+            nn.ReLU(True),
+            nn.BatchNorm1d(784),
+            nn.Tanh()
+        )
+        self.reconst_error = nn.MSELoss()
+
+    def encode(self, x):
+        """Compute latent representation using convolutional autoencoder."""
+        return self.encoder(x)
+
+    def decode(self, z):
+        """Compute reconstruction using convolutional autoencoder."""
+        return self.decoder(z)
+
+    def forward(self, x):
+        """Apply autoencoder to batch of input images.
+
+        Args:
+            x: Batch of images with shape [bs x channels x n_row x n_col]
+
+        Returns:
+            tuple(reconstruction_error, dict(other errors))
+
+        """
+        latent = self.encode(x)
+        x_reconst = self.decode(latent)
+        reconst_error = self.reconst_error(x, x_reconst)
+        return reconst_error, {'reconstruction_error': reconst_error}
+
+
+class DeepAE_MNIST_4D(AutoencoderModel):
+    """Convolutional Autoencoder for MNIST"""
+
+    def __init__(self):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(784, 256),
+            nn.ReLU(True),
+            nn.BatchNorm1d(256),
+            nn.Linear(256, 64),
+            nn.ReLU(True),
+            nn.BatchNorm1d(64),
+            nn.Linear(64, 16),
+            nn.ReLU(True),
+            nn.BatchNorm1d(16),
+            nn.Linear(16, 8),
+            nn.ReLU(True),
+            nn.BatchNorm1d(8),
+            nn.Linear(8, 4),
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(4, 8),
+            nn.ReLU(True),
+            nn.BatchNorm1d(8),
+            nn.Linear(8, 16),
+            nn.ReLU(True),
+            nn.BatchNorm1d(16),
+            nn.Linear(16, 64),
+            nn.ReLU(True),
+            nn.BatchNorm1d(64),
+            nn.Linear(64, 256),
+            nn.ReLU(True),
+            nn.BatchNorm1d(256),
+            nn.Linear(256, 784),
+            nn.ReLU(True),
+            nn.BatchNorm1d(784),
+            nn.Tanh()
+        )
+        self.reconst_error = nn.MSELoss()
+
+    def encode(self, x):
+        """Compute latent representation using convolutional autoencoder."""
+        return self.encoder(x)
+
+    def decode(self, z):
+        """Compute reconstruction using convolutional autoencoder."""
+        return self.decoder(z)
+
+    def forward(self, x):
+        """Apply autoencoder to batch of input images.
+
+        Args:
+            x: Batch of images with shape [bs x channels x n_row x n_col]
+
+        Returns:
+            tuple(reconstruction_error, dict(other errors))
+
+        """
+        latent = self.encode(x)
+        x_reconst = self.decode(latent)
+        reconst_error = self.reconst_error(x, x_reconst)
+        return reconst_error, {'reconstruction_error': reconst_error}
+
 
 class ConvAE_MNIST_SMALL(AutoencoderModel):
     """Convolutional Autoencoder for MNIST"""
