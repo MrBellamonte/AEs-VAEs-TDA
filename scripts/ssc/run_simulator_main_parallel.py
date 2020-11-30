@@ -11,6 +11,9 @@ from src.models.TopoAE.config import ConfigGrid_TopoAE
 from src.models.TopoAE.train_engine import simulator_TopoAE
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
+from src.models.vanillaAE.config import Config_VanillaAE, ConfigGrid_VanillaAE
+from src.models.vanillaAE.train_engine import simulator_VanillaAE
+from src.utils.config_utils import get_configs
 
 
 def parse_input():
@@ -54,6 +57,15 @@ if __name__ == "__main__":
             configs = configs
         random.shuffle(configs)
         Parallel(n_jobs=args.n_jobs)(delayed(simulator_TopoAE_ext)(config) for config in configs)
+    elif args.model == 'vanilla_ae':
+        conifg_srt = 'scripts.ssc.models.vanillaAE.config_libraries.'+args.configs
+        mod_name, config_name = conifg_srt.rsplit('.', 1)
+        mod = importlib.import_module(mod_name)
+        configs = getattr(mod, config_name)
+
+        configs = get_configs(configs, Config_VanillaAE, ConfigGrid_VanillaAE)
+        random.shuffle(configs)
+        Parallel(n_jobs=args.n_jobs)(delayed(simulator_VanillaAE)(config) for config in configs)
 
     elif args.model == 'competitor':
         conifg_srt = 'scripts.ssc.models.Competitors.config_libraries.'+args.configs
