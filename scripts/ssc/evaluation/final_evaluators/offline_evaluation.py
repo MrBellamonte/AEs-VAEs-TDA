@@ -21,7 +21,7 @@ from src.utils.plots import plot_distcomp_Z_manifold, plot_2Dscatter
 
 
 
-def offline_eval_WAE(exp_dir,evalconfig,startwith, model):
+def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2):
 
 
 
@@ -62,12 +62,12 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith, model):
         autoencoder = autoencoder(**config['model_kwargs'])
 
 
-        if model is 'topoae_ext':
+        if model_name2 == 'topoae_ext':
             model = WitnessComplexAutoencoder(autoencoder)
-        elif model is 'vanilla_ae':
+        elif model_name2 == 'vanilla_ae':
             model = autoencoder
         else:
-            raise ValueError("Model {} not defined.".format(model))
+            raise ValueError("Model {} not defined.".format(model_name2))
 
 
 
