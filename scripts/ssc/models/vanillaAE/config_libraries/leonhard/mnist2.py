@@ -12,7 +12,7 @@ from src.models.vanillaAE.config import ConfigGrid_VanillaAE
 
 mnist_2_deepae_2 = [ConfigGrid_VanillaAE(
     learning_rate=[1/10,1/100,1/1000],
-    batch_size=[16,32,64,128,256,512],
+    batch_size=[64,128,256,512],
     n_epochs=[1000],
     weight_decay=[1e-6],
     early_stopping=[30],
@@ -37,13 +37,13 @@ mnist_2_deepae_2 = [ConfigGrid_VanillaAE(
     seed=838,
     device='cuda',
     num_threads=2,
-    verbose=False) for seed in [838,579,1988,1958,124]]
+    verbose=False) for seed in [838,579,1988]]
 
 mnist_2_deepae_2_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in mnist_2_deepae_2]))
 
 mnist_3_deepae = [ConfigGrid_VanillaAE(
     learning_rate=[1/10,1/100,1/1000],
-    batch_size=[16,32,64,128,256,512],
+    batch_size=[64,128,256,512],
     n_epochs=[1000],
     weight_decay=[1e-6],
     early_stopping=[30],
@@ -68,13 +68,13 @@ mnist_3_deepae = [ConfigGrid_VanillaAE(
     seed=838,
     device='cuda',
     num_threads=2,
-    verbose=False) for seed in [838,579,1988,1958,124]]
+    verbose=False) for seed in [838,579,1988]]
 
 mnist_3_deepae_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in mnist_3_deepae]))
 
 mnist_4_deepae = [ConfigGrid_VanillaAE(
     learning_rate=[1/10,1/100,1/1000],
-    batch_size=[16,32,64,128,256,512],
+    batch_size=[64,128,256,512],
     n_epochs=[1000],
     weight_decay=[1e-6],
     early_stopping=[30],
@@ -99,14 +99,14 @@ mnist_4_deepae = [ConfigGrid_VanillaAE(
     seed=838,
     device='cuda',
     num_threads=2,
-    verbose=False) for seed in [838,579,1988,1958,124]]
+    verbose=False) for seed in [838,579,1988]]
 
 
 mnist_4_deepae_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in mnist_4_deepae]))
 
 mnist_8_deepae = [ConfigGrid_VanillaAE(
     learning_rate=[1/10,1/100,1/1000],
-    batch_size=[16,32,64,128,256,512],
+    batch_size=[64,128,256,512],
     n_epochs=[1000],
     weight_decay=[1e-6],
     early_stopping=[30],
@@ -131,6 +131,6 @@ mnist_8_deepae = [ConfigGrid_VanillaAE(
     seed=838,
     device='cuda',
     num_threads=2,
-    verbose=False) for seed in [838,579,1988,1958,124]]
+    verbose=False) for seed in [838,579,1988]]
 
 mnist_8_deepae_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in mnist_8_deepae]))

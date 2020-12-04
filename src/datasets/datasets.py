@@ -392,7 +392,7 @@ class Unity_XYTransOpenAI(DataSet):
 
     def __init__(self, version = DEFAULT['unity_xytrans']['version']):
 
-        assert version in ['xy_trans', 'xy_trans_l', 'xy_trans_l_newpers', 'xy_trans_rot']
+        assert version in ['xy_trans', 'xy_trans_l', 'xy_trans_l_newpers', 'xy_trans_rot','xy_trans_final']
 
         self.version = version
 
