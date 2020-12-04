@@ -77,7 +77,7 @@ def train_VanillaAE(_run, _seed, _rnd, config: ConfigTopoAE, experiment_dir, exp
 
     # Train and evaluate model
     result = train(model=model, data_train=dataset_train, data_test=dataset_test, config=config,
-                   device=device, quiet=operator.not_(verbose), val_size=0.2, _seed=_seed,
+                   device=device, quiet=operator.not_(verbose), val_size=config.method_args['val_size'], _seed=_seed,
                    _rnd=_rnd, _run=_run, rundir=experiment_dir)
 
     # Format experiment data

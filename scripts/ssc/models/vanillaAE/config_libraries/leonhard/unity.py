@@ -32,7 +32,7 @@ xy_trans_final_notopo10= ConfigGrid_VanillaAE(
 
     )],
     uid=[''],
-    method_args=[dict()],
+    method_args=dict(val_size=[0]),
     experiment_dir='/cluster/scratch/schsimo/output/xy_trans_final_notopo',
     seed=838,
     device='cuda',
@@ -63,7 +63,7 @@ xy_trans_final_notopo100 = ConfigGrid_VanillaAE(
 
     )],
     uid=[''],
-    method_args=[dict()],
+    method_args=dict(val_size=[0]),
     experiment_dir='/cluster/scratch/schsimo/output/xy_trans_final_notopo',
     seed=838,
     device='cuda',
@@ -94,10 +94,10 @@ xy_trans_final_notopo1000 = ConfigGrid_VanillaAE(
 
     )],
     uid=[''],
-    method_args=[dict()],
+    method_args=dict(val_size=[0]),
     experiment_dir='/cluster/scratch/schsimo/output/xy_trans_final_notopo',
     seed=838,
     device='cuda',
-    num_threads=2,
+    num_threads=1,
     verbose=False)
 
