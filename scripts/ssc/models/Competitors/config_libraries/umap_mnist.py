@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 
 from src.competitors.competitor_models import UMAP
@@ -27,6 +29,7 @@ umap_mnist_euler_multi = [ConfigGrid_Competitors(
     verbose = True
 ) for seed in [1110,1909,1318]]
 
+umap_mnist_euler_multi_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in umap_mnist_euler_multi]))
 
 umap_mnist_test_local = ConfigGrid_Competitors(
     model_class = [UMAP],
