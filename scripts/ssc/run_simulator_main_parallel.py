@@ -5,6 +5,7 @@ import random
 
 from joblib import Parallel, delayed
 
+from src.competitors.config import Config_Competitors, ConfigGrid_Competitors
 from src.competitors.train_engine import simulator_competitor
 from src.models.TopoAE.config import ConfigGrid_TopoAE
 
@@ -73,6 +74,8 @@ if __name__ == "__main__":
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
 
+        configs = get_configs(configs, Config_Competitors, ConfigGrid_Competitors)
+        random.shuffle(configs)
         Parallel(n_jobs=args.n_jobs)(delayed(simulator_competitor)(config) for config in configs)
     else:
         raise ValueError("Model {} not defined.".format(args.model))
