@@ -8,7 +8,7 @@ from src.evaluation.config import ConfigEval
 
 umap_mnist_euler_1 = ConfigGrid_Competitors(
     model_class = [UMAP],
-    model_kwargs=dict(test_eval=[False],n_neighbors = np.linspace(10,500,15).tolist(), min_dist = np.linspace(0.1,1,10).astype(int).tolist()),
+    model_kwargs=dict(test_eval=[False],n_neighbors = np.linspace(10,500,15).astype(int).tolist(), min_dist = np.linspace(0.1,1,10).tolist()),
     dataset=[MNIST_offline()],
     sampling_kwargs=[dict(root_path='/cluster/home/schsimo/MT/AEs-VAEs-TDA', n_samples = 10000)],
     eval=[ConfigEval(
