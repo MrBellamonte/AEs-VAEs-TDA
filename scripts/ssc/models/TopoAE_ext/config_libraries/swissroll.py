@@ -7,6 +7,95 @@ from src.evaluation.config import ConfigEval
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE
 from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
+
+swissroll_visualize128 = ConfigGrid_WCAE(
+    learning_rate=[1/100],
+    batch_size=[128],
+    n_epochs=[1000],
+    weight_decay=[0],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[8192],
+    match_edges=['push_active'],
+    k=[3],
+    r_max=[10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560] #2560
+    },
+    eval=[ConfigEval(
+        active=False,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=True,
+        quant_eval=False,
+        k_min=5,
+        k_max=45,
+        k_step=5,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1.25], online_wc=[True], wc_offline=[dict(
+        path_to_data='/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/SwissRoll/nonoise/SwissRoll-bs128-seed5310-d39df50c')]),
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/online_visualize2',
+    seed=5310,
+    device='cpu',
+    num_threads=1,
+    verbose=True,
+)
+swissroll_visualize256 = ConfigGrid_WCAE(
+    learning_rate=[1/100],
+    batch_size=[256],
+    n_epochs=[1000],
+    weight_decay=[1e-6],
+    early_stopping=[50],
+    rec_loss_weight=[1],
+    top_loss_weight=[8192],
+    match_edges=['push_active'],
+    k=[3],
+    r_max=[10],
+    model_class=[Autoencoder_MLP_topoae],
+    model_kwargs={
+        'input_dim'         : [3],
+        'latent_dim'        : [2],
+        'size_hidden_layers': [[32, 32]]
+    },
+    dataset=[SwissRoll()],
+    sampling_kwargs={
+        'n_samples': [2560] #2560
+    },
+    eval=[ConfigEval(
+        active=False,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=True,
+        quant_eval=False,
+        k_min=5,
+        k_max=45,
+        k_step=5,
+    )],
+    uid=[''],
+    toposig_kwargs=[dict()],
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1.15], online_wc=[True], wc_offline=[dict(
+        path_to_data='/Users/simons/MT_data/sync/euler_sync/schsimo/MT/output/WitnessComplexes/SwissRoll/nonoise/SwissRoll-bs256-seed5310-b344784f')]),
+    experiment_dir='/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WAE/online_visualize',
+    seed=5310,
+    device='cpu',
+    num_threads=1,
+    verbose=True,
+)
+
+
 ### SWISSROLL MULTISEED
 k1_multiseed = [ConfigGrid_WCAE(
     learning_rate=[1/1000],

@@ -1,5 +1,7 @@
 """Callbacks for training loop."""
 import os
+
+from sklearn.neighbors import NearestNeighbors
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 # from torchvision.utils import save_image
@@ -108,12 +110,19 @@ class SaveLatentRepresentation(Callback):
         self.path = path
         self.dataset = dataset
         self.device = device
-        self.data_loader = DataLoader(self.dataset, batch_size=batch_size,
+        self.data_loader = DataLoader(self.dataset, batch_size=256,
                                       drop_last=True, pin_memory=True)
 
     def on_epoch_end(self, model, dataset, img, epoch, **kwargs):
         """Save reconstruction images."""
-        model.eval()
-        _, labels, latents = get_latentspace_representation(model, self.data_loader, device=self.device)
-        plot_2Dscatter(latents, labels, path_to_save=os.path.join(
-            self.path, f'latent_epoch_{epoch}.pdf'), title=None, show=False)
+
+        if epoch == 1 or epoch%10==0:
+            model.eval()
+            _, labels, latents = get_latentspace_representation(model, self.data_loader, device=self.device,bs=True)
+
+            #get pairings
+            neigh = NearestNeighbors(n_neighbors=3).fit(latents)
+            distances, pairings = neigh.kneighbors()
+
+            plot_2Dscatter(latents, labels, pairings,path_to_save=os.path.join(
+                self.path, f'latent_epoch_{epoch}.pdf'), title=None, show=False)

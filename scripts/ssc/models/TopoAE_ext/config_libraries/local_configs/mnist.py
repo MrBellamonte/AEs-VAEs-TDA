@@ -5,6 +5,8 @@ from src.models.autoencoder.autoencoders import (
     ConvAE_MNIST,
     ConvAE_MNIST_SMALL, ConvAE_MNIST_3D)
 
+
+
 mnist_test = ConfigGrid_WCAE(
     learning_rate=[1/100],
     batch_size=[1024],

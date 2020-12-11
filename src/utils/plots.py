@@ -13,8 +13,8 @@ from matplotlib.collections import PatchCollection
 from matplotlib.ticker import MaxNLocator
 
 
-def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False, palette = plt.cm.viridis, dpi = 200):
-    #fig, ax = plt.subplots()
+def plot_2Dscatter(data, labels,pairings = None, path_to_save= None, title = None, show = False, palette = plt.cm.viridis, dpi = 200):
+    fig, ax = plt.subplots()
     # sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=palette, marker=".",
     #     #                 size=5, edgecolor="none", legend=True)
     if palette is 'hsv':
@@ -25,19 +25,26 @@ def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False,
         cbar.set_ticklabels(['0°','90°','180°','270°','360°'])
 
     else:
-        sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=palette, marker=".",
-                                   size=5, edgecolor="none")
+        sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=palette,
+                                   size=100, edgecolor="none",ax = ax,zorder=2)
+        if pairings is None:
+            pass
+        else:
+            for i, pairing in enumerate(pairings):
+                for ind in pairing:
+                    ax.plot([data[i, 0], data[ind, 0]],
+                            [data[i, 1], data[ind, 1]], color='grey', zorder=1)
     sns.despine(left=True, bottom=True)
 
     plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False, left=False)
 
     plt.title(title)
-
+    plt.legend([], [], frameon=False)
     if show:
         plt.show()
 
     if path_to_save != None:
-        fig = sns_plot.get_figure()
+        #fig = sns_plot.get_figure()
         fig.savefig(path_to_save, dpi=dpi)
 
     plt.close()

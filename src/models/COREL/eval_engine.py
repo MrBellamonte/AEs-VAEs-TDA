@@ -53,12 +53,13 @@ def get_model(path_to_folder, config_fix = False):
 
     return model
 
-def get_latentspace_representation(model, dl: DataLoader, device = 'cuda'):
+def get_latentspace_representation(model, dl: DataLoader, device = 'cuda',bs=False):
     X, Z, Y = [], [], []
     model.eval()
     sys.setrecursionlimit(10000)
     model.to(device)
     for x, y in dl:
+
         x = x.to(device)
 
         z = model.encode(x.float())
@@ -68,6 +69,8 @@ def get_latentspace_representation(model, dl: DataLoader, device = 'cuda'):
         X.append(x_hat)
         Y.append(y)
         Z.append(z)
+        if bs:
+            break
 
 
     X = torch.cat(X, dim=0)

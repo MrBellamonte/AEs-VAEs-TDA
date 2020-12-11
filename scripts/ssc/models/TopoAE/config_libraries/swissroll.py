@@ -8,6 +8,7 @@ from src.models.TopoAE.config import ConfigGrid_TopoAE, ConfigTopoAE
 from src.models.autoencoder.autoencoders import Autoencoder_MLP_topoae
 
 
+
 ### SWISSROLL - MULTISEED ASYMMETRIC-II
 swissroll_multiseed_asymmetric2_parallel_batch1 = [ConfigGrid_TopoAE(
     learning_rate=[1/1000],
