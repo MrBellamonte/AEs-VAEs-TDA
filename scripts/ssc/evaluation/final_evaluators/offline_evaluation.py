@@ -21,15 +21,23 @@ from src.utils.plots import plot_distcomp_Z_manifold, plot_2Dscatter
 
 
 
-def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2):
+def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2, check):
 
-
-
+    if check:
+        df_exist = pd.read_csv(os.path.join(exp_dir,"eval_metrics_all.csv"))
+        uid_exist = list(df_exist.loc[df_exist['metric'] == 'test_Lipschitz_std_refZ'].uid)
+    else:
+        pass
     subfolders = [f.path for f in os.scandir(exp_dir) if
                   (f.is_dir() and f and f.path.split('/')[-1].startswith(startwith))]
 
     for run_dir in subfolders:
         exp = run_dir.split('/')[-1]
+
+        if exp in uid_exist and check:
+            continue2 = False
+        else:
+            continue2 = True
 
         try:
             os.remove(os.path.join(run_dir,"metrics.json"))
@@ -173,7 +181,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2):
                 # Visualize latent space
                 plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
                     run_dir, 'train_latent_visualization.png'),dpi=100, title=None, show=False)
-            if evalconfig.quant_eval:
+            if evalconfig.quant_eval and continue2:
                 print('QUANT EVAL....')
                 ks = list(
                     range(evalconfig.k_min, evalconfig.k_max+evalconfig.k_step, evalconfig.k_step))
@@ -218,6 +226,7 @@ def parse_input():
     parser.add_argument('-stw', "--startswith", help="dataset_prettyname_start", type=str, default = 'MNIST')
     parser.add_argument('--latent', help='latent representation', action='store_true')
     parser.add_argument('--model', help='model', type=str,default = 'topoae_ext')
+    parser.add_argument('--check', help='check if already evaluated', action='store_true')
 
 
     return parser.parse_args()
@@ -244,6 +253,6 @@ if __name__ == "__main__":
         pass
 
     stw = args.startswith
-    offline_eval_WAE(exp_dir,evalconfig,stw, model_name2 = args.model)
+    offline_eval_WAE(exp_dir,evalconfig,stw, model_name2 = args.model,check = args.check)
 
 
