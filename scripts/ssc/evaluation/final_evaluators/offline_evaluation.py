@@ -24,6 +24,7 @@ from src.utils.plots import plot_distcomp_Z_manifold, plot_2Dscatter
 def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2, check):
 
     if check:
+
         df_exist = pd.read_csv(os.path.join(exp_dir,"eval_metrics_all.csv"))
         uid_exist = list(df_exist.loc[df_exist['metric'] == 'test_Lipschitz_std_refZ'].uid)
     else:
@@ -214,6 +215,8 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2, check):
 
                 df = df[COLS_DF_RESULT]
                 df.to_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'), mode='a', header=False)
+            else:
+                print('skipped quant eval')
         else:
             shutil.move(run_dir, os.path.join(exp_dir,'not_evaluated'))
 
