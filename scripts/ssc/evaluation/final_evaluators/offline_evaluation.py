@@ -26,8 +26,10 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2, check):
     if check:
 
         df_exist = pd.read_csv(os.path.join(exp_dir,"eval_metrics_all.csv"))
-        uid_exist = list(df_exist.loc[df_exist['metric'] == 'test_Lipschitz_std_refZ'].uid)
+        uid_exist = list(df_exist.loc[df_exist['metric'] == 'test_rmse'].uid)
+        print('passed')
     else:
+        print('other pass')
         pass
     subfolders = [f.path for f in os.scandir(exp_dir) if
                   (f.is_dir() and f and f.path.split('/')[-1].startswith(startwith))]
