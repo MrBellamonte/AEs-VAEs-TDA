@@ -23,7 +23,7 @@ class TopologicallyRegularizedAutoencoder(AutoencoderModel):
         self.lam_t = lam_t
         self.lam_r = lam_r
         toposig_kwargs = toposig_kwargs if toposig_kwargs else {}
-        self.push_edges = (toposig_kwargs['match_edges'] == 'asymmetric_push')
+        #self.push_edges = (toposig_kwargs['match_edges'] == 'asymmetric_push')
         self.topo_sig = TopologicalSignatureDistance(**toposig_kwargs)
         self.autoencoder = autoencoder
         self.latent_norm = torch.nn.Parameter(data=torch.ones(1),
