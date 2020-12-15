@@ -69,7 +69,7 @@ if __name__ == "__main__":
             for uuid in list(set(list(df_selected.uid))):
                 if args.competitor:
                     df_selected.loc[(df_selected.uid == uuid), ['seed']] = int(
-                        uuid.split('-')[7][4:])
+                        uuid.split('-')[6][4:])
                 else:
                     df_selected.loc[(df_selected.uid == uuid), ['seed']] = int(
                         uuid.split('-')[10][4:])
