@@ -59,7 +59,7 @@ umap_mnist_test_local = ConfigGrid_Competitors(
 
 tsne_mnist_euler_multi = [ConfigGrid_Competitors(
     model_class = [tSNE],
-    model_kwargs=dict(n_jobs = [1],perplexity = np.linspace(5,50,5).astype(int).tolist()),
+    model_kwargs=dict(n_jobs = [1],perplexity = np.linspace(5,50,10).astype(int).tolist()),
     dataset=[MNIST_offline()],
     sampling_kwargs=[dict(root_path='/cluster/home/schsimo/MT/AEs-VAEs-TDA', n_samples = 10000)],
     eval=[ConfigEval(
