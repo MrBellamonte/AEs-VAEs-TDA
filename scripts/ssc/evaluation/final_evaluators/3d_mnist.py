@@ -116,6 +116,7 @@ if __name__ == "__main__":
                 uid_opt = list(df_opt.uid.values)
                 df_final = pd.DataFrame(index=np.arange(1), columns=['method'])
                 df_final['method'] = method
+                df_final['id'] = uid_opt[0]
                 df_final['criterion'] = criterion
 
 
