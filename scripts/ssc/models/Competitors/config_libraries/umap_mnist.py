@@ -78,6 +78,6 @@ tsne_mnist_euler_multi = [ConfigGrid_Competitors(
     verbose = True
 ) for seed in [1110,1909,1318]]
 
-umap_mnist_euler_multi_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in umap_mnist_euler_multi]))
+tsne_mnist_euler_multi_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in tsne_mnist_euler_multi]))
 
 
