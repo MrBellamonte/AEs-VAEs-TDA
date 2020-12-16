@@ -28,6 +28,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2, check):
         uid_exist = list(df_exist.loc[df_exist['metric'] == 'test_rmse'].uid)
         print('passed')
     else:
+        uid_exist = []
         print('other pass')
         pass
     subfolders = [f.path for f in os.scandir(exp_dir) if
