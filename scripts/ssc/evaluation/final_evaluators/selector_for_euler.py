@@ -49,7 +49,7 @@ if __name__ == "__main__":
     exp_dir = args.directory
     N = args.n
     if args.competitor:
-        metrics_to_select = ['rmse_manifold_Z', 'train_mean_Lipschitz_std_refZ','train_density_kl_global_1','train_density_kl_global_01','train_density_kl_global_001','train_density_kl_global_0001','train_mean_local_rmse_refX','train_mean_local_rmse_refZ','train_mrre']
+        metrics_to_select = ['rmse_manifold_Z', 'train_mean_Lipschitz_std_refZ','train_density_kl_global_1','train_density_kl_global_01','train_density_kl_global_001','train_density_kl_global_0001','train_mean_local_rmse_refX','train_mean_local_rmse_refZ','train_mrre', 'train_continuity','train_trustworthiness']
         max_metrics = ['train_continuity','train_trustworthiness']
     else:
         metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ',
