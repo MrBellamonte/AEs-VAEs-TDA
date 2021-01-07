@@ -32,8 +32,9 @@ if __name__ == "__main__":
     all_methods = {
         'TopoAE' : '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/mnist_topoae_1_deepae3',
         'AE': '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/mnist_ae_1_deepae3',
-        'UMAP': '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/umap_mnist2',
-        'tSNE': '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/mnist_tsne'
+        'WAE': '/Users/simons/MT_data/sync/leonhard_sync_scratch/mnist_wae_1_deepae3',
+        'UMAP': '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/umap_mnist3d',
+        'tSNE': '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/mnist_tsne3d'
     }
 
 
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     methods = all_methods
     df_END = pd.DataFrame()
 
-    path_end = '/Users/simons/MT_data/eval_data/MNIST_FINAL/eval/mnist3d_selected.csv'
+    path_end = '/Users/simons/MT_data/eval_data/MNIST_FINAL/eval/mnist3d_selected_FINAL.csv'
     criterions = ['test_mean_Lipschitz_std_refZ','test_mean_local_rmse_refZ','training.reconstruction_error','test_mean_continuity','test_density_kl_global_01']
     max_metrics = ['test_mean_trustworthiness','test_mean_continuity','train_mean_trustworthiness','train_mean_continuity']
 
