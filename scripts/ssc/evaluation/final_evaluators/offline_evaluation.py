@@ -21,15 +21,26 @@ from src.utils.plots import plot_distcomp_Z_manifold, plot_2Dscatter
 
 
 
-def offline_eval_WAE(exp_dir,evalconfig,startwith):
+def offline_eval_WAE(exp_dir,evalconfig,startwith, model_name2, check):
 
-
-
+    if check:
+        df_exist = pd.read_csv(os.path.join(exp_dir,"eval_metrics_all.csv"))
+        uid_exist = list(df_exist.loc[df_exist['metric'] == 'test_rmse'].uid)
+        print('passed')
+    else:
+        uid_exist = []
+        print('other pass')
+        pass
     subfolders = [f.path for f in os.scandir(exp_dir) if
                   (f.is_dir() and f and f.path.split('/')[-1].startswith(startwith))]
 
     for run_dir in subfolders:
         exp = run_dir.split('/')[-1]
+
+        if exp in uid_exist and check:
+            continue2 = False
+        else:
+            continue2 = True
 
         try:
             os.remove(os.path.join(run_dir,"metrics.json"))
@@ -60,7 +71,17 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
 
 
         autoencoder = autoencoder(**config['model_kwargs'])
-        model = WitnessComplexAutoencoder(autoencoder)
+
+
+        if model_name2 == 'topoae_ext':
+            model = WitnessComplexAutoencoder(autoencoder)
+        elif model_name2 == 'vanilla_ae':
+            model = autoencoder
+        else:
+            raise ValueError("Model {} not defined.".format(model_name2))
+
+
+
         continue_ = False
         try:
             state_dict = torch.load(os.path.join(run_dir, 'model_state.pth'),map_location=torch.device('cpu'))
@@ -75,7 +96,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
             print('WARNING: model {} not complete'.format(exp))
 
         if continue_:
-            if 'latent' not in state_dict:
+            if 'latent' not in state_dict and model_name2 == 'topoae_ext':
                 state_dict['latent_norm'] = torch.Tensor([1.0]).float()
 
             model.load_state_dict(state_dict)
@@ -163,7 +184,7 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
                 # Visualize latent space
                 plot_2Dscatter(Z_train, Y_train, path_to_save=os.path.join(
                     run_dir, 'train_latent_visualization.png'),dpi=100, title=None, show=False)
-            if evalconfig.quant_eval and (os.path.exists(os.path.join(run_dir,'test_latent_visualization.png')) == False):
+            if evalconfig.quant_eval and continue2:
                 print('QUANT EVAL....')
                 ks = list(
                     range(evalconfig.k_min, evalconfig.k_max+evalconfig.k_step, evalconfig.k_step))
@@ -196,6 +217,8 @@ def offline_eval_WAE(exp_dir,evalconfig,startwith):
 
                 df = df[COLS_DF_RESULT]
                 df.to_csv(os.path.join(exp_dir, 'eval_metrics_all.csv'), mode='a', header=False)
+            else:
+                print('skipped quant eval')
         else:
             shutil.move(run_dir, os.path.join(exp_dir,'not_evaluated'))
 
@@ -206,6 +229,10 @@ def parse_input():
     parser = argparse.ArgumentParser()
     parser.add_argument('-dir', "--directory", help="Experiment directory", type=str, default = '/Users/simons/MT_data/sync/euler_sync_scratch/schsimo/output/mnist_test')
     parser.add_argument('-stw', "--startswith", help="dataset_prettyname_start", type=str, default = 'MNIST')
+    parser.add_argument('--latent', help='latent representation', action='store_true')
+    parser.add_argument('--model', help='model', type=str,default = 'topoae_ext')
+    parser.add_argument('--check', help='check if already evaluated', action='store_true')
+
 
     return parser.parse_args()
 
@@ -215,9 +242,10 @@ if __name__ == "__main__":
         active=True,
         evaluate_on='test',
         eval_manifold=False,
-        save_eval_latent=True,
+        save_eval_latent=args.latent,
         save_train_latent=False,
         online_visualization=False,
+        quant_eval = True,
         k_min=4,
         k_max=16,
         k_step=4)
@@ -230,6 +258,6 @@ if __name__ == "__main__":
         pass
 
     stw = args.startswith
-    offline_eval_WAE(exp_dir,evalconfig,stw)
+    offline_eval_WAE(exp_dir,evalconfig,stw, model_name2 = args.model,check = args.check)
 
 

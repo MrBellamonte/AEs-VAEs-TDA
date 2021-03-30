@@ -49,10 +49,10 @@ class tSNE(TSNE, Competitor):
 
 class UMAP(UMAP_, Competitor):
     '''UMAP'''
-    def __init__(self, *args, **kwargs):
+    def __init__(self, test_eval=True, *args, **kwargs):
         DEFAULT["umap"].update(kwargs)
         super().__init__(*args, **DEFAULT["umap"])
-        self.test_eval = True
+        self.test_eval = test_eval
 
     def get_latent_train(self, x, y):
         return super().fit_transform(x, y=None), y

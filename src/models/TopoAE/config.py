@@ -14,7 +14,7 @@ from src.utils.config_utils import (
     get_keychain_value, fraction_to_string, get_kwargs,
     dictionary_to_string, add_default_to_dict)
 
-admissible_model_classes_TopoAE = [Autoencoder_MLP_topoae.__name__]
+
 
 
 @dataclass
@@ -73,6 +73,7 @@ class ConfigTopoAE:
 
         add_default_to_dict(self.sampling_kwargs, 'seed', self.seed)
         add_default_to_dict(self.method_args, 'name', 'topoae')
+        add_default_to_dict(self.method_args, 'shuffle', False)
         add_default_to_dict(self.method_args, 'LLE_pretrain', False)
 
 
@@ -83,9 +84,14 @@ class ConfigTopoAE:
 
             unique_id = str(uuid.uuid4())[:8]
 
+            if 'size_hidden_layers' in self.model_kwargs:
+                hidden_layers = '-'.join(str(x) for x in self.model_kwargs['size_hidden_layers'])
+            else:
+                hidden_layers = 'default'
+
             uuid_model = '{model}-{hidden_layers}-lr{learning_rate}-bs{batch_size}-nep{n_epochs}-rlw{rec_loss_weight}-tlw{top_loss_weight}-seed{seed}'.format(
                 model=self.model_class.__name__,
-                hidden_layers='-'.join(str(x) for x in self.model_kwargs['size_hidden_layers']),
+                hidden_layers=hidden_layers,
                 learning_rate=fraction_to_string(self.learning_rate),
                 batch_size=self.batch_size,
                 n_epochs=self.n_epochs,
@@ -94,10 +100,16 @@ class ConfigTopoAE:
                 seed = self.seed
             )
 
+            if 'root_path' in self.sampling_kwargs:
+                sampling_kwargs2 = self.sampling_kwargs.copy()
+                sampling_kwargs2.pop('root_path')
+            else:
+                sampling_kwargs2 = self.sampling_kwargs.copy()
+
             uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
                 dataset=self.dataset.__class__.__name__,
                 object_kwargs=get_kwargs(self.dataset),
-                sampling_kwargs=dictionary_to_string(self.sampling_kwargs)
+                sampling_kwargs=dictionary_to_string(sampling_kwargs2)
             )
 
             return uuid_data+uuid_model+'-'+ unique_id
@@ -123,7 +135,6 @@ class ConfigTopoAE:
         assert 0 < self.batch_size
         assert 0 < self.n_epochs
 
-        assert self.model_class.__name__ in admissible_model_classes_TopoAE
         s = inspect.getfullargspec(self.model_class.__init__)
         for a in s.kwonlyargs:
             assert a in self.model_kwargs

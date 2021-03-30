@@ -1,15 +1,16 @@
 import argparse
 
 import importlib
-from typing import List
-
-import torch
 
 from src.competitors.train_engine import simulator_competitor
 from src.data_preprocessing.witness_complex_offline.compute_wc import compute_wc_multiple
+from src.models.TopoAE.config import ConfigTopoAE, ConfigGrid_TopoAE
 from src.models.TopoAE.train_engine import simulator_TopoAE
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE, ConfigWCAE
 from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
+from src.models.vanillaAE.config import Config_VanillaAE, ConfigGrid_VanillaAE
+from src.models.vanillaAE.train_engine import simulator_VanillaAE
+from src.utils.config_utils import get_configs
 
 
 def parse_input():
@@ -27,32 +28,34 @@ if __name__ == "__main__":
     args = parse_input()
 
     if args.model == 'topoae':
-        conifg_srt = 'scripts.ssc.TopoAE.config_libraries.'+args.configs
+        conifg_srt = 'scripts.ssc.models.TopoAE.config_libraries.'+args.configs
         mod_name, config_name = conifg_srt.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
 
-        simulator_TopoAE(configs)
+        configs = get_configs(configs, ConfigTopoAE, ConfigGrid_TopoAE)
+        for config in configs:
+            simulator_TopoAE(config)
     elif args.model == 'topoae_ext':
-        conifg_srt = 'scripts.ssc.TopoAE_ext.config_libraries.'+args.configs
+        conifg_srt = 'scripts.ssc.models.TopoAE_ext.config_libraries.'+args.configs
         mod_name, config_name = conifg_srt.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)
 
-        if isinstance(configs, ConfigGrid_WCAE):
-            configs = configs.configs_from_grid()
-        elif isinstance(configs, ConfigWCAE):
-            configs = [configs]
-        elif isinstance(configs, List):
-            configs = configs
-        else:
-            raise ValueError
-
+        configs = get_configs(configs, ConfigWCAE, ConfigGrid_WCAE)
         for config in configs:
             simulator_TopoAE_ext(config)
+    elif args.model == 'vanilla_ae':
+        conifg_srt = 'scripts.ssc.models.vanillaAE.config_libraries.'+args.configs
+        mod_name, config_name = conifg_srt.rsplit('.', 1)
+        mod = importlib.import_module(mod_name)
+        configs = getattr(mod, config_name)
 
+        configs = get_configs(configs, Config_VanillaAE, ConfigGrid_VanillaAE)
+        for config in configs:
+            simulator_VanillaAE(config)
     elif args.model == 'competitor':
-        conifg_srt = 'scripts.ssc.Competitors.config_libraries.'+args.configs
+        conifg_srt = 'scripts.ssc.models.Competitors.config_libraries.'+args.configs
         mod_name, config_name = conifg_srt.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         configs = getattr(mod, config_name)

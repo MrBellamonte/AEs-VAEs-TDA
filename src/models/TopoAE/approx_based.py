@@ -23,7 +23,7 @@ class TopologicallyRegularizedAutoencoder(AutoencoderModel):
         self.lam_t = lam_t
         self.lam_r = lam_r
         toposig_kwargs = toposig_kwargs if toposig_kwargs else {}
-        self.push_edges = (toposig_kwargs['match_edges'] == 'asymmetric_push')
+        #self.push_edges = (toposig_kwargs['match_edges'] == 'asymmetric_push')
         self.topo_sig = TopologicalSignatureDistance(**toposig_kwargs)
         self.autoencoder = autoencoder
         self.latent_norm = torch.nn.Parameter(data=torch.ones(1),
@@ -35,7 +35,7 @@ class TopologicallyRegularizedAutoencoder(AutoencoderModel):
         distances = torch.norm(x_flat[:, None] - x_flat, dim=2, p=p)
         return distances
 
-    def forward(self, x, mu = 0):
+    def forward(self, x,x_distances = None, mu = 0):
         """Compute the loss of the Topologically regularized autoencoder.
 
         Args:
@@ -47,7 +47,11 @@ class TopologicallyRegularizedAutoencoder(AutoencoderModel):
         """
         latent = self.autoencoder.encode(x)
 
-        x_distances = self._compute_distance_matrix(x)
+        if x_distances is None:
+            x_distances = self._compute_distance_matrix(x)
+        else:
+            pass
+
 
         dimensions = x.size()
         if len(dimensions) == 4:

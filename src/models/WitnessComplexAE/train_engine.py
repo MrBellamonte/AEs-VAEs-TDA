@@ -10,11 +10,12 @@ import random
 import pandas as pd
 import torch
 from sacred import Experiment
+
 from sacred.observers import FileStorageObserver
 from torch.utils.data import TensorDataset
 
 
-from scripts.ssc.TopoAE_ext.config_libraries.swissroll import swissroll_testing
+from scripts.ssc.models.TopoAE_ext.config_libraries.swissroll import swissroll_testing
 from src.datasets.datasets import Unity_Rotblock, Unity_RotCorgi, MNIST, MNIST_offline
 
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE, ConfigWCAE

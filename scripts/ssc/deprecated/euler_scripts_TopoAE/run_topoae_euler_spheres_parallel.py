@@ -1,4 +1,4 @@
-from scripts.ssc.TopoAE.topoae_config_library import spheres_lowmemory_midbs_euler_seed2_1, spheres_lowmemory_midbs_euler_seed2_2,spheres_lowmemory_midbs_euler_seed2_3, spheres_lowmemory_midbs_euler_seed2_4
+from scripts.ssc.models.TopoAE import spheres_lowmemory_midbs_euler_seed2_1, spheres_lowmemory_midbs_euler_seed2_2,spheres_lowmemory_midbs_euler_seed2_3, spheres_lowmemory_midbs_euler_seed2_4
 from src.models.TopoAE.train_engine import simulator_TopoAE
 from joblib import Parallel, delayed
 

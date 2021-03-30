@@ -22,10 +22,10 @@ def eval(result,Z_manifold,X,Z,Y,rundir,config,train = True):
         name_prefix = 'test'
         save_latent = config.eval.save_eval_latent
 
+    df = pd.DataFrame(Z)
+    df['labels'] = Y
+    df.to_csv(os.path.join(rundir, '{}_latents.csv'.format(name_prefix)), index=False)
     if rundir and save_latent:
-        df = pd.DataFrame(Z)
-        df['labels'] = Y
-        df.to_csv(os.path.join(rundir, '{}_latents.csv'.format(name_prefix)), index=False)
         np.savez(
             os.path.join(rundir, '{}_latents.npz'.format(name_prefix)),
             latents=Z, labels=Y

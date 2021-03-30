@@ -21,7 +21,9 @@ class Config_Competitors:
                  'sampling_kwargs',
                  'eval',
                  'uid',
-                 'seed']
+                 'seed',
+                 'experiment_dir',
+                 'verbose']
     model_class: Type[Competitor]
     model_kwargs: dict
     dataset: Type[DataSet]
@@ -29,6 +31,8 @@ class Config_Competitors:
     eval: ConfigEval
     uid: str
     seed: int
+    experiment_dir: str
+    verbose: bool
 
 
     def __post_init__(self):
@@ -44,10 +48,16 @@ class Config_Competitors:
                 model_kwargs=dictionary_to_string(self.model_kwargs),
                 seed = str(self.seed))
 
+            if 'root_path' in self.sampling_kwargs:
+                sampling_kwargs2 = self.sampling_kwargs.copy()
+                sampling_kwargs2.pop('root_path')
+            else:
+                sampling_kwargs2 = self.sampling_kwargs.copy()
+
             uuid_data = '{dataset}{object_kwargs}{sampling_kwargs}-'.format(
                 dataset=self.dataset.__class__.__name__,
                 object_kwargs=get_kwargs(self.dataset),
-                sampling_kwargs=dictionary_to_string(self.sampling_kwargs),
+                sampling_kwargs=dictionary_to_string(sampling_kwargs2),
 
             )
             return uuid_data+uuid_model+'-'+ unique_id
@@ -106,11 +116,12 @@ class ConfigGrid_Competitors:
     verbose: str
 
 
+
     def configs_from_grid(self):
 
         grid = dict()
 
-        for slot in (set(self.__slots__)-set(['experiment_dir','seed', 'verbose'])):
+        for slot in (set(self.__slots__)-set(['seed', 'verbose','experiment_dir'])):
             grid.update({slot: getattr(self, slot)})
         tmp = list(get_keychain_value(grid))
         values = [x[1] for x in tmp]
@@ -119,7 +130,10 @@ class ConfigGrid_Competitors:
         ret = []
 
         for v in itertools.product(*values):
-            ret_i = {'seed': self.seed}
+
+            ret_i = {'seed'          : self.seed,
+                     'experiment_dir': self.experiment_dir,
+                     'verbose'       : self.verbose}
 
             for kc, kc_v in zip(key_chains, v):
                 tmp = ret_i
@@ -154,6 +168,8 @@ placeholder_config_competitors = Config_Competitors(
         k_max=20,
         k_step=5,
     )],
-    uid = ['uid'],
+    uid = 'uid',
+    verbose = False,
+    experiment_dir = '',
     seed = 123123,
 )

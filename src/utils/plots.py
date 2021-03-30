@@ -13,31 +13,74 @@ from matplotlib.collections import PatchCollection
 from matplotlib.ticker import MaxNLocator
 
 
-def plot_2Dscatter(data, labels, path_to_save= None, title = None, show = False, palette = plt.cm.viridis, dpi = 200):
-    #fig, ax = plt.subplots()
+def plot_2Dscatter(data, labels,pairings = None, path_to_save= None, title = None, show = False, palette = plt.cm.viridis, dpi = 200):
+
     # sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=palette, marker=".",
     #     #                 size=5, edgecolor="none", legend=True)
     if palette is 'hsv':
+
         sns_plot = plt.scatter(data[:, 0], data[:, 1],
                          c=labels, s=5, cmap="hsv")
         cbar = plt.colorbar(sns_plot)
         cbar.set_ticks([0,90,180,270,360])
         cbar.set_ticklabels(['0°','90°','180°','270°','360°'])
+    elif (palette is 'x' or palette is 'y'):
+        sns_plot = plt.scatter(data[:, 0], data[:, 1],
+                         c=labels, s=5, cmap=sns.color_palette("viridis", as_cmap=True))
+
+        cbar = plt.colorbar(sns_plot)
+        cbar.set_ticks([labels.min(), (labels.max()-labels.min())/2, labels.max()])
+        cbar.set_ticklabels([str(int(labels.min())), str(int(labels.min()+(labels.max()-labels.min())/2)), str(5)])
+        cbar.ax.set_title('{}-coordinate'.format(palette))
+
+    elif palette is 'custom':
+        fig, ax = plt.subplots()
+        cp = dict()
+        for i, c in enumerate(sns.color_palette("hls", len(set(list(labels))))):
+            cp.update({list(set(list(labels)))[i]: c})
+        sns.scatterplot(x=data[:, 0], y=data[:, 1], hue=labels, palette=cp,
+                        size=100, edgecolor="none", ax=ax, zorder=2)
+    elif palette is 'custom2':
+        fig, ax = plt.subplots()
+        cp = dict()
+        for i, c in enumerate(sns.color_palette("muted", len(set(list(labels))))):
+            cp.update({list(set(list(labels)))[i]: c})
+        sns.scatterplot(x=data[:, 0], y=data[:, 1], hue=labels, palette=cp,
+                        s=4, edgecolor="none", ax=ax, zorder=2)
+        handles, labels_ = ax.get_legend_handles_labels()
+        # sort both labels and handles by labels
+        labels_, handles = zip(*sorted(zip(labels_, handles), key=lambda t: int(t[0])))
+
+        if labels_[-1] == '100':
+            ax.legend(handles[:-1], labels_[:-1])
+        else:
+            ax.legend(handles, labels_)
+
 
     else:
-        sns_plot = sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=palette, marker=".",
-                                   size=5, edgecolor="none")
+        fig, ax = plt.subplots()
+        sns.scatterplot(x = data[:, 0], y=data[:, 1], hue=labels, palette=palette,
+                                   size=100, edgecolor="none",ax = ax,zorder=2)
+        if pairings is None:
+            pass
+        else:
+            for i, pairing in enumerate(pairings):
+                for ind in pairing:
+                    ax.plot([data[i, 0], data[ind, 0]],
+                            [data[i, 1], data[ind, 1]], color='grey', zorder=1)
     sns.despine(left=True, bottom=True)
 
     plt.tick_params(axis='both', labelbottom=False, labelleft=False, bottom=False, left=False)
 
     plt.title(title)
-
+    if palette is not 'custom2':
+        plt.legend([], [], frameon=False)
     if show:
         plt.show()
 
     if path_to_save != None:
-        fig = sns_plot.get_figure()
+        if (palette is 'x' or palette is 'y'):
+            fig = sns_plot.get_figure()
         fig.savefig(path_to_save, dpi=dpi)
 
     plt.close()

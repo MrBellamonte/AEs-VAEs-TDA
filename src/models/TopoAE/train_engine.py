@@ -10,21 +10,18 @@ import pandas as pd
 
 import torch
 from sacred import Experiment
+from sacred import SETTINGS
 from sacred.observers import FileStorageObserver
-from sklearn.manifold import SpectralEmbedding
-from torch.optim import optimizer
-from torch.utils.data import TensorDataset, DataLoader
+from torch.utils.data import TensorDataset
 
-from scripts.ssc.TopoAE.topoae_config_library import placeholder_config_topoae
-from src.data_preprocessing.witness_complex_offline.wc_offline_utils import fetch_data
-from src.models.COREL.eval_engine import get_latentspace_representation
+from scripts.ssc.models.TopoAE.topoae_config_library import placeholder_config_topoae
 from src.models.TopoAE.approx_based import TopologicallyRegularizedAutoencoder
-from src.models.TopoAE.config import ConfigTopoAE, ConfigGrid_TopoAE
+from src.models.TopoAE.config import ConfigTopoAE
 from src.train_pipeline.sacred_observer import SetID
 
 from src.train_pipeline.train_model import train
-from src.utils.plots import plot_2Dscatter
 
+SETTINGS['CAPTURE_MODE'] = 'sys'
 ex = Experiment()
 COLS_DF_RESULT = list(placeholder_config_topoae.create_id_dict().keys())+['metric', 'value']
 

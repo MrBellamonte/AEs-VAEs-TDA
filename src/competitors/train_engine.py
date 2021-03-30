@@ -100,16 +100,26 @@ def train_competitor(_run, _seed, _rnd, config: Config_Competitors, experiment_d
 
 
 
-def simulator_competitor(config_grid: ConfigGrid_Competitors):
+def simulator_competitor(config: Config_Competitors):
+    id = config.creat_uuid()
+    try:
+        ex.observers[0] = SetID(id)
+        ex.observers[1] = FileStorageObserver(config.experiment_dir)
+    except:
+        ex.observers.append(SetID(id))
+        ex.observers.append(FileStorageObserver(config.experiment_dir))
+    ex_dir_new = os.path.join(config.experiment_dir, id)
+    ex.run(config_updates={'config'         : config, 'experiment_dir': ex_dir_new,
+                           'experiment_root': config.experiment_dir,
+                           'seed'           : config.seed,
+                           'verbose'        : config.verbose
+                           })
 
-    ex.observers.append(FileStorageObserver(config_grid.experiment_dir))
-    ex.observers.append(SetID('myid'))
-
-    for config in config_grid.configs_from_grid():
-        id = config.creat_uuid()
-        ex_dir_new = os.path.join(config_grid.experiment_dir, id)
-        ex.observers[1] = SetID(id)
-        ex.run(config_updates={'config': config, 'experiment_dir' : ex_dir_new, 'experiment_root' : config_grid.experiment_dir,
-                               'seed' : config_grid.seed, 'verbose' : config_grid.verbose
-                               })
+    # for config in config_grid.configs_from_grid():
+    #     id = config.creat_uuid()
+    #     ex_dir_new = os.path.join(config_grid.experiment_dir, id)
+    #     ex.observers[1] = SetID(id)
+    #     ex.run(config_updates={'config': config, 'experiment_dir' : ex_dir_new, 'experiment_root' : config_grid.experiment_dir,
+    #                            'seed' : config_grid.seed, 'verbose' : config_grid.verbose
+    #                            })
 

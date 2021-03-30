@@ -49,13 +49,13 @@ if __name__ == "__main__":
     exp_dir = args.directory
     N = args.n
     if args.competitor:
-        metrics_to_select = ['rmse_manifold_Z', 'train_mean_Lipschitz_std_refZ','training.metrics.notmatched_pairs_0D','training.loss.autoencoder','train_continuity']
-        max_metrics = ['train_continuity']
+        metrics_to_select = ['rmse_manifold_Z', 'train_mean_Lipschitz_std_refZ','train_density_kl_global_1','train_density_kl_global_01','train_density_kl_global_001','train_density_kl_global_0001','train_mean_local_rmse_refX','train_mean_local_rmse_refZ','train_mrre', 'train_continuity','train_trustworthiness']
+        max_metrics = ['train_continuity','train_trustworthiness']
     else:
         metrics_to_select = ['rmse_manifold_Z', 'test_mean_Lipschitz_std_refZ',
                              'training.metrics.notmatched_pairs_0D', 'training.loss.autoencoder',
                              'test_continuity','test_density_kl_global_1','test_density_kl_global_01','test_density_kl_global_001','test_density_kl_global_0001',
-                             'training.metrics.distance2-1','test_trustworthiness','test_mean_local_rmse_refX','test_mean_local_rmse_refZ','test_mrre']
+                             'training.metrics.distance2-1','test_trustworthiness','test_mean_local_rmse_refX','test_mean_local_rmse_refZ','test_mrre','training.reconstruction_error']
         max_metrics = ['test_continuity','test_trustworthiness']
 
     # LOAD DF

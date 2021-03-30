@@ -1,4 +1,4 @@
-from scripts.ssc.TopoAE.config_libraries.spheres import spheres_euler_seed6_parallel_shuffled
+from scripts.ssc.models.TopoAE.config_libraries.spheres import spheres_euler_seed6_parallel_shuffled
 from src.models.TopoAE.train_engine import simulator_TopoAE
 from joblib import Parallel, delayed
 

@@ -1,4 +1,4 @@
-from scripts.ssc.TopoAE.config_libraries.swissroll import \
+from scripts.ssc.models.TopoAE import \
     (
     swissroll_midsize_euler_seed1_parallel_shuffled,
     swissroll_midsize_euler_seed1_parallel_shuffled_hw, swissroll_multiseed_parallel)
