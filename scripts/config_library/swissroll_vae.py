@@ -150,15 +150,15 @@ vae_run1_seed36 = [ConfigGrid_WCAE(
 
 
 vae_run1_seed36_remote = [ConfigGrid_WCAE(
-    learning_rate=[1/10],
+    learning_rate=[1/10,1/100],
     batch_size=[bs],
     n_epochs=[100],
     weight_decay=[0],
     early_stopping=[50],
     rec_loss_weight=[1],
-    top_loss_weight=[8192],
+    top_loss_weight=[int(i) for i in np.logspace(10,13,num=4,base = 2.0)],
     match_edges=['push_active'],
-    k=[1],
+    k=[1,2,4],
     r_max=[10],
     model_class=[VanillaVAE],
     model_kwargs={
@@ -185,7 +185,7 @@ vae_run1_seed36_remote = [ConfigGrid_WCAE(
     )],
     uid=[''],
     toposig_kwargs=[dict()],
-    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1], online_wc=[True], wc_offline = [dict_wc]),
+    method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125,1.25], online_wc=[True], wc_offline = [dict_wc]),
     experiment_dir='/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA/output/WAE/vae_test',
     seed=36,
     device='cpu',
@@ -197,5 +197,3 @@ vae_run1_seed36_remote = [ConfigGrid_WCAE(
 
 vae_run1_seed36_list_remote = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in vae_run1_seed36_remote]))
 vae_run1_seed36_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in vae_run1_seed36]))
-
-

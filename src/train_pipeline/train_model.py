@@ -8,6 +8,7 @@ import torch
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from joblib.externals.loky.backend import get_context
 from sklearn.metrics import pairwise_distances
 from torch.utils.data import TensorDataset
 
@@ -127,7 +128,7 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
 
         dataloader_eval = torch.utils.data.DataLoader(
             selected_dataset, batch_size=config.batch_size, pin_memory=True,
-            drop_last=False)
+            drop_last=False, multiprocessing_context=get_context('loky'))
 
         X_eval, Y_eval, Z_eval = get_latentspace_representation(model, dataloader_eval,
                                                                 device=device)

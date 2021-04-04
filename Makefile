@@ -36,5 +36,5 @@ test_euler_topoae_ext:
 
 
 run_vae:
-	python3 main.py -m 'WCAE' -c 'swissroll_vae.vae_run1_seed36_list_remote' -n 4
+	python3 main.py -m 'WCAE' -c 'swissroll_vae.vae_run1_seed36_list_remote' -n 8
 

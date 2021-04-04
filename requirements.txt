@@ -6,7 +6,7 @@ cmake
 persim
 Cython
 #Ripser
-torch
+torch==1.6.0
 torchvision
 pre-commit
 seaborn

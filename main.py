@@ -32,8 +32,6 @@ def parse_input():
 
 if __name__ == "__main__":
 
-    print('PyTorch Version: {}'.format(torch.__version__))
-
     args = parse_input()
     conifg_srt = 'scripts.config_library.'+args.configs
     mod_name, config_name = conifg_srt.rsplit('.', 1)
