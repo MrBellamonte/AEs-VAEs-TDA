@@ -128,7 +128,7 @@ def train(model, data_train, data_test, config, device, quiet, val_size, _seed, 
 
         dataloader_eval = torch.utils.data.DataLoader(
             selected_dataset, batch_size=config.batch_size, pin_memory=True,
-            drop_last=False, multiprocessing_context=get_context('loky'))
+            drop_last=False)
 
         X_eval, Y_eval, Z_eval = get_latentspace_representation(model, dataloader_eval,
                                                                 device=device)
