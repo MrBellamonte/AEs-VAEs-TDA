@@ -186,7 +186,7 @@ vae_run1_seed36_remote = [ConfigGrid_WCAE(
     uid=[''],
     toposig_kwargs=[dict()],
     method_args=dict(n_jobs=[1], normalize=[True], mu_push=[1,1.125,1.25], online_wc=[True], wc_offline = [dict_wc]),
-    experiment_dir='/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA/output/WAE/vae_test',
+    experiment_dir='/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA/output/WAE/vae_run1',
     seed=36,
     device='cpu',
     num_threads=1,
