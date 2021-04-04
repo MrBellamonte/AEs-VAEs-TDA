@@ -12,10 +12,10 @@ SWISSROLL_NONOISE36 = [
 
 
 SWISSROLL_NONOISE36_LOCALSERVER = [
-    dict(uid='SwissRoll-bs64-seed36-f5c07948', path_global_register= PATH_GR_SWISSROLL_LOCAL_SERVER),
-    dict(uid='SwissRoll-bs128-seed36-0fee517e', path_global_register= PATH_GR_SWISSROLL_LOCAL_SERVER),
-    dict(uid='SwissRoll-bs256-seed36-b3aa917f', path_global_register= PATH_GR_SWISSROLL_LOCAL_SERVER),
-    dict(uid='SwissRoll-bs512-seed36-50563bfc', path_global_register= PATH_GR_SWISSROLL_LOCAL_SERVER)]
+    dict(path_to_data= '/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA/output/WitnessComplex_offline/SwissRoll/nonoise/SwissRoll-bs64-seed36-f5c07948'),
+    dict(path_to_data= '/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA/output/WitnessComplex_offline/SwissRoll/nonoise/SwissRoll-bs128-seed36-0fee517e'),
+    dict(path_to_data= '/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA/output/WitnessComplex_offline/SwissRoll/nonoise/SwissRoll-bs256-seed36-b3aa917f'),
+    dict(path_to_data= '/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA/output/WitnessComplex_offline/SwissRoll/nonoise/SwissRoll-bs512-seed36-50563bfc')]
 
 
 
