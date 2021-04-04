@@ -7,6 +7,9 @@ run_simulator_main_parallel:
 test_topoae:
 	python -m scripts.ssc.run_simulator_main -c 'swissroll.swissroll_testing' -m 'topoae'
 
+
+
+
 test_topoae_ext:
 	python -m scripts.ssc.run_simulator_main -c 'swissroll.swissroll_testing' -m 'topoae_ext'
 
@@ -31,4 +34,7 @@ test_euler_topoae_ext:
 	bsub -n 2 -W 0:10 -R "rusage[mem=1536]" -oo /cluster/home/schsimo/MT/output/test 'make test_euler_topoae_ext_parallel'
 
 
+
+run_vae:
+	python main.py 'WCAE' -c 'swissroll_vae.vae_run1_seed36_list' -n 4
 

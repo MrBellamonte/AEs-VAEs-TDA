@@ -49,6 +49,8 @@ def compute_wc_offline(config: ConfigWC):
     torch.manual_seed(config.seed)
 
     # get data, i.e. sample or load
+    if config.verbose:
+        print('Sample Data...')
     dataset = config.dataset
     X_train, y_train = dataset.sample(**config.sampling_kwargs, seed=config.seed, train=True)
 
@@ -72,6 +74,8 @@ def compute_wc_offline(config: ConfigWC):
 
     test_dataset = TensorDataset(torch.Tensor(X_test), torch.Tensor(y_test))
 
+    if config.verbose:
+        print('Prepare Dataloader...')
     # load batches
     dataloader_train = DataLoader(
         train_dataset, batch_size=config.batch_size, pin_memory=True, drop_last=True, shuffle=False

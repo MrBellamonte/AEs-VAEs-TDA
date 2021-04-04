@@ -798,3 +798,5 @@ class ConvAE_Unity480320_inference(AutoencoderModel):
 
         """
         return self.encode(x)
+
+

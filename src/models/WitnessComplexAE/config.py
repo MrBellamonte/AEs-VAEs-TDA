@@ -98,7 +98,11 @@ class ConfigWCAE:
             unique_id = str(uuid.uuid4())[:8]
 
             if 'size_hidden_layers' in self.model_kwargs:
-                hidden_layers = '-'.join(str(x) for x in self.model_kwargs['size_hidden_layers'])
+                if 'lambda_kld' in self.model_kwargs:
+                    hidden_layers = '-'.join(str(x) for x in self.model_kwargs['size_hidden_layers'] + [self.model_kwargs['lambda_kld']] )
+                else:
+                    hidden_layers = '-'.join(
+                        str(x) for x in self.model_kwargs['size_hidden_layers'])
             else:
                 hidden_layers = 'default'
 

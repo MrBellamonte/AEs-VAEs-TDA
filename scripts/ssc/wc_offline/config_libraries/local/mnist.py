@@ -18,3 +18,15 @@ mnist_1 = ConfigWC_Grid(
 )
 
 
+mnist_2 = ConfigWC_Grid(
+    dataset = [MNIST()],
+    sampling_kwargs = [dict()],
+    batch_size=[64,128,256,512],
+    wc_kwargs=[dict()],
+    eval_size=[0.14], # not a lot of data "wasted for bs = 4096 & could go to bs=8192
+    n_jobs = [4],
+    seed = [74],
+    global_register = PATH_GR_MNIST_LOCAL,
+    root_path = '/Users/simons/PycharmProjects/MT-VAEs-TDA/output/WitnessComplex_offline/mnist',
+    verbose = True
+)

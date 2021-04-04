@@ -2,7 +2,7 @@ from scripts.ssc.models.TopoAE_ext.config_libraries.colab_configs.mnist import m
 from scripts.ssc.models.TopoAE_ext.config_libraries.euler_configs.unity_posttrain import \
     (
     rotopenai_1_local2, rotopenai_2_local)
-from scripts.ssc.models.TopoAE_ext.config_libraries.local_configs.mnist import (
+from scripts.ssc.models.TopoAE_ext.config_libraries.local_configs.mnist_ import (
     mnist_test3,
     mnist_test256, mnist_test)
 from scripts.ssc.models.TopoAE_ext.config_libraries.swissroll import debug
