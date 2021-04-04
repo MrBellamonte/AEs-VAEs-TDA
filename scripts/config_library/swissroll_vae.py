@@ -237,7 +237,7 @@ vae_run1_seed36_remote = [ConfigGrid_WCAE(
 
 
 
-
+vae_run1_seed36_list_remote = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in vae_run1_seed36_remote]))
 vae_run1_seed36_list = list(itertools.chain(*[config_grid.configs_from_grid() for config_grid in vae_run1_seed36]))
 
-print(len(vae_run1_seed36_list))
+
