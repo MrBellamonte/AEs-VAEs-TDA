@@ -3,6 +3,7 @@ import argparse
 import importlib
 import random
 
+import torch
 from joblib import Parallel, delayed
 
 from src.competitors.config import ConfigGrid_Competitors, Config_Competitors
@@ -30,6 +31,9 @@ def parse_input():
 
 
 if __name__ == "__main__":
+
+    print('PyTorch Version: {}'.format(torch.__version__))
+
     args = parse_input()
     conifg_srt = 'scripts.config_library.'+args.configs
     mod_name, config_name = conifg_srt.rsplit('.', 1)
