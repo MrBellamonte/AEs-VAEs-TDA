@@ -83,7 +83,7 @@ xy_trans_test= ConfigGrid_VanillaAE(
 
 xy_trans_test2 = ConfigGrid_VanillaAE(
     learning_rate=[1/10],
-    batch_size=[221],
+    batch_size=[64],
     n_epochs=[10000],
     weight_decay=[1e-6],
     early_stopping=[1000],
