@@ -18,3 +18,4 @@ if __name__ == "__main__":
     dataset = torch.load('{}/full_dataset.pt'.format(args.path))
 
     x = dataset[:args.batch_size][0].to('cuda')
+    print(torch.cuda.memory_allocated())
