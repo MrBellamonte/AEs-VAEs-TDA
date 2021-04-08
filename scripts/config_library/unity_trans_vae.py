@@ -57,7 +57,7 @@ xy_trans_test= ConfigGrid_VanillaAE(
     model_class=[ConvVAE_Unity480320],
     model_kwargs={'lambda_kld': [1]},
     dataset=[Unity_XYTransOpenAI(version = 'xy_trans_final')],
-    sampling_kwargs=[dict(root_path='home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA')],
+    sampling_kwargs=[dict(root_path='/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA')],
     eval=[ConfigEval(
         active=True,
         evaluate_on='test',
