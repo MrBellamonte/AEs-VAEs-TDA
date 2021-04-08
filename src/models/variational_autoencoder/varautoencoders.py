@@ -122,7 +122,7 @@ class ConvVAE_Unity480320(VariationalAutoencoderModel):
     '''
     __slots__ = ['encoder', 'decoder','reconst_error']
 
-    def __init__(self, input_dim: int, latent_dim: int, size_hidden_layers: list,lambda_kld = 1):
+    def __init__(self,lambda_kld = 1):
         super().__init__()
 
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=4, kernel_size=3, stride=1)
@@ -169,8 +169,8 @@ class ConvVAE_Unity480320(VariationalAutoencoderModel):
             nn.Tanh()
         )
 
-        self.fc_mu = nn.Linear(8, latent_dim)
-        self.fc_var = nn.Linear(8, latent_dim)
+        self.fc_mu = nn.Linear(8, 2)
+        self.fc_var = nn.Linear(8, 2)
 
         self.reconst_error = nn.MSELoss()
         self.lambda_kld = lambda_kld
