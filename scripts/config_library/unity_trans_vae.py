@@ -110,4 +110,4 @@ xy_trans_test2 = ConfigGrid_VanillaAE(
     seed=838,
     device='cuda',
     num_threads=2,
-    verbose=False)
+    verbose=True)
