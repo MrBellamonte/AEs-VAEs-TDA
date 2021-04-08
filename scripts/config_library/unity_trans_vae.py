@@ -78,3 +78,36 @@ xy_trans_test= ConfigGrid_VanillaAE(
     device='cuda',
     num_threads=2,
     verbose=False)
+
+
+
+xy_trans_test2 = ConfigGrid_VanillaAE(
+    learning_rate=[1/10],
+    batch_size=[221],
+    n_epochs=[10000],
+    weight_decay=[1e-6],
+    early_stopping=[1000],
+    model_class=[ConvVAE_Unity480320],
+    model_kwargs={'lambda_kld': [1]},
+    dataset=[Unity_XYTransOpenAI(version = 'xy_trans_final')],
+    sampling_kwargs=[dict(root_path='/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA')],
+    eval=[ConfigEval(
+        active=True,
+        evaluate_on='test',
+        eval_manifold=False,
+        save_eval_latent=True,
+        save_train_latent=True,
+        online_visualization=False,
+        k_min=5,
+        k_max=10,
+        k_step=5,
+        quant_eval=False
+
+    )],
+    uid=[''],
+    method_args=dict(val_size=[0]),
+    experiment_dir='/home/simonberg/PycharmProjects/MT_contd/AEs-VAEs-TDA/output/vanillaVAE/xy_trans_test',
+    seed=838,
+    device='cuda',
+    num_threads=2,
+    verbose=False)
