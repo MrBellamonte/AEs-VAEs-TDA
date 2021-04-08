@@ -13,6 +13,8 @@ from src.models.TopoAE.config import ConfigGrid_TopoAE, ConfigTopoAE
 from src.models.TopoAE.train_engine import simulator_TopoAE
 from src.models.WitnessComplexAE.config import ConfigGrid_WCAE, ConfigWCAE
 from src.models.WitnessComplexAE.train_engine import simulator_TopoAE_ext
+from src.models.vanillaAE.config import Config_VanillaAE, ConfigGrid_VanillaAE
+from src.models.vanillaAE.train_engine import simulator_VanillaAE
 from src.utils.config_utils import get_configs
 
 
@@ -55,6 +57,16 @@ if __name__ == "__main__":
         else:
             for config in configs:
                 simulator_TopoAE_ext(config)
+
+    elif args.model == 'vanilla_ae':
+
+        configs = get_configs(configs, Config_VanillaAE, ConfigGrid_VanillaAE)
+        if args.n_jobs != 1:
+            Parallel(n_jobs=args.n_jobs)(delayed(simulator_VanillaAE)(config) for config in configs)
+        else:
+            for config in configs:
+                simulator_VanillaAE(config)
+
 
     elif args.model == 'competitor':
         configs = get_configs(configs,Config_Competitors,ConfigGrid_Competitors)
